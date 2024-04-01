@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FileManagementApp" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="com.tom.FileManagementApp" />
-    <module name="MyDriver" />
+    <module name="jfx_learn" />
     <option name="VM_PARAMETERS" value="--add-exports=java.desktop/sun.awt.shell=ALL-UNNAMED,com.tom" />
     <extension name="coverage">
       <pattern>
