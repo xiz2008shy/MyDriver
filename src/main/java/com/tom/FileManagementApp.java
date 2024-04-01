@@ -72,7 +72,7 @@ public class FileManagementApp extends Application {
         textField.setPromptText("在 " +file.getName()+" 中搜索");
         textField.setFocusTraversable(false);
         textField.setPrefWidth(200);
-        InputStream iconInputStream = this.getClass().getClassLoader().getResourceAsStream("images/searchIcon.png");
+        InputStream iconInputStream = this.getClass().getClassLoader().getResourceAsStream("searchIcon.png");
         ImageView searchIcon = new ImageView(new Image(iconInputStream));
         searchIcon.setFitWidth(20);
         searchIcon.setFitHeight(20);
@@ -128,7 +128,7 @@ public class FileManagementApp extends Application {
         //imageBox.setStyle("-fx-background-color: red");
         ImageView imageView;
         if (file.isDirectory()){
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("images/fileDir.png");
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("fileDir.png");
             Image image = new Image(inputStream);
             imageView = new ImageView(image);
             imageView.setFitHeight(60);

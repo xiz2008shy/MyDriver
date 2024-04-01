@@ -1,7 +1,8 @@
 module com.tom {
+    opens com.tom to java.desktop,sun.awt.shell;
     requires javafx.controls;
-    requires java.desktop;
     requires javafx.swing;
-    opens com.tom to com.sun.javafx.scene.layout, sun.awt.shell,java.desktop;
+    requires java.desktop;
     exports com.tom;
+
 }
