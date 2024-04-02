@@ -3,6 +3,7 @@ module MyDriver {
     requires javafx.controls;
     requires javafx.swing;
     requires java.desktop;
+    requires cn.hutool.core;
     exports com.tom;
 
 }

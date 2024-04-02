@@ -3,11 +3,13 @@ package com.tom;
 import com.tom.component.MainAddressPart;
 import com.tom.component.MainFlowContentPart;
 import com.tom.component.MainScrollPart;
+import com.tom.handler.key.CopyHandler;
 import com.tom.model.AddressProperty;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -41,6 +43,9 @@ public class FileManagementApp extends Application {
         borderPane.setCenter(scrollPane);
         borderPane.setTop(addressPane);
 
+
+        scrollPane.addEventHandler(KeyEvent.KEY_PRESSED, new CopyHandler(mainFlowContentPart));
+
         // scene
         Scene scene = new Scene(borderPane);
         stage.setScene(scene);
@@ -48,13 +53,5 @@ public class FileManagementApp extends Application {
         stage.setHeight(700);
         stage.show();
     }
-
-
-
-
-
-
-
-
 
 }

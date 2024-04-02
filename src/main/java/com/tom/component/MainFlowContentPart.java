@@ -7,12 +7,14 @@ import com.tom.utils.ImageUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
@@ -24,25 +26,30 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MainFlowContentPart {
+public class MainFlowContentPart extends AddressGetterImpl{
 
     private FlowPane flowPane;
 
-    private AddressProperty addressProperty;
+
 
     public MainFlowContentPart(AddressProperty addressProperty) {
-        this.addressProperty = addressProperty;
+        super(addressProperty);
         this.flowPane = new FlowPane();
-        addFileNode(flowPane,addressProperty.getCurPath());
+        refreshFileNode();
     }
 
     public FlowPane getFlowPane() {
         return flowPane;
     }
 
-    private void addFileNode(FlowPane flowPane, String path) {
+    public void refreshFileNode() {
+        refreshFileNode(null);
+    }
+
+    public void refreshFileNode(Set<String> findFileSet) {
         ObservableList<Node> children = flowPane.getChildren();
-        File baseDir = new File(path);
+        children.clear();
+        File baseDir = new File(getCurPath());
         File[] files = baseDir.listFiles();
         Set<AnchorPane> selectedSet = new HashSet<>();
         ObjectProperty<AnchorPane> os = new SimpleObjectProperty<>();
@@ -54,6 +61,13 @@ public class MainFlowContentPart {
             anchorPane.addEventFilter(MouseEvent.MOUSE_CLICKED, factory.getIconClickHandler());
             anchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED, factory.getIconMouseInHandler());
             anchorPane.addEventFilter(MouseEvent.MOUSE_EXITED, factory.getIconMouseOutHandler());
+            if (findFileSet != null && findFileSet.contains(file.getName())){
+                Event.fireEvent(anchorPane,new MouseEvent(MouseEvent.MOUSE_CLICKED,
+                        1,1,1,1, MouseButton.PRIMARY, 1,
+                        true, true, true, true,
+                        true, true, true,
+                        true, true, true, null));
+            }
         }
     }
 

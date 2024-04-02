@@ -1,7 +1,6 @@
 package com.tom.component;
 
 import com.tom.model.AddressProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
@@ -15,21 +14,20 @@ import javafx.scene.text.Text;
 import java.io.File;
 import java.io.InputStream;
 
-public class MainAddressPart {
+public class MainAddressPart extends AddressGetterImpl{
 
     private AnchorPane addressPane;
 
-    private AddressProperty addressProperty;
 
     public MainAddressPart(AddressProperty addressProperty) {
-        this.addressProperty = addressProperty;
+        super(addressProperty);
         this.addressPane = genAddressPane();
     }
 
     private AnchorPane genAddressPane(){
         AnchorPane anchorPane = new AnchorPane();
         HBox hBox = new HBox();
-        Text text = new Text(addressProperty.getCurPath());
+        Text text = new Text(getCurPath());
         Font font = new Font(13);
         text.setFont(font);
         hBox.getChildren().add(text);
@@ -40,7 +38,7 @@ public class MainAddressPart {
         HBox searchTab = new HBox();
         searchTab.setAlignment(Pos.CENTER);
         TextField textField = new TextField();
-        File file = new File(addressProperty.getCurPath());
+        File file = new File(getCurPath());
         textField.setPromptText("在 " +file.getName()+" 中搜索");
         textField.setFocusTraversable(false);
         textField.setPrefWidth(200);
