@@ -7,6 +7,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -143,7 +144,7 @@ public class IconHandlerFactory<T> {
 
     public static void executeFile(File file) {
         try {
-            Runtime.getRuntime().exec(file.getAbsolutePath());
+            Desktop.getDesktop().open(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
