@@ -1,6 +1,7 @@
 package com.tom.component;
 
-import com.tom.handler.IconHandlerFactory;
+import com.tom.handler.icon.IconHandlerFactory;
+import com.tom.handler.icon.IconHandlerFactoryBuilder;
 import com.tom.model.AddressProperty;
 import com.tom.utils.ImageUtils;
 import javafx.beans.property.ObjectProperty;
@@ -45,14 +46,14 @@ public class MainFlowContentPart {
         File[] files = baseDir.listFiles();
         Set<AnchorPane> selectedSet = new HashSet<>();
         ObjectProperty<AnchorPane> os = new SimpleObjectProperty<>();
-        IconHandlerFactory<MouseEvent> instance = IconHandlerFactory.getInstance(os, selectedSet);
+        IconHandlerFactoryBuilder<MouseEvent> instance = IconHandlerFactoryBuilder.getInstance(os, selectedSet);
         for (File file : files) {
             AnchorPane anchorPane = genFileNode( file);
             children.add(anchorPane);
-            instance.makeHandleInstance();
-            anchorPane.addEventFilter(MouseEvent.MOUSE_CLICKED, instance.getIconClickHandler());
-            anchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED, instance.getIconMouseInHandler());
-            anchorPane.addEventFilter(MouseEvent.MOUSE_EXITED, instance.getIconMouseOutHandler());
+            IconHandlerFactory<MouseEvent> factory = instance.createFactory(file);
+            anchorPane.addEventFilter(MouseEvent.MOUSE_CLICKED, factory.getIconClickHandler());
+            anchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED, factory.getIconMouseInHandler());
+            anchorPane.addEventFilter(MouseEvent.MOUSE_EXITED, factory.getIconMouseOutHandler());
         }
     }
 

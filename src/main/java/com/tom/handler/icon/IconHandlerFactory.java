@@ -1,41 +1,41 @@
-package com.tom.handler;
+package com.tom.handler.icon;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
-/**
- * 图标事件的工厂方法
- */
-public class IconHandlerFactory<T extends Event> {
+public class IconHandlerFactory<T> {
 
     private ObjectProperty<AnchorPane> os;
 
     private Set<AnchorPane> selectedSet;
 
-    private IconClickHandler<T>iconClickHandler;
+    private File file;
+
+    private IconClickHandler<T> iconClickHandler;
     private IconMouseInHandler<T> iconMouseInHandler;
     private IconMouseOutHandler<T> iconMouseOutHandler;
 
-    public static <T extends Event>IconHandlerFactory<T> getInstance(ObjectProperty<AnchorPane> os, Set<AnchorPane> selectedSet){
-        return new IconHandlerFactory<>(os,selectedSet);
-    }
 
-    private IconHandlerFactory(ObjectProperty<AnchorPane> os, Set<AnchorPane> selectedSet) {
+    public IconHandlerFactory(ObjectProperty<AnchorPane> os, Set<AnchorPane> selectedSet) {
         this.os = os;
         this.selectedSet = selectedSet;
     }
 
 
-    public void makeHandleInstance(){
-        this.iconClickHandler = new IconClickHandler<>(os,selectedSet);
+    public void makeHandleInstance(File file){
+        this.iconClickHandler = new IconClickHandler<>(os,selectedSet,file);
         this.iconMouseInHandler = new IconMouseInHandler<>(iconClickHandler);
         this.iconMouseOutHandler = new IconMouseOutHandler<>(iconClickHandler);
     }
+
 
     public IconClickHandler<T> getIconClickHandler() {
         return iconClickHandler;
@@ -48,6 +48,7 @@ public class IconHandlerFactory<T extends Event> {
     public IconMouseOutHandler<T> getIconMouseOutHandler() {
         return iconMouseOutHandler;
     }
+
 
     /**
      * 鼠标移入图标事件
@@ -95,29 +96,39 @@ public class IconHandlerFactory<T extends Event> {
      * 鼠标单机图标事件
      * @param <T>
      */
-    static class IconClickHandler<T> implements EventHandler {
+    static class IconClickHandler<T> implements EventHandler<MouseEvent> {
 
         private ObjectProperty<AnchorPane> os;
 
         private Set<AnchorPane> selectedSet;
 
-        public IconClickHandler(ObjectProperty<AnchorPane> os,Set<AnchorPane> selectedSet) {
+        private File file;
+
+        public IconClickHandler(ObjectProperty<AnchorPane> os,Set<AnchorPane> selectedSet,File file) {
             if (os == null) {
                 throw new RuntimeException("os cannot be null!");
             }
             this.os = os;
+            this.file = file;
             this.selectedSet = selectedSet;
         }
 
         @Override
-        public void handle(Event event) {
+        public void handle(MouseEvent event) {
             AnchorPane curOs = (AnchorPane)event.getSource();
             AnchorPane lastOs = os.get();
             if (lastOs != null) {
                 lastOs.setStyle("-fx-background-color: none");
             }
-            curOs.setStyle("-fx-background-color: rgba(104,202,249,0.4)");
+            curOs.setStyle("-fx-background-color: rgba(63,175,229,0.3)");
             os.set(curOs);
+            if (event.getClickCount() == 2) {
+                if (file.isDirectory()){
+
+                }else {
+                    executeFile(file);
+                }
+            }
         }
 
         public AnchorPane getOs() {
@@ -126,6 +137,15 @@ public class IconHandlerFactory<T extends Event> {
 
         public ObjectProperty<AnchorPane> osProperty() {
             return os;
+        }
+    }
+
+
+    public static void executeFile(File file) {
+        try {
+            Runtime.getRuntime().exec(file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
