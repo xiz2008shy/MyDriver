@@ -1,5 +1,6 @@
 package com.tom.handler.icon;
 
+import com.tom.component.MainFlowContentPart;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.Event;
 import javafx.scene.layout.AnchorPane;
@@ -27,9 +28,9 @@ public class IconHandlerFactoryBuilder<T extends Event> {
     }
 
 
-    public IconHandlerFactory<T> createFactory(File file){
+    public IconHandlerFactory<T> createFactory(File file, MainFlowContentPart mainFlowContentPart){
         IconHandlerFactory<T> factory = new IconHandlerFactory<>(os, selectedSet);
-        factory.makeHandleInstance(file);
+        factory.makeHandleInstance(file, mainFlowContentPart);
         return factory;
     }
 

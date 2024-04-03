@@ -94,6 +94,7 @@
                     <include>**/*.css</include>
                     <include>**/*.setting</include>
                     <include>**/*.png</include>
+                    <include>**/*.svg</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

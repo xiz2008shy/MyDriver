@@ -9,11 +9,11 @@ import java.io.File;
  * @Description 抽象出的地址获取默认实现
  * @Date 2024/4/2 22:23
  */
-public class AddressGetterImpl implements AddressGetter{
+public class DefaultAddressGetterImpl implements AddressGetter{
 
     private AddressProperty addressProperty;
 
-    public AddressGetterImpl(AddressProperty addressProperty) {
+    public DefaultAddressGetterImpl(AddressProperty addressProperty) {
         this.addressProperty = addressProperty;
     }
 
@@ -26,4 +26,11 @@ public class AddressGetterImpl implements AddressGetter{
     public File getFile() {
         return addressProperty.getFile();
     }
+
+    @Override
+    public AddressProperty getAddressProperty() {
+        return addressProperty;
+    }
+
+
 }

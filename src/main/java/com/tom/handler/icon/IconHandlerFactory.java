@@ -1,5 +1,6 @@
 package com.tom.handler.icon;
 
+import com.tom.component.MainFlowContentPart;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -18,11 +19,8 @@ public class IconHandlerFactory<T> {
 
     private Set<AnchorPane> selectedSet;
 
-    private File file;
-
     private IconClickHandler<T> iconClickHandler;
-    private IconMouseInHandler<T> iconMouseInHandler;
-    private IconMouseOutHandler<T> iconMouseOutHandler;
+    private IconMouseInOutHandler<T> iconMouseInOutHandler;
 
 
     public IconHandlerFactory(ObjectProperty<AnchorPane> os, Set<AnchorPane> selectedSet) {
@@ -31,10 +29,9 @@ public class IconHandlerFactory<T> {
     }
 
 
-    public void makeHandleInstance(File file){
-        this.iconClickHandler = new IconClickHandler<>(os,selectedSet,file);
-        this.iconMouseInHandler = new IconMouseInHandler<>(iconClickHandler);
-        this.iconMouseOutHandler = new IconMouseOutHandler<>(iconClickHandler);
+    public void makeHandleInstance(File file, MainFlowContentPart mainFlowContentPart){
+        this.iconClickHandler = new IconClickHandler<>(os,selectedSet,file,mainFlowContentPart);
+        this.iconMouseInOutHandler = new IconMouseInOutHandler<>(iconClickHandler);
     }
 
 
@@ -42,12 +39,8 @@ public class IconHandlerFactory<T> {
         return iconClickHandler;
     }
 
-    public IconMouseInHandler<T> getIconMouseInHandler() {
-        return iconMouseInHandler;
-    }
-
-    public IconMouseOutHandler<T> getIconMouseOutHandler() {
-        return iconMouseOutHandler;
+    public IconMouseInOutHandler<T> getIconInOutHandler() {
+        return iconMouseInOutHandler;
     }
 
 
@@ -55,10 +48,12 @@ public class IconHandlerFactory<T> {
      * 鼠标移入图标事件
      * @param <T>
      */
-    static class IconMouseInHandler <T> implements EventHandler {
+    static class IconMouseInOutHandler <T> implements EventHandler {
         private IconClickHandler<T> iconClickHandler;
 
-        public IconMouseInHandler(IconClickHandler<T> iconClickHandler) {
+        private boolean flag = true;
+
+        public IconMouseInOutHandler(IconClickHandler<T> iconClickHandler) {
             this.iconClickHandler = iconClickHandler;
         }
 
@@ -66,28 +61,14 @@ public class IconHandlerFactory<T> {
         public void handle(Event event) {
             Pane source = (Pane) event.getSource();
             if (!source.equals(iconClickHandler.getOs())) {
-                source.setStyle("-fx-background-color: #dce9f1");
-            }
-        }
-    }
-
-    /**
-     * 鼠标移出图标事件
-     * @param <T>
-     */
-    static class IconMouseOutHandler<T> implements EventHandler {
-
-        private IconClickHandler<T> iconClickHandler;
-
-        public IconMouseOutHandler(IconClickHandler<T> iconClickHandler) {
-            this.iconClickHandler = iconClickHandler;
-        }
-
-        @Override
-        public void handle(Event event) {
-            Pane source = (Pane)event.getSource();
-            if (!source.equals(iconClickHandler.getOs())) {
-                source.setStyle("-fx-background-color: none");
+                if (flag) {
+                    source.setStyle("-fx-background-color: #dce9f1");
+                }else {
+                    source.setStyle("-fx-background-color: none");
+                }
+                this.flag = !flag;
+            }else {
+                this.flag = true;
             }
         }
     }
@@ -105,13 +86,16 @@ public class IconHandlerFactory<T> {
 
         private File file;
 
-        public IconClickHandler(ObjectProperty<AnchorPane> os,Set<AnchorPane> selectedSet,File file) {
+        private MainFlowContentPart mainFlowContentPart;
+
+        public IconClickHandler(ObjectProperty<AnchorPane> os,Set<AnchorPane> selectedSet,File file, MainFlowContentPart mainFlowContentPart) {
             if (os == null) {
                 throw new RuntimeException("os cannot be null!");
             }
             this.os = os;
             this.file = file;
             this.selectedSet = selectedSet;
+            this.mainFlowContentPart = mainFlowContentPart;
         }
 
         @Override
@@ -125,7 +109,8 @@ public class IconHandlerFactory<T> {
             os.set(curOs);
             if (event.getClickCount() == 2) {
                 if (file.isDirectory()){
-
+                    this.mainFlowContentPart.getAddressProperty().setCurPath(file);
+                    this.mainFlowContentPart.refreshFileNode();
                 }else {
                     executeFile(file);
                 }

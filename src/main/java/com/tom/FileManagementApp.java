@@ -34,7 +34,7 @@ public class FileManagementApp extends Application {
         MainScrollPart mainScrollPart = new MainScrollPart(flowPane);
         ScrollPane scrollPane = mainScrollPart.getScrollPane();
         // 地址栏组件
-        MainAddressPart mainAddressPart = new MainAddressPart(addressProperty);
+        MainAddressPart mainAddressPart = new MainAddressPart(addressProperty,mainFlowContentPart);
         AnchorPane addressPane = mainAddressPart.getAddressPane();
 
         // 最外层的方位布局组件

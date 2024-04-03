@@ -26,11 +26,9 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MainFlowContentPart extends AddressGetterImpl{
+public class MainFlowContentPart extends DefaultAddressGetterImpl{
 
     private FlowPane flowPane;
-
-
 
     public MainFlowContentPart(AddressProperty addressProperty) {
         super(addressProperty);
@@ -57,10 +55,10 @@ public class MainFlowContentPart extends AddressGetterImpl{
         for (File file : files) {
             AnchorPane anchorPane = genFileNode( file);
             children.add(anchorPane);
-            IconHandlerFactory<MouseEvent> factory = instance.createFactory(file);
+            IconHandlerFactory<MouseEvent> factory = instance.createFactory(file,this);
             anchorPane.addEventFilter(MouseEvent.MOUSE_CLICKED, factory.getIconClickHandler());
-            anchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED, factory.getIconMouseInHandler());
-            anchorPane.addEventFilter(MouseEvent.MOUSE_EXITED, factory.getIconMouseOutHandler());
+            anchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED, factory.getIconInOutHandler());
+            anchorPane.addEventFilter(MouseEvent.MOUSE_EXITED, factory.getIconInOutHandler());
             if (findFileSet != null && findFileSet.contains(file.getName())){
                 Event.fireEvent(anchorPane,new MouseEvent(MouseEvent.MOUSE_CLICKED,
                         1,1,1,1, MouseButton.PRIMARY, 1,
