@@ -5,6 +5,7 @@ import com.tom.component.MainFlowContentPart;
 import com.tom.component.MainScrollPart;
 import com.tom.handler.key.CopyHandler;
 import com.tom.model.AddressProperty;
+import com.tom.utils.ImageUtils;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -49,6 +50,11 @@ public class FileManagementApp extends Application {
         // scene
         Scene scene = new Scene(borderPane);
         stage.setScene(scene);
+
+        // 增加图标
+        stage.getIcons().addAll(
+                ImageUtils.getImageFromResources("fileDir16.png"),
+                ImageUtils.getImageFromResources("fileDir32.png"));
         stage.setWidth(800);
         stage.setHeight(700);
         stage.show();

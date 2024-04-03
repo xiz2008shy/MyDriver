@@ -3,11 +3,7 @@ package com.tom.utils;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import sun.awt.shell.ShellFolder;
 
@@ -17,15 +13,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class ImageUtils {
 
-    public static ImageView getImageFromResources(String path){
-        InputStream inputStream = ImageUtils.class.getClassLoader().getResourceAsStream(path);
-        Image image = new Image(inputStream);
+    public static ImageView getImageViewFromResources(String path){
+        Image image = getImageFromResources(path);
         return new ImageView(image);
+    }
+
+    public static Image getImageFromResources(String path){
+        InputStream inputStream = ImageUtils.class.getClassLoader().getResourceAsStream(path);
+        return new Image(inputStream);
     }
 
     /**

@@ -118,7 +118,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
         if (absolutePath.contains(basePath)){
             if (!absolutePath.equals(basePath)){
                 if(addDirNodeExcludeBaseDir(hBox,file.getParentFile(),basePath)) {
-                    ImageView arrowView = ImageUtils.getImageFromResources("right-arrow16.png");
+                    ImageView arrowView = ImageUtils.getImageViewFromResources("right-arrow16.png");
                     arrowView.setFitHeight(10);
                     arrowView.setFitWidth(10);
                     hBox.getChildren().add(arrowView);
