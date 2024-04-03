@@ -21,6 +21,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -28,7 +29,7 @@ import java.util.Set;
 
 public class MainFlowContentPart extends DefaultAddressGetterImpl{
 
-    private FlowPane flowPane;
+    private final FlowPane flowPane;
 
     public MainFlowContentPart(AddressProperty addressProperty) {
         super(addressProperty);
@@ -52,8 +53,10 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl{
         Set<AnchorPane> selectedSet = new HashSet<>();
         ObjectProperty<AnchorPane> os = new SimpleObjectProperty<>();
         IconHandlerFactoryBuilder<MouseEvent> instance = IconHandlerFactoryBuilder.getInstance(os, selectedSet);
+        FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+        assert files != null;
         for (File file : files) {
-            AnchorPane anchorPane = genFileNode( file);
+            AnchorPane anchorPane = genFileNode( fileSystemView,file);
             children.add(anchorPane);
             IconHandlerFactory<MouseEvent> factory = instance.createFactory(file,this);
             anchorPane.addEventFilter(MouseEvent.MOUSE_CLICKED, factory.getIconClickHandler());
@@ -70,7 +73,7 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl{
     }
 
 
-    private AnchorPane genFileNode( File file) {
+    private AnchorPane genFileNode( FileSystemView fileSystemView,File file) {
         AnchorPane anchorPane = new AnchorPane();
         FlowPane.setMargin(anchorPane,new Insets(10));
         anchorPane.setPrefWidth(90);
@@ -89,7 +92,7 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl{
             imageView.setFitWidth(60);
             imageBox.getChildren().add(imageView);
         }else {
-            imageView = ImageUtils.getBigIcon( file);
+            imageView = ImageUtils.getBigIcon(fileSystemView,file);
             imageBox.getChildren().add(imageView);
         }
 

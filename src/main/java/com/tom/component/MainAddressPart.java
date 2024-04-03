@@ -43,7 +43,8 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
         HBox hBox = new HBox();
 
         // 返回按钮
-        Region backSvg = ImageUtils.getSvgFromResources(this.getClass().getClassLoader(),"back.svg");
+        Region backSvg = ImageUtils.getSvgFromResources("back.svg");
+        assert backSvg != null;
         backSvg.setPrefSize(25,25);
         backSvg.setStyle("-fx-background-color: #777777;");
         IconColorChangeHandler<Region> handler = new IconColorChangeHandler<>(this);
@@ -81,6 +82,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
         textField.setFocusTraversable(false);
         textField.setPrefWidth(200);
         InputStream iconInputStream = this.getClass().getClassLoader().getResourceAsStream("searchIcon.png");
+        assert iconInputStream != null;
         ImageView searchIcon = new ImageView(new Image(iconInputStream));
         searchIcon.setFitWidth(20);
         searchIcon.setFitHeight(20);
@@ -101,7 +103,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
 
     /**
      * 刷新地址栏
-     * @param curAddr
+     * @param curAddr 当前地址
      */
     public void freshAddrTab(File curAddr) {
         urlBox.getChildren().clear();
@@ -139,7 +141,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
         dirLabel.setPadding(new Insets(5));
         hBox.getChildren().add(dirLabel);
 
-        IconBakChangeHandler iconBakChangeHandler = new IconBakChangeHandler(file);
+        IconBakChangeHandler<Label> iconBakChangeHandler = new IconBakChangeHandler<>(file);
         dirLabel.addEventHandler(MouseEvent.MOUSE_ENTERED,iconBakChangeHandler);
         dirLabel.addEventHandler(MouseEvent.MOUSE_EXITED,iconBakChangeHandler);
         dirLabel.addEventHandler(MouseEvent.MOUSE_CLICKED,new AddressJumpHandler(file,this));

@@ -10,9 +10,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
+        <maven.compiler.compilerVersion>22</maven.compiler.compilerVersion>
     </properties>
 
 
@@ -20,23 +20,23 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17.0.2</version>
+            <version>22</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>17.0.2</version>
+            <version>22</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>17.0.2</version>
+            <version>22</version>
         </dependency>
 
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>17.0.2</version>
+            <version>22</version>
         </dependency>
 
         <dependency>
@@ -57,9 +57,9 @@
                     <encoding>UTF-8</encoding>
 <!--                    <verbose>true</verbose>-->
 <!--                    <fork>true</fork>-->
-                    <compilerArgs>
-                        <arg>--add-exports=java.desktop/sun.awt.shell=ALL-UNNAMED,MyDriver</arg>
-                    </compilerArgs>
+<!--                    <compilerArgs>-->
+<!--                        <arg>&#45;&#45;add-exports=java.desktop/sun.awt.shell=ALL-UNNAMED,MyDriver</arg>-->
+<!--                    </compilerArgs>-->
                 </configuration>
             </plugin>
 
@@ -68,7 +68,13 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.tom</mainClass>
+                    <mainClass>com.tom.JavafxMain</mainClass>
+                    <launcher>com.tom.JavafxMain</launcher>
+                    <jlinkZipName>app</jlinkZipName>
+                    <jlinkImageName>app</jlinkImageName>
+                    <noManPages>true</noManPages>
+                    <stripDebug>true</stripDebug>
+                    <noHeaderFiles>true</noHeaderFiles>
                 </configuration>
             </plugin>
         </plugins>

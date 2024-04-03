@@ -22,7 +22,7 @@ public class FileManagementApp extends Application {
         Application.launch(args);
     }
 
-    private String curPath = "C:\\Users\\TOMQI\\Desktop";
+    private final String curPath = "C:\\Users\\TOMQI\\Desktop";
 
     @Override
     public void start(Stage stage) throws Exception {

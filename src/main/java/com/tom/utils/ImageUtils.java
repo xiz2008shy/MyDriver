@@ -5,14 +5,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
-import sun.awt.shell.ShellFolder;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class ImageUtils {
@@ -24,7 +22,10 @@ public class ImageUtils {
 
     public static Image getImageFromResources(String path){
         InputStream inputStream = ImageUtils.class.getClassLoader().getResourceAsStream(path);
-        return new Image(inputStream);
+        if(inputStream != null){
+            return new Image(inputStream);
+        }
+        return null;
     }
 
     /**
@@ -32,16 +33,10 @@ public class ImageUtils {
      * @param file
      * @return
      */
-    public static ImageView getBigIcon (File file) {
-        BufferedImage bi = null;
-        try {
-            ShellFolder shellFolder = ShellFolder.getShellFolder(file);
-            ImageIcon imageIcon = new ImageIcon(shellFolder.getIcon(true));
-            bi = toBufferedImage(imageIcon);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Image image = SwingFXUtils.toFXImage(bi,null);
+    public static ImageView getBigIcon (FileSystemView fileSystemView,File file) {
+        ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file, 48, 48);
+        BufferedImage bufferedImage = toBufferedImage(iconImage,true);
+        Image image = SwingFXUtils.toFXImage(bufferedImage,null);
         return new ImageView(image);
     }
 
@@ -53,15 +48,20 @@ public class ImageUtils {
      */
     public static ImageView getSmallIcon (FileSystemView fileSystemView, File file) {
         ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file);
-        BufferedImage bufferedImage = toBufferedImage(iconImage);
+        BufferedImage bufferedImage = toBufferedImage(iconImage,true);
         Image image = SwingFXUtils.toFXImage(bufferedImage,null);
         return new ImageView(image);
     }
 
-    public static BufferedImage toBufferedImage(ImageIcon iconImage){
-        boolean hasAlpha = true;
-        //java.awt.Image instance = iconImage.getImage();
-        java.awt.Image instance = iconImage.getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+
+    /**
+     * 将swing的image转成图片缓冲流，用于后续SwingFXUtil转换
+     * @param iconImage swing图片对象
+     * @param hasAlpha 决定转化的图片是否为透明背景
+     * @return
+     */
+    public static BufferedImage toBufferedImage(ImageIcon iconImage,boolean hasAlpha){
+        java.awt.Image instance = iconImage.getImage().getScaledInstance(48, 48, java.awt.Image.SCALE_SMOOTH);
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         BufferedImage bi = null;
         try {
@@ -72,7 +72,7 @@ public class ImageUtils {
             GraphicsDevice gd = ge.getDefaultScreenDevice();
             GraphicsConfiguration gc = gd.getDefaultConfiguration();
             bi = gc.createCompatibleImage(instance.getWidth(null), instance.getHeight(null), transparency);
-        }catch (HeadlessException e) {
+        }catch (HeadlessException ignored) {
 
         }
         if (bi == null) {
@@ -89,7 +89,14 @@ public class ImageUtils {
     }
 
 
-    public static Region getSvgFromResources(ClassLoader classLoader, String name){
+    /**
+     * 一个假装在加载svg的方法
+     * svg在fx中的支持程度比较一般，下面这个方法会用固定svg代码创建图片
+     * 这里的svg代码对应back.svg文件
+     * @param name
+     * @return
+     */
+    public static Region getSvgFromResources(String name){
         try {
             SVGPath svg1 = new SVGPath();
             svg1.setContent("M512 0c281.6 0 512 230.4 512 512s-230.4 512-512 512-512-230.4-512-512 230.4-512 512-512z m0 960c249.6 0 448-198.4 448-448s-198.4-448-448-448-448 198.4-448 448 198.4 448 448 448z " +
