@@ -1,11 +1,11 @@
 package com.tom.component;
 
+import com.tom.handler.address.AddressJumpHandler;
+import com.tom.handler.address.IconBakChangeHandler;
 import com.tom.handler.address.IconColorChangeHandler;
 import com.tom.listener.AddressListener;
 import com.tom.model.AddressProperty;
 import com.tom.utils.ImageUtils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -68,7 +68,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
         hBox.getChildren().addAll(backSvg,urlBox);
 
         HBox.setMargin(backSvg,new Insets(10,0,10,15));
-        HBox.setMargin(urlBox,new Insets(10,0,10,15));
+        HBox.setMargin(urlBox,new Insets(0,0,0,15));
         hBox.setPrefHeight(25);
         hBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -122,7 +122,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
                     arrowView.setFitHeight(10);
                     arrowView.setFitWidth(10);
                     hBox.getChildren().add(arrowView);
-                    HBox.setMargin(arrowView, new Insets(0, 10, 0, 0));
+                    HBox.setMargin(arrowView, new Insets(0, 5, 0, 0));
                     return addAddrLabel(hBox, file);
                 }
             }else {
@@ -136,8 +136,17 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
         Label dirLabel = new Label(file.getName());
         Font font = new Font(13);
         dirLabel.setFont(font);
+        dirLabel.setPadding(new Insets(5));
         hBox.getChildren().add(dirLabel);
-        HBox.setMargin(dirLabel, new Insets(0, 10, 0, 0));
+
+        IconBakChangeHandler iconBakChangeHandler = new IconBakChangeHandler(file);
+        dirLabel.addEventHandler(MouseEvent.MOUSE_ENTERED,iconBakChangeHandler);
+        dirLabel.addEventHandler(MouseEvent.MOUSE_EXITED,iconBakChangeHandler);
+        dirLabel.addEventHandler(MouseEvent.MOUSE_CLICKED,new AddressJumpHandler(file,this));
         return true;
+    }
+
+    public void refreshFileNode(){
+        this.mainFlowContentPart.refreshFileNode();
     }
 }

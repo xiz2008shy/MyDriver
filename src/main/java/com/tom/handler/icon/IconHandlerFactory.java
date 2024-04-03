@@ -2,11 +2,11 @@ package com.tom.handler.icon;
 
 import com.tom.component.MainFlowContentPart;
 import javafx.beans.property.ObjectProperty;
-import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 
 import java.awt.*;
 import java.io.File;
@@ -48,7 +48,7 @@ public class IconHandlerFactory<T> {
      * 鼠标移入图标事件
      * @param <T>
      */
-    static class IconMouseInOutHandler <T> implements EventHandler {
+    static class IconMouseInOutHandler <T> implements EventHandler<MouseEvent> {
         private IconClickHandler<T> iconClickHandler;
 
         private boolean flag = true;
@@ -58,8 +58,8 @@ public class IconHandlerFactory<T> {
         }
 
         @Override
-        public void handle(Event event) {
-            Pane source = (Pane) event.getSource();
+        public void handle(MouseEvent event) {
+            Region source = (Region) event.getSource();
             if (!source.equals(iconClickHandler.getOs())) {
                 if (flag) {
                     source.setStyle("-fx-background-color: #dce9f1");
@@ -100,19 +100,21 @@ public class IconHandlerFactory<T> {
 
         @Override
         public void handle(MouseEvent event) {
-            AnchorPane curOs = (AnchorPane)event.getSource();
-            AnchorPane lastOs = os.get();
-            if (lastOs != null) {
-                lastOs.setStyle("-fx-background-color: none");
-            }
-            curOs.setStyle("-fx-background-color: rgba(63,175,229,0.3)");
-            os.set(curOs);
-            if (event.getClickCount() == 2) {
-                if (file.isDirectory()){
-                    this.mainFlowContentPart.getAddressProperty().setCurPath(file);
-                    this.mainFlowContentPart.refreshFileNode();
-                }else {
-                    executeFile(file);
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                AnchorPane curOs = (AnchorPane)event.getSource();
+                AnchorPane lastOs = os.get();
+                if (lastOs != null) {
+                    lastOs.setStyle("-fx-background-color: none");
+                }
+                curOs.setStyle("-fx-background-color: rgba(63,175,229,0.3)");
+                os.set(curOs);
+                if (event.getClickCount() == 2) {
+                    if (file.isDirectory()){
+                        this.mainFlowContentPart.getAddressProperty().setCurPath(file);
+                        this.mainFlowContentPart.refreshFileNode();
+                    }else {
+                        executeFile(file);
+                    }
                 }
             }
         }

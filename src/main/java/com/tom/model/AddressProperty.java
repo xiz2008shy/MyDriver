@@ -33,6 +33,10 @@ public class AddressProperty {
         return curPath;
     }
 
+    /**
+     * 必须通过setCurPath方法去修改当前地址，才能在地址栏和文件界面同时刷新
+     * @param curPath
+     */
     public void setCurPath(String curPath) {
         this.curPath.set(curPath);
         this.file.set(new File(curPath));
