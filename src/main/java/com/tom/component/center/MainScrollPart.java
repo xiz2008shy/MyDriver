@@ -1,16 +1,20 @@
-package com.tom.component;
+package com.tom.component.center;
 
+import com.tom.handler.key.CopyHandler;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 
 
 
 public class MainScrollPart {
 
+    private MainFlowContentPart mainFlowContentPart;
     private ScrollPane scrollPane;
 
-    public MainScrollPart(FlowPane flowPane) {
-        this.scrollPane = genScrollPane(flowPane);
+    public MainScrollPart(MainFlowContentPart mainFlowContentPart) {
+        this.scrollPane = genScrollPane(mainFlowContentPart.getFlowPane());
+        scrollPane.addEventHandler(KeyEvent.KEY_PRESSED, new CopyHandler(mainFlowContentPart));
     }
 
     private ScrollPane genScrollPane(FlowPane flowPane) {

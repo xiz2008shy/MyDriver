@@ -1,6 +1,6 @@
 package com.tom.handler.address;
 
-import com.tom.component.MainAddressPart;
+import com.tom.component.top.AddressTab;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -11,19 +11,19 @@ public class AddressJumpHandler implements EventHandler<MouseEvent> {
 
     private File file;
 
-    private MainAddressPart mainAddressPart;
+    private AddressTab addressTab;
 
-    public AddressJumpHandler(File file, MainAddressPart mainAddressPart) {
+    public AddressJumpHandler(File file, AddressTab mainAddressPart) {
         this.file = file;
-        this.mainAddressPart = mainAddressPart;
+        this.addressTab = mainAddressPart;
     }
 
     @Override
     public void handle(MouseEvent event) {
         if (event.getButton().equals(MouseButton.PRIMARY)) {
-            if (!mainAddressPart.getAddressProperty().getFile().equals(file)) {
-                this.mainAddressPart.getAddressProperty().setCurPath(file);
-                this.mainAddressPart.refreshFileNode();
+            if (!addressTab.getAddressProperty().getCurPath().equals(file.getAbsolutePath())) {
+                this.addressTab.getAddressProperty().setCurPath(file);
+                this.addressTab.refreshFileNode();
             }
         }
     }

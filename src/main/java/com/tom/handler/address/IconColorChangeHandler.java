@@ -1,6 +1,6 @@
 package com.tom.handler.address;
 
-import com.tom.component.MainAddressPart;
+import com.tom.component.top.AddressTab;
 import com.tom.model.AddressProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -10,16 +10,16 @@ public class IconColorChangeHandler<T extends Node> implements EventHandler<Mous
 
     private boolean bp = true;
 
-    private MainAddressPart mainAddressPart;
+    private AddressTab addressTab;
 
-    public IconColorChangeHandler(MainAddressPart mainAddressPart) {
-        this.mainAddressPart = mainAddressPart;
+    public IconColorChangeHandler(AddressTab mainAddressPart) {
+        this.addressTab = mainAddressPart;
     }
 
     @Override
     public void handle(MouseEvent mouseEvent) {
         Node source = (T)mouseEvent.getSource();
-        AddressProperty addressProperty = mainAddressPart.getAddressProperty();
+        AddressProperty addressProperty = addressTab.getAddressProperty();
         if (!addressProperty.getCurPath().equals(addressProperty.getBasePath())) {
             if (bp) {
                 source.setStyle("-fx-background-color: #1c94cf;");

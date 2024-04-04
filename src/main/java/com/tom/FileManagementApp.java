@@ -1,16 +1,17 @@
 package com.tom;
 
-import com.tom.component.MainAddressPart;
-import com.tom.component.MainFlowContentPart;
-import com.tom.component.MainScrollPart;
-import com.tom.handler.key.CopyHandler;
+import com.tom.component.center.MainFlowContentPart;
+import com.tom.component.center.MainScrollPart;
+import com.tom.component.top.TopPart;
+import com.tom.listener.DragListener;
 import com.tom.model.AddressProperty;
+import com.tom.pane.RecWindows;
+import com.tom.utils.DrawUtil;
 import com.tom.utils.ImageUtils;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -26,38 +27,48 @@ public class FileManagementApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setTitle("MyDriver");
+
         AddressProperty addressProperty = new AddressProperty(curPath);
         // 最内层的流布局
         MainFlowContentPart mainFlowContentPart = new MainFlowContentPart(addressProperty);
         FlowPane flowPane = mainFlowContentPart.getFlowPane();
         // 中层的滚动布局
-        MainScrollPart mainScrollPart = new MainScrollPart(flowPane);
+        MainScrollPart mainScrollPart = new MainScrollPart(mainFlowContentPart);
         ScrollPane scrollPane = mainScrollPart.getScrollPane();
         // 地址栏组件
-        MainAddressPart mainAddressPart = new MainAddressPart(addressProperty,mainFlowContentPart);
-        AnchorPane addressPane = mainAddressPart.getAddressPane();
+        TopPart topPart = new TopPart(addressProperty,mainFlowContentPart);
+        topPart.setTitle("MyDriver");
 
         // 最外层的方位布局组件
         BorderPane borderPane = new BorderPane();
-        BorderPane.setMargin(flowPane,new Insets(0,10,0,10));
+        borderPane.setTop(topPart.getTopPart());
+        BorderPane.setMargin(flowPane,new Insets(0,20,0,20));
         borderPane.setCenter(scrollPane);
-        borderPane.setTop(addressPane);
 
+        BorderPane.setMargin(scrollPane,new Insets(0,5,0,0));
 
-        scrollPane.addEventHandler(KeyEvent.KEY_PRESSED, new CopyHandler(mainFlowContentPart));
+        RecWindows recWindowsPane = new RecWindows(borderPane, 800.0, 600.0, 20.0);
+
 
         // scene
-        Scene scene = new Scene(borderPane);
-        stage.setScene(scene);
+        recWindowsPane.initStage(stage);
+
+        //DrawUtil.addDragListener(stage, recWindowsPane);
+        // 添加窗体拉伸效果
+        DrawUtil.addDrawFunc(stage, recWindowsPane);
 
         // 增加图标
-        stage.getIcons().addAll(
-                ImageUtils.getImageFromResources("fileDir16.png"),
-                ImageUtils.getImageFromResources("fileDir32.png"));
-        stage.setWidth(800);
-        stage.setHeight(700);
+        stage.getIcons().add(ImageUtils.getImageFromResources("fileDir16.png"));
+
         stage.show();
+
+        DragListener dragListener = new DragListener(stage);
+        topPart.getTopBar().getTopBar().addEventHandler(MouseEvent.MOUSE_PRESSED,dragListener);
+        topPart.getTopBar().getTopBar().addEventHandler(MouseEvent.MOUSE_DRAGGED,dragListener);
+
+
+        System.out.println(recWindowsPane.getWidth());
+        System.out.println(recWindowsPane.getHeight());
     }
 
 }

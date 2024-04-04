@@ -1,5 +1,7 @@
-package com.tom.component;
+package com.tom.component.top;
 
+import com.tom.component.pub.DefaultAddressGetterImpl;
+import com.tom.component.center.MainFlowContentPart;
 import com.tom.handler.address.AddressJumpHandler;
 import com.tom.handler.address.IconBakChangeHandler;
 import com.tom.handler.address.IconColorChangeHandler;
@@ -21,7 +23,7 @@ import javafx.scene.text.Font;
 import java.io.File;
 import java.io.InputStream;
 
-public class MainAddressPart extends DefaultAddressGetterImpl{
+public class AddressTab extends DefaultAddressGetterImpl {
 
     private AnchorPane addressPane;
 
@@ -32,7 +34,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
      */
     private HBox urlBox = new HBox();
 
-    public MainAddressPart(AddressProperty addressProperty,MainFlowContentPart mainFlowContentPart) {
+    public AddressTab(AddressProperty addressProperty, MainFlowContentPart mainFlowContentPart) {
         super(addressProperty);
         this.addressPane = genAddressPane();
         this.mainFlowContentPart = mainFlowContentPart;
@@ -50,7 +52,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
         IconColorChangeHandler<Region> handler = new IconColorChangeHandler<>(this);
         backSvg.addEventHandler(MouseEvent.MOUSE_ENTERED,handler);
         backSvg.addEventHandler(MouseEvent.MOUSE_EXITED,handler);
-        backSvg.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+        backSvg.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> {
             AddressProperty addressProperty = getAddressProperty();
             File file = addressProperty.getFile();
             if (!file.getAbsolutePath().equals(addressProperty.getBasePath())) {
@@ -78,7 +80,7 @@ public class MainAddressPart extends DefaultAddressGetterImpl{
         searchTab.setAlignment(Pos.CENTER);
         TextField textField = new TextField();
         File file = new File(getCurPath());
-        textField.setPromptText("在 " +file.getName()+" 中搜索");
+        textField.setPromptText(STR."在 \{file.getName()} 中搜索");
         textField.setFocusTraversable(false);
         textField.setPrefWidth(200);
         InputStream iconInputStream = this.getClass().getClassLoader().getResourceAsStream("searchIcon.png");

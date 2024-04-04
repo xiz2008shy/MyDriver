@@ -12,8 +12,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ImageUtils {
+
+    private static final Map<String, SoftReference<ImageView>> imageViewCache = new HashMap<>(256);
 
     public static ImageView getImageViewFromResources(String path){
         Image image = getImageFromResources(path);
@@ -34,10 +39,17 @@ public class ImageUtils {
      * @return
      */
     public static ImageView getBigIcon (FileSystemView fileSystemView,File file) {
-        ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file, 48, 48);
-        BufferedImage bufferedImage = toBufferedImage(iconImage,true);
-        Image image = SwingFXUtils.toFXImage(bufferedImage,null);
-        return new ImageView(image);
+        String fileName = file.getName();
+        SoftReference<ImageView> sr = imageViewCache.get(file.getName());
+        ImageView imageView = sr != null ? sr.get() : null;
+        if (imageView == null) {
+            ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file, 48, 48);
+            BufferedImage bufferedImage = toBufferedImage(iconImage,true);
+            Image image = SwingFXUtils.toFXImage(bufferedImage,null);
+            imageView = new ImageView(image);
+            imageViewCache.put(file.getName(),new SoftReference<>(imageView));
+        }
+        return imageView;
     }
 
     /**
@@ -109,5 +121,20 @@ public class ImageUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public static Region createSvg(String content,String color){
+        SVGPath svg = new SVGPath();
+        svg.setContent(content);
+        Region region = new Region();
+        region.setShape(svg);
+        region.setStyle(STR."-fx-background-color: \{color}");
+        return region;
+    }
+
+    public static void resize(ImageView view,double width,double height){
+        view.setFitWidth(width);
+        view.setFitHeight(height);
     }
 }

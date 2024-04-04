@@ -1,4 +1,4 @@
-package com.tom.component;
+package com.tom.component.pub;
 
 import com.tom.model.AddressProperty;
 

@@ -1,6 +1,6 @@
 package com.tom.handler.icon;
 
-import com.tom.component.MainFlowContentPart;
+import com.tom.component.center.MainFlowContentPart;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.Event;
 import javafx.scene.layout.AnchorPane;

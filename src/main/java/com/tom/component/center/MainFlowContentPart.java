@@ -1,5 +1,6 @@
-package com.tom.component;
+package com.tom.component.center;
 
+import com.tom.component.pub.DefaultAddressGetterImpl;
 import com.tom.handler.icon.IconHandlerFactory;
 import com.tom.handler.icon.IconHandlerFactoryBuilder;
 import com.tom.model.AddressProperty;
@@ -27,7 +28,7 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MainFlowContentPart extends DefaultAddressGetterImpl{
+public class MainFlowContentPart extends DefaultAddressGetterImpl {
 
     private final FlowPane flowPane;
 
