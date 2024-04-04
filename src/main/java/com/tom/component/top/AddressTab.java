@@ -1,7 +1,7 @@
 package com.tom.component.top;
 
-import com.tom.component.pub.DefaultAddressGetterImpl;
 import com.tom.component.center.MainFlowContentPart;
+import com.tom.component.pub.DefaultAddressGetterImpl;
 import com.tom.handler.address.AddressJumpHandler;
 import com.tom.handler.address.IconBakChangeHandler;
 import com.tom.handler.address.IconColorChangeHandler;
@@ -15,9 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.File;
@@ -60,7 +59,9 @@ public class AddressTab extends DefaultAddressGetterImpl {
                 mainFlowContentPart.refreshFileNode();
             }
         });
-
+        BorderStroke borderStroke = new BorderStroke(null, null, Color.rgb(191, 203, 217),
+                null, null, null, BorderStrokeStyle.SOLID, null, null, BorderWidths.DEFAULT, null);
+        anchorPane.setBorder(new Border(borderStroke));
         // url栏
         urlBox.setAlignment(Pos.CENTER_LEFT);
         File curAddr = this.getAddressProperty().getFile();

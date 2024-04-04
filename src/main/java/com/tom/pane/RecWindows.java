@@ -1,6 +1,7 @@
 package com.tom.pane;
 
 import com.tom.utils.AnchorPaneUtil;
+import com.tom.utils.DrawUtil;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -34,6 +35,8 @@ public class RecWindows extends AnchorPane {
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setWidth(rectangle.getWidth());
         stage.setHeight(rectangle.getHeight());
+        // 添加窗体拉伸效果
+        DrawUtil.addDrawFunc(stage, this);
     }
 
 

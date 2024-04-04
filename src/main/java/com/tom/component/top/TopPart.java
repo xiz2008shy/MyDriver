@@ -1,8 +1,11 @@
 package com.tom.component.top;
 
 import com.tom.component.center.MainFlowContentPart;
+import com.tom.listener.DragListener;
 import com.tom.model.AddressProperty;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class TopPart {
 
@@ -12,12 +15,15 @@ public class TopPart {
 
     private final VBox topPart;
 
-    public TopPart(AddressProperty addressProperty, MainFlowContentPart mainFlowContentPart) {
+    public TopPart(AddressProperty addressProperty, MainFlowContentPart mainFlowContentPart, Stage stage) {
         this.topBar = new TopBar();
         this.addressTab = new AddressTab(addressProperty,mainFlowContentPart);
         topBar.setAddressTab(addressTab);
         topPart = new VBox();
         topPart.getChildren().addAll(topBar.getTopBar(),addressTab.getAddressPane());
+        DragListener dragListener = new DragListener(stage);
+        topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_PRESSED,dragListener);
+        topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_DRAGGED,dragListener);
     }
 
 
