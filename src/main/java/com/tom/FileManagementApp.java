@@ -47,7 +47,7 @@ public class FileManagementApp extends Application {
         recWindowsPane.initStage(stage);
 
         // 增加图标
-        stage.getIcons().add(ImageUtils.getImageFromResources("fileDir16.png"));
+        stage.getIcons().add(ImageUtils.getImageFromResources("fileDir32.png"));
 
         stage.show();
     }
