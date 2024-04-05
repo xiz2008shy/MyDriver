@@ -7,12 +7,12 @@ import com.tom.handler.address.IconBakChangeHandler;
 import com.tom.handler.address.IconColorChangeHandler;
 import com.tom.listener.AddressListener;
 import com.tom.model.AddressProperty;
+import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -20,7 +20,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.File;
-import java.io.InputStream;
 
 public class AddressTab extends DefaultAddressGetterImpl {
 
@@ -40,11 +39,12 @@ public class AddressTab extends DefaultAddressGetterImpl {
     }
 
     private AnchorPane genAddressPane(){
-        AnchorPane anchorPane = new AnchorPane();
+        AnchorPane addressPane = new AnchorPane();
+
         HBox hBox = new HBox();
 
         // 返回按钮
-        Region backSvg = ImageUtils.getSvgFromResources("back.svg");
+        Region backSvg = ImageUtils.getBackSvg();
         assert backSvg != null;
         backSvg.setPrefSize(25,25);
         backSvg.setStyle("-fx-background-color: #777777;");
@@ -61,7 +61,7 @@ public class AddressTab extends DefaultAddressGetterImpl {
         });
         BorderStroke borderStroke = new BorderStroke(null, null, Color.rgb(191, 203, 217),
                 null, null, null, BorderStrokeStyle.SOLID, null, null, BorderWidths.DEFAULT, null);
-        anchorPane.setBorder(new Border(borderStroke));
+        addressPane.setBorder(new Border(borderStroke));
         // url栏
         urlBox.setAlignment(Pos.CENTER_LEFT);
         File curAddr = this.getAddressProperty().getFile();
@@ -84,24 +84,16 @@ public class AddressTab extends DefaultAddressGetterImpl {
         textField.setPromptText(STR."在 \{file.getName()} 中搜索");
         textField.setFocusTraversable(false);
         textField.setPrefWidth(200);
-        InputStream iconInputStream = this.getClass().getClassLoader().getResourceAsStream("searchIcon.png");
-        assert iconInputStream != null;
-        ImageView searchIcon = new ImageView(new Image(iconInputStream));
-        searchIcon.setFitWidth(20);
-        searchIcon.setFitHeight(20);
+        ImageView searchIcon = ImageUtils.getImageViewFromResources("/img/searchIcon.png",32,32);
+        ImageUtils.resize(searchIcon,20,20);
         searchTab.getChildren().addAll(textField,searchIcon);
         HBox.setMargin(textField,new Insets(10,0,10,15));
         HBox.setMargin(searchIcon,new Insets(10,15,10,10));
 
-        anchorPane.getChildren().addAll(hBox,searchTab);
-        AnchorPane.setLeftAnchor(hBox,0.0);
-        AnchorPane.setTopAnchor(hBox,0.0);
-        AnchorPane.setBottomAnchor(hBox,0.0);
-
-        AnchorPane.setRightAnchor(searchTab,0.0);
-        AnchorPane.setTopAnchor(searchTab,0.0);
-        AnchorPane.setBottomAnchor(searchTab,0.0);
-        return anchorPane;
+        addressPane.getChildren().addAll(hBox,searchTab);
+        AnchorPaneUtil.setNode(hBox,0.0,null,0.0,0.0);
+        AnchorPaneUtil.setNode(searchTab,0.0,0.0,0.0,null);
+        return addressPane;
     }
 
     /**
@@ -123,9 +115,8 @@ public class AddressTab extends DefaultAddressGetterImpl {
         if (absolutePath.contains(basePath)){
             if (!absolutePath.equals(basePath)){
                 if(addDirNodeExcludeBaseDir(hBox,file.getParentFile(),basePath)) {
-                    ImageView arrowView = ImageUtils.getImageViewFromResources("right-arrow16.png");
-                    arrowView.setFitHeight(10);
-                    arrowView.setFitWidth(10);
+                    ImageView arrowView = ImageUtils.getImageViewFromResources("/img/right-arrow16.png",16,16);
+                    ImageUtils.resize(arrowView,10,10);
                     hBox.getChildren().add(arrowView);
                     HBox.setMargin(arrowView, new Insets(0, 5, 0, 0));
                     return addAddrLabel(hBox, file);

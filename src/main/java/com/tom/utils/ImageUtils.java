@@ -18,52 +18,49 @@ import java.util.Map;
 
 public class ImageUtils {
 
-    private static final Map<String, SoftReference<ImageView>> imageViewCache = new HashMap<>(256);
+    private static final Map<String, SoftReference<Image>> imageViewCache = new HashMap<>(256);
 
-    public static ImageView getImageViewFromResources(String path){
-        Image image = getImageFromResources(path);
+    public static ImageView getImageViewFromResources(String path,double width,double height){
+        Image image = getImageFromResources(path, width, height);
         return new ImageView(image);
     }
 
-    public static Image getImageFromResources(String path){
-        InputStream inputStream = ImageUtils.class.getClassLoader().getResourceAsStream(path);
-        if(inputStream != null){
-            return new Image(inputStream);
+    public static Image getImageFromResources(String path,double width,double height){
+        SoftReference<Image> imageSoftReference = imageViewCache.get(STR."\{path}-\{width}-\{height}");
+        Image image = null;
+        if (imageSoftReference == null) {
+            InputStream inputStream = ImageUtils.class.getResourceAsStream(path);
+            if(inputStream != null){
+                image = new Image(inputStream, width, height, true, true);
+                imageViewCache.put(path,new SoftReference<>(image));
+            }
+        }else {
+            image = imageSoftReference.get();
         }
-        return null;
+        return image;
     }
 
     /**
      * 获取文件大图标
-     * @param file
-     * @return
+     * @param file 文件对象
+     * @return 返回文件icon的图片视图
      */
     public static ImageView getBigIcon (FileSystemView fileSystemView,File file) {
-        String fileName = file.getName();
-        SoftReference<ImageView> sr = imageViewCache.get(file.getName());
-        ImageView imageView = sr != null ? sr.get() : null;
-        if (imageView == null) {
+        SoftReference<Image> sr = imageViewCache.get(file.getName());
+        Image image = sr != null ? sr.get() : null;
+        ImageView imageView;
+        if (image == null) {
             ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file, 48, 48);
             BufferedImage bufferedImage = toBufferedImage(iconImage,true);
-            Image image = SwingFXUtils.toFXImage(bufferedImage,null);
+            image = SwingFXUtils.toFXImage(bufferedImage,null);
             imageView = new ImageView(image);
-            imageViewCache.put(file.getName(),new SoftReference<>(imageView));
+            imageViewCache.put(file.getName(),new SoftReference<>(image));
+        }else {
+            imageView = new ImageView(image);
         }
         return imageView;
     }
 
-    /**
-     * 获取文件更小一号的图标
-     * @param fileSystemView
-     * @param file
-     * @return
-     */
-    public static ImageView getSmallIcon (FileSystemView fileSystemView, File file) {
-        ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file);
-        BufferedImage bufferedImage = toBufferedImage(iconImage,true);
-        Image image = SwingFXUtils.toFXImage(bufferedImage,null);
-        return new ImageView(image);
-    }
 
 
     /**
@@ -105,10 +102,9 @@ public class ImageUtils {
      * 一个假装在加载svg的方法
      * svg在fx中的支持程度比较一般，下面这个方法会用固定svg代码创建图片
      * 这里的svg代码对应back.svg文件
-     * @param name
      * @return
      */
-    public static Region getSvgFromResources(String name){
+    public static Region getBackSvg(){
         try {
             SVGPath svg1 = new SVGPath();
             svg1.setContent("M512 0c281.6 0 512 230.4 512 512s-230.4 512-512 512-512-230.4-512-512 230.4-512 512-512z m0 960c249.6 0 448-198.4 448-448s-198.4-448-448-448-448 198.4-448 448 198.4 448 448 448z " +

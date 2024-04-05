@@ -4,6 +4,7 @@ import com.tom.component.pub.DefaultAddressGetterImpl;
 import com.tom.handler.icon.IconHandlerFactory;
 import com.tom.handler.icon.IconHandlerFactoryBuilder;
 import com.tom.model.AddressProperty;
+import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -86,11 +87,7 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
         //imageBox.setStyle("-fx-background-color: red");
         ImageView imageView;
         if (file.isDirectory()){
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("fileDir.png");
-            Image image = new Image(inputStream);
-            imageView = new ImageView(image);
-            imageView.setFitHeight(60);
-            imageView.setFitWidth(60);
+            imageView = ImageUtils.getImageViewFromResources("/img/fileDir32@2.png",60,60);
             imageBox.getChildren().add(imageView);
         }else {
             imageView = ImageUtils.getBigIcon(fileSystemView,file);
@@ -105,12 +102,8 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
         hBox.setPrefWidth(90);
 
         anchorPane.getChildren().addAll(imageBox,hBox);
-        AnchorPane.setTopAnchor(imageBox,5.0);
-        AnchorPane.setLeftAnchor(imageBox,15.0);
-        AnchorPane.setRightAnchor(imageBox,15.0);
-        AnchorPane.setTopAnchor(hBox,65.0);
-        AnchorPane.setLeftAnchor(hBox,0.0);
-        AnchorPane.setRightAnchor(hBox,0.0);
+        AnchorPaneUtil.setNode(imageBox,5.0,15.0,null,15.0);
+        AnchorPaneUtil.setNode(hBox,65.0,0.0,null,0.0);
         return anchorPane;
     }
 
