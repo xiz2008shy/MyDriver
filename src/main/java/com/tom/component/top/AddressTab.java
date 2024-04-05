@@ -41,13 +41,12 @@ public class AddressTab extends DefaultAddressGetterImpl {
     private AnchorPane genAddressPane(){
         AnchorPane addressPane = new AnchorPane();
 
-        HBox hBox = new HBox();
-
         // 返回按钮
         Region backSvg = ImageUtils.getBackSvg();
         assert backSvg != null;
         backSvg.setPrefSize(25,25);
         backSvg.setStyle("-fx-background-color: #777777;");
+
         IconColorChangeHandler<Region> handler = new IconColorChangeHandler<>(this);
         backSvg.addEventHandler(MouseEvent.MOUSE_ENTERED,handler);
         backSvg.addEventHandler(MouseEvent.MOUSE_EXITED,handler);
@@ -59,22 +58,21 @@ public class AddressTab extends DefaultAddressGetterImpl {
                 mainFlowContentPart.refreshFileNode();
             }
         });
+        HBox backBut = new HBox(backSvg);
+
         BorderStroke borderStroke = new BorderStroke(null, null, Color.rgb(191, 203, 217),
                 null, null, null, BorderStrokeStyle.SOLID, null, null, BorderWidths.DEFAULT, null);
         addressPane.setBorder(new Border(borderStroke));
+
         // url栏
-        urlBox.setAlignment(Pos.CENTER_LEFT);
         File curAddr = this.getAddressProperty().getFile();
         this.getAddressProperty().fileProperty().addListener(new AddressListener(this));
-
         freshAddrTab(curAddr);
 
-        hBox.getChildren().addAll(backSvg,urlBox);
-
-        HBox.setMargin(backSvg,new Insets(10,0,10,15));
+        HBox.setMargin(backSvg,new Insets(10,0,10,10));
         HBox.setMargin(urlBox,new Insets(0,0,0,15));
-        hBox.setPrefHeight(25);
-        hBox.setAlignment(Pos.CENTER_LEFT);
+        urlBox.setPrefHeight(25);
+        urlBox.setAlignment(Pos.CENTER_LEFT);
 
         // 搜索栏部分
         HBox searchTab = new HBox();
@@ -90,8 +88,9 @@ public class AddressTab extends DefaultAddressGetterImpl {
         HBox.setMargin(textField,new Insets(10,0,10,15));
         HBox.setMargin(searchIcon,new Insets(10,15,10,10));
 
-        addressPane.getChildren().addAll(hBox,searchTab);
-        AnchorPaneUtil.setNode(hBox,0.0,null,0.0,0.0);
+        addressPane.getChildren().addAll(backBut,urlBox,searchTab);
+        AnchorPaneUtil.setNode(backBut,0.0,null,0.0,0.0);
+        AnchorPaneUtil.setNode(urlBox,0.0,250.0,0.0,45.0);
         AnchorPaneUtil.setNode(searchTab,0.0,0.0,0.0,null);
         return addressPane;
     }
@@ -134,6 +133,7 @@ public class AddressTab extends DefaultAddressGetterImpl {
         dirLabel.setFont(font);
         dirLabel.setPadding(new Insets(5));
         hBox.getChildren().add(dirLabel);
+        HBox.setHgrow(dirLabel,Priority.ALWAYS);
 
         IconBakChangeHandler<Label> iconBakChangeHandler = new IconBakChangeHandler<>(file);
         dirLabel.addEventHandler(MouseEvent.MOUSE_ENTERED,iconBakChangeHandler);

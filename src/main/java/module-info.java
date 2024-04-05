@@ -4,6 +4,7 @@ module MyDriver {
     requires javafx.swing;
     requires java.desktop;
     requires cn.hutool.core;
+    requires javafx.fxml;
     exports com.tom;
 
 }
