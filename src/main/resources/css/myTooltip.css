@@ -1,0 +1,6 @@
+.myToolTip {
+    -fx-background-color: white;
+    -fx-background-radius: 2.0;
+    -fx-text-fill:rgb(87, 87, 87);
+    -fx-effect: dropshadow(three-pass-box, rgb(142, 142, 142), 5,0, 2, 2);
+}

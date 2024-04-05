@@ -14,7 +14,7 @@ public class MainScrollPart {
 
     public MainScrollPart(MainFlowContentPart mainFlowContentPart) {
         this.scrollPane = genScrollPane(mainFlowContentPart.getFlowPane());
-        scrollPane.setStyle("-fx-padding: 0;-fx-background-insets: 0;");
+        scrollPane.setStyle("-fx-padding: 0;-fx-background-insets: 0;-fx-background-color: white;");
         scrollPane.addEventHandler(KeyEvent.KEY_PRESSED, new CopyHandler(mainFlowContentPart));
     }
 

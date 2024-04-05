@@ -9,10 +9,13 @@ import com.tom.listener.AddressListener;
 import com.tom.model.AddressProperty;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
+import javafx.css.CssMetaData;
+import javafx.css.Styleable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -20,6 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.File;
+import java.util.List;
 
 public class AddressTab extends DefaultAddressGetterImpl {
 
@@ -40,6 +44,7 @@ public class AddressTab extends DefaultAddressGetterImpl {
 
     private AnchorPane genAddressPane(){
         AnchorPane addressPane = new AnchorPane();
+        addressPane.setStyle("-fx-background-color: rgb(244, 244, 244)");
 
         // 返回按钮
         Region backSvg = ImageUtils.getBackSvg();
@@ -134,6 +139,9 @@ public class AddressTab extends DefaultAddressGetterImpl {
         dirLabel.setPadding(new Insets(5));
         hBox.getChildren().add(dirLabel);
         HBox.setHgrow(dirLabel,Priority.ALWAYS);
+        Tooltip tooltip = new Tooltip(file.getName());
+        tooltip.getStyleClass().add("myToolTip");
+        dirLabel.setTooltip(tooltip);
 
         IconBakChangeHandler<Label> iconBakChangeHandler = new IconBakChangeHandler<>(file);
         dirLabel.addEventHandler(MouseEvent.MOUSE_ENTERED,iconBakChangeHandler);

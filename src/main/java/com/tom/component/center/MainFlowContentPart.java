@@ -34,6 +34,7 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
     public MainFlowContentPart(AddressProperty addressProperty) {
         super(addressProperty);
         this.flowPane = new FlowPane();
+        flowPane.setStyle("-fx-background-color: white");
         refreshFileNode();
     }
 

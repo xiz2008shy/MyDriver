@@ -58,6 +58,8 @@ public class RecWindows extends AnchorPane {
         DragListener dragListener = new DragListener(stage);
         topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_PRESSED,dragListener);
         topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_DRAGGED,dragListener);
+        this.setStyle("-fx-background-color: white");
+        scene.getStylesheets().add(this.getClass().getResource("/css/myTooltip.css").toExternalForm());
     }
 
 
