@@ -9,8 +9,6 @@ import com.tom.listener.AddressListener;
 import com.tom.model.AddressProperty;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
-import javafx.css.CssMetaData;
-import javafx.css.Styleable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -23,7 +21,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.File;
-import java.util.List;
 
 public class AddressTab extends DefaultAddressGetterImpl {
 
