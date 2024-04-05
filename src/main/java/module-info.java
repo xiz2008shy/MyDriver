@@ -1,5 +1,5 @@
 module MyDriver {
-    opens com.tom to java.desktop,sun.awt.shell;
+    opens com.tom to java.desktop;
     requires javafx.controls;
     requires javafx.swing;
     requires java.desktop;

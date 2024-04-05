@@ -103,8 +103,6 @@ public class RecWindows extends AnchorPane {
 
 
     public EventHandler<MouseEvent> minimizedHandler() {
-        return _ -> {
-            stage.setIconified(true);
-        };
+        return _ -> stage.setIconified(true);
     }
 }
