@@ -23,14 +23,14 @@ import java.io.File;
 
 public class AddressTab extends DefaultAddressGetterImpl {
 
-    private AnchorPane addressPane;
+    private final AnchorPane addressPane;
 
-    private MainFlowContentPart mainFlowContentPart;
+    private final MainFlowContentPart mainFlowContentPart;
 
     /**
      * url栏
      */
-    private HBox urlBox = new HBox();
+    private final HBox urlBox = new HBox();
 
     public AddressTab(AddressProperty addressProperty, MainFlowContentPart mainFlowContentPart) {
         super(addressProperty);

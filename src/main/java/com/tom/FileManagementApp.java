@@ -10,7 +10,6 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
 public class FileManagementApp extends Application {
@@ -22,7 +21,7 @@ public class FileManagementApp extends Application {
     private final String curPath = "C:\\Users\\TOMQI\\Desktop";
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         AddressProperty addressProperty = new AddressProperty(curPath);
         // 最内层的流布局

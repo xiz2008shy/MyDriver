@@ -15,9 +15,8 @@ import javafx.stage.StageStyle;
 
 public class RecWindows extends AnchorPane {
 
-    private Rectangle rectangle;
-
-    private TopBar topBar;
+    private final Rectangle rectangle;
+    private final TopBar topBar;
     private String title;
 
     public RecWindows( Node node, double prefWidth, double prefHeight, double radius) {
