@@ -40,6 +40,12 @@ public class ImageUtils {
         return image;
     }
 
+    public static ImageView getImageView(String image, int size, int resize) {
+        ImageView imageView = getImageViewFromResources(image, size, size);
+        ImageUtils.resize(imageView, resize, resize);
+        return imageView;
+    }
+
     /**
      * 获取文件大图标
      * @param file 文件对象
@@ -102,7 +108,7 @@ public class ImageUtils {
      * 一个假装在加载svg的方法
      * svg在fx中的支持程度比较一般，下面这个方法会用固定svg代码创建图片
      * 这里的svg代码对应back.svg文件
-     * @return
+     * @return 返回back键的region
      */
     public static Region getBackSvg(){
         try {
@@ -120,6 +126,12 @@ public class ImageUtils {
     }
 
 
+    /**
+     * 创建一个svgPath构建的region
+     * @param content
+     * @param color
+     * @return
+     */
     public static Region createSvg(String content,String color){
         SVGPath svg = new SVGPath();
         svg.setContent(content);

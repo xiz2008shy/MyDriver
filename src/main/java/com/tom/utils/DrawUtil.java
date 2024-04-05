@@ -10,7 +10,7 @@ public class DrawUtil {
     private static boolean isRight;// 是否处于右边界调整窗口状态
     private static boolean isBottomRight;// 是否处于右下角调整窗口状态
     private static boolean isBottom;// 是否处于下边界调整窗口状态
-    private final static double RESIZE_WIDTH = 2;// 判定是否为调整窗口状态的范围与边界距离
+    private final static double RESIZE_WIDTH = 10;// 判定是否为调整窗口状态的范围与边界距离
     private final static double MIN_WIDTH = 10;// 窗口最小宽度
     private final static double MIN_HEIGHT = 10;// 窗口最小高度
 
