@@ -84,6 +84,7 @@ public class AddressTab extends DefaultAddressGetterImpl {
         textField.setPromptText(STR."在 \{file.getName()} 中搜索");
         textField.setFocusTraversable(false);
         textField.setPrefWidth(200);
+        textField.getStyleClass().add("my-text-field");
         ImageView searchIcon = ImageUtils.getImageViewFromResources("/img/searchIcon.png",32,32);
         ImageUtils.resize(searchIcon,20,20);
         searchTab.getChildren().addAll(textField,searchIcon);
@@ -137,7 +138,7 @@ public class AddressTab extends DefaultAddressGetterImpl {
         hBox.getChildren().add(dirLabel);
         HBox.setHgrow(dirLabel,Priority.ALWAYS);
         Tooltip tooltip = new Tooltip(file.getName());
-        tooltip.getStyleClass().add("myToolTip");
+        tooltip.getStyleClass().add("my-tooltip");
         dirLabel.setTooltip(tooltip);
 
         IconBakChangeHandler<Label> iconBakChangeHandler = new IconBakChangeHandler<>(file);

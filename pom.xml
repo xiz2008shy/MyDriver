@@ -63,9 +63,9 @@
                     <encoding>UTF-8</encoding>
 <!--                    <verbose>true</verbose>-->
 <!--                    <fork>true</fork>-->
-<!--                    <compilerArgs>-->
-<!--                        <arg>&#45;&#45;add-exports=java.desktop/sun.awt.shell=ALL-UNNAMED,MyDriver</arg>-->
-<!--                    </compilerArgs>-->
+                    <compilerArgs>
+                        --enable-preview
+                    </compilerArgs>
                 </configuration>
             </plugin>
 

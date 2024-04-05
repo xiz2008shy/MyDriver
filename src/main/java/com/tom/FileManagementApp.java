@@ -41,7 +41,7 @@ public class FileManagementApp extends Application {
 
         BorderPane.setMargin(scrollPane,new Insets(0,5,0,20));
 
-        RecWindows recWindowsPane = new RecWindows(borderPane, 800.0, 600.0, 20.0, stage);
+        RecWindows recWindowsPane = new RecWindows(borderPane, 900.0, 600.0, 12.0, stage);
         // scene
         recWindowsPane.initStage();
         recWindowsPane.setTitle("MyDriver");

@@ -40,9 +40,8 @@ public class RecWindows extends AnchorPane {
         this.topBar = new TopBar(this);
         VBox vBox = new VBox();
         vBox.getChildren().addAll(topBar.getTopBar(),node);
-
         this.getChildren().add(vBox);
-        AnchorPaneUtil.setNode(vBox,0.0,0.0,10.0,0.0);
+        AnchorPaneUtil.setNode(vBox,0.5,0.5,10.0,0.5);
         this.stage = stage;
     }
 
@@ -58,8 +57,8 @@ public class RecWindows extends AnchorPane {
         DragListener dragListener = new DragListener(stage);
         topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_PRESSED,dragListener);
         topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_DRAGGED,dragListener);
-        this.setStyle("-fx-background-color: white");
         scene.getStylesheets().add(this.getClass().getResource("/css/myTooltip.css").toExternalForm());
+        this.getStyleClass().add("my-windows");
     }
 
 
