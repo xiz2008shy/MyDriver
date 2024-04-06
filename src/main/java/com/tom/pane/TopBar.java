@@ -51,6 +51,7 @@ public class TopBar<T> {
         this.leftTabs = new HBox();
         createTab(obj,true);
         createTab(obj,false);
+        createTab(obj,false);
         topBar.getChildren().addAll(leftTabs,rightIcons);
         AnchorPaneUtil.setNode(leftTabs,7.0,160.0,0.0, 0.0);
         AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
