@@ -5,6 +5,7 @@ import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DrawUtil;
 import com.tom.utils.ImageUtils;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -29,11 +30,10 @@ public class RecWindows extends AnchorPane {
 
     private final Rectangle rectangle;
     private final TopBar topBar;
-    private String title;
 
     private Stage stage;
 
-    public RecWindows( Node node, double prefWidth, double prefHeight, double radius ,Stage stage,StringProperty title) {
+    public RecWindows( Node node, double prefWidth, double prefHeight, double radius ,Stage stage, ObjectProperty<?> obj) {
         super();
         this.rectangle = new Rectangle(prefWidth,prefHeight);
         rectangle.setArcWidth(radius);
@@ -41,7 +41,7 @@ public class RecWindows extends AnchorPane {
         this.setShape(rectangle);
         this.setPrefSize(prefWidth,prefHeight);
         this.setClip(rectangle);
-        this.topBar = new TopBar(this,title);
+        this.topBar = new TopBar(this,obj);
         VBox vBox = new VBox();
         vBox.getChildren().addAll(topBar.getTopBar(),node);
         this.getChildren().add(vBox);

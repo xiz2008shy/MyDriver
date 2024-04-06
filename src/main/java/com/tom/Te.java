@@ -4,7 +4,10 @@ import com.tom.pane.HeadTab;
 import com.tom.pane.RecWindows;
 import com.tom.utils.AnchorPaneUtil;
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -34,7 +37,7 @@ public class Te extends Application {
         ap.setStyle("-fx-background-color: black");
         AnchorPaneUtil.setNode(button,300.0,null,null,100.0);
 
-        RecWindows recWindows = new RecWindows(ap, 800, 600,10, primaryStage,new SimpleStringProperty("TEST"));
+        RecWindows recWindows = new RecWindows(ap, 800, 600, 10, primaryStage, new SimpleObjectProperty<String>("TEST"));
         recWindows.initStage();
         primaryStage.show();
 

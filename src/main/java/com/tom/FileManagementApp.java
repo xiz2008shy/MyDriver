@@ -42,7 +42,7 @@ public class FileManagementApp extends Application {
         BorderPane.setMargin(scrollPane,new Insets(0,5,0,20));
 
         RecWindows recWindowsPane = new RecWindows(borderPane, 900.0,
-                600.0, 12.0, stage, addressProperty.getCurPathProperty());
+                600.0, 12.0, stage, addressProperty.fileProperty());
         // scene
         recWindowsPane.initStage();
 
