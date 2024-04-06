@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -105,6 +106,7 @@ public class TopBar<T> {
                 ap.setStyle(INACTIVE_STYLE);
             }
         });
+        ap.addEventHandler(MouseEvent.MOUSE_DRAGGED, Event::consume);
         ap.addEventHandler(MouseEvent.MOUSE_CLICKED,_ -> {
             if (curIndex.get() != activeProperty.get()) {
                 activeProperty.set(curIndex.get());
