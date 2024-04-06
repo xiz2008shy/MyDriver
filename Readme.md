@@ -41,6 +41,7 @@ jpackage --type app-image -n MyDriver -m "my_driver/com.tom.JavafxMain"  --icon 
 
 jpackage打包部分参考了 
 https://github.com/JavaFX-Starter/JavaFX-Package-Sample
+https://docs.oracle.com/en/java/javase/17/docs/specs/man/jpackage.html
 https://www.bilibili.com/video/BV1BK4y1W72q/?spm_id_from=333.337.search-card.all.click&vd_source=72d894bf4fb5c4389e3a57d06cb8161b
 
 
