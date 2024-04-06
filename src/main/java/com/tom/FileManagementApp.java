@@ -41,10 +41,10 @@ public class FileManagementApp extends Application {
 
         BorderPane.setMargin(scrollPane,new Insets(0,5,0,20));
 
-        RecWindows recWindowsPane = new RecWindows(borderPane, 900.0, 600.0, 12.0, stage);
+        RecWindows recWindowsPane = new RecWindows(borderPane, 900.0,
+                600.0, 12.0, stage, addressProperty.getCurPathProperty());
         // scene
         recWindowsPane.initStage();
-        recWindowsPane.setTitle("MyDriver");
 
         // 增加图标
         stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));

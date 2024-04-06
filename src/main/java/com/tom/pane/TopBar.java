@@ -2,23 +2,23 @@ package com.tom.pane;
 
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
-import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.shape.Shape;
 
 public class TopBar {
 
     private final AnchorPane topBar;
 
-    private String title;
+    private StringProperty title;
 
     private RecWindows recWindows;
 
@@ -28,30 +28,75 @@ public class TopBar {
 
     private HBox minimizeBox;
 
-    public TopBar(RecWindows recWindows) {
+    public TopBar(RecWindows recWindows,StringProperty title) {
         this.recWindows = recWindows;
         this.topBar = new AnchorPane();
+        this.title = title;
         topBar.setPrefHeight(25);
         topBar.setStyle("-fx-background-color: rgb(216, 218, 219)");
-        FlowPane rightIcons = createRightPart(recWindows);
-        topBar.getChildren().addAll(rightIcons);
+        HBox rightIcons = createRightPart(recWindows);
+        HBox leftPart = createLeftPart(recWindows,title);
+        topBar.getChildren().addAll(leftPart,rightIcons);
+        AnchorPaneUtil.setNode(leftPart,7.0,160.0,0.0, 0.0);
         AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
     }
 
+    private HBox createLeftPart(RecWindows recWindows,StringProperty title) {
+        HBox leftTabs = new HBox();
 
-    
-    private FlowPane createRightPart(RecWindows recWindows) {
-        FlowPane rightIcons = new FlowPane();
+        Pane ap1 = createTab(title,true);
+        Pane ap2 = createTab(title,false);
+
+        leftTabs.getChildren().addAll(ap1,ap2);
+
+        return leftTabs;
+    }
+
+    private static Pane createTab(StringProperty title,boolean isActive) {
+        AnchorPane ap = new AnchorPane();
+        Shape shape ;
+        if (isActive){
+            shape = HeadTab.headTabSharp(260, 35, 7);
+            ap.setStyle("-fx-background-color: rgb(246, 243, 243)");
+        }else {
+            shape = HeadTab.headTabSecSharp(260, 35, 7);
+            ap.setStyle("-fx-background-color: rgb(216, 218, 219)");
+            HBox.setMargin(ap,new Insets(0,0,0,-7));
+        }
+
+        ap.setShape(shape);
+        ap.setPrefSize(260,35);
+        ImageView imageView = ImageUtils.getImageView("/img/fileDir32.png", 19, 19);
+        Label label = new Label();
+        label.textProperty().bind(title);
+        label.setStyle("-fx-text-overrun: ellipsis");
+        HBox textBox = new HBox(label);
+        textBox.setAlignment(Pos.CENTER_LEFT);
+        ap.getChildren().addAll(imageView,textBox);
+
+        AnchorPaneUtil.setNode(imageView,5.0,null,0.0, 15.0);
+        AnchorPaneUtil.setNode(textBox,0.0,15.0,0.0, 45.0);
+        HBox.setHgrow(textBox, Priority.ALWAYS);
+        return ap;
+    }
+
+
+    private HBox createRightPart(RecWindows recWindows) {
+        HBox rightIcons = new HBox();
         rightIcons.setPrefWidth(152);
 
         EventHandler<MouseEvent> blueMoveOnHandler = getBlueOrRedMoveOnHandler(true,null,null);
         HBox h1 = createSquareIconBox("/img/gear.png", 32,20, 9,blueMoveOnHandler);
 
         this.minimizeBox = createSquareIconBox("/img/minimize.png", 32,14, 12,blueMoveOnHandler);
-        minimizeBox.setOnMouseClicked(recWindows.minimizedHandler());
+        EventHandler<MouseEvent> minimizedHandler = recWindows.minimizedHandler(minimizeBox);
+        minimizeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,minimizedHandler);
+        minimizeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,minimizedHandler);
 
         this.maximizeBox = createSquareIconBox("/img/maximize.png", 16,14, 12,blueMoveOnHandler);
-        maximizeBox.setOnMouseClicked(recWindows.maximizedHandler());
+        EventHandler<MouseEvent> maximizedHandler = recWindows.maximizedHandler(maximizeBox);
+        maximizeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,maximizedHandler);
+        maximizeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,maximizedHandler);
 
         this.closeBox = createSquareIconBox("/img/close.png", 16,14, 12,null);
 
@@ -59,7 +104,9 @@ public class TopBar {
         ImageView closed = ImageUtils.getImageView("/img/close-white.png",16,14);
         EventHandler<MouseEvent> redMoveOnHandler = getBlueOrRedMoveOnHandler(false,normal,closed);
         setMoveOnHandler(redMoveOnHandler, closeBox);
-        closeBox.setOnMouseClicked(_ -> Platform.exit());
+        EventHandler<MouseEvent> closeHandler = recWindows.closeHandler(closeBox);
+        closeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,closeHandler);
+        closeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,closeHandler);
 
         rightIcons.getChildren().addAll(h1,minimizeBox,maximizeBox,closeBox);
         return rightIcons;
@@ -103,10 +150,6 @@ public class TopBar {
             }
             flag[0] = !flag[0];
         };
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public AnchorPane getTopBar() {

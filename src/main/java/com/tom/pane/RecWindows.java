@@ -4,6 +4,8 @@ import com.tom.listener.DragListener;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DrawUtil;
 import com.tom.utils.ImageUtils;
+import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -12,6 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -29,7 +33,7 @@ public class RecWindows extends AnchorPane {
 
     private Stage stage;
 
-    public RecWindows( Node node, double prefWidth, double prefHeight, double radius ,Stage stage) {
+    public RecWindows( Node node, double prefWidth, double prefHeight, double radius ,Stage stage,StringProperty title) {
         super();
         this.rectangle = new Rectangle(prefWidth,prefHeight);
         rectangle.setArcWidth(radius);
@@ -37,7 +41,7 @@ public class RecWindows extends AnchorPane {
         this.setShape(rectangle);
         this.setPrefSize(prefWidth,prefHeight);
         this.setClip(rectangle);
-        this.topBar = new TopBar(this);
+        this.topBar = new TopBar(this,title);
         VBox vBox = new VBox();
         vBox.getChildren().addAll(topBar.getTopBar(),node);
         this.getChildren().add(vBox);
@@ -68,42 +72,58 @@ public class RecWindows extends AnchorPane {
         this.setPrefSize(prefWidth,prefHeight);
     }
 
-    public void setTitle(String title){
-        topBar.setTitle(title);
-    }
 
     /**
      * 窗口最大化/还原处理器
      * @return
      */
-    public EventHandler<MouseEvent> maximizedHandler() {
+    public EventHandler<MouseEvent> maximizedHandler(Pane pane) {
         AtomicReference<Double> nw = new AtomicReference<>(rectangle.getWidth());
         AtomicReference<Double> nh = new AtomicReference<>(rectangle.getHeight());
         System.out.println(STR."nw-\{nw.get()},nh-\{nh.get()}");
-        return _ -> {
-            if (!stage.isMaximized()) {
-                Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
-                nw.set(rectangle.getWidth());
-                nh.set(rectangle.getHeight());
-                this.myResize(visualBounds.getWidth(),visualBounds.getHeight());
-                stage.setMaximized(true);
-                ImageView restore = ImageUtils.getImageView("/img/restore.png",16,14);
-                ObservableList<Node> children = topBar.getMaximizeBox().getChildren();
-                children.clear();
-                children.add(restore);
-            }else {
-                this.myResize(nw.get(),nh.get());
-                stage.setMaximized(false);
-                ImageView restore = ImageUtils.getImageView("/img/maximize.png",16,14);
-                ObservableList<Node> children = topBar.getMaximizeBox().getChildren();
-                children.clear();
-                children.add(restore);
+        return e -> {
+            e.consume();
+            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && pane.equals(e.getPickResult().getIntersectedNode())) {
+                if (!stage.isMaximized()) {
+                    Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
+                    nw.set(rectangle.getWidth());
+                    nh.set(rectangle.getHeight());
+                    this.myResize(visualBounds.getWidth(),visualBounds.getHeight());
+                    stage.setMaximized(true);
+                    ImageView restore = ImageUtils.getImageView("/img/restore.png",16,14);
+                    ObservableList<Node> children = topBar.getMaximizeBox().getChildren();
+                    children.clear();
+                    children.add(restore);
+                }else {
+                    this.myResize(nw.get(),nh.get());
+                    stage.setMaximized(false);
+                    ImageView restore = ImageUtils.getImageView("/img/maximize.png",16,14);
+                    ObservableList<Node> children = topBar.getMaximizeBox().getChildren();
+                    children.clear();
+                    children.add(restore);
+                }
             }
         };
     }
 
 
-    public EventHandler<MouseEvent> minimizedHandler() {
-        return _ -> stage.setIconified(true);
+    public EventHandler<MouseEvent> minimizedHandler(Pane pane) {
+        return e -> {
+            e.consume();
+            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && pane.equals(e.getPickResult().getIntersectedNode())) {
+                stage.setIconified(true);
+            }
+        };
     }
+
+    public EventHandler<MouseEvent> closeHandler(Pane pane) {
+        return e -> {
+            e.consume();
+            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && pane.equals(e.getPickResult().getIntersectedNode())) {
+                Platform.exit();
+            }
+        };
+    }
+
+
 }

@@ -30,3 +30,12 @@
     -fx-border-width: 0.5;
     -fx-effect: dropshadow(three-pass-box, rgb(142, 142, 142), 10,0, 2, 2);
 }
+
+.my-te {
+    -fx-background-color: red;
+    -fx-background-radius: 20 0 20 0;
+    -fx-border-radius: 20 0 0 20;
+    -fx-border-color: rgb(183, 183, 183);
+    -fx-border-width: 0.5;
+    -fx-effect: dropshadow(three-pass-box, rgb(142, 142, 142), 10,0, 2, 2);
+}

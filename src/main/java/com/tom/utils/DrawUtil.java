@@ -22,7 +22,7 @@ public class DrawUtil {
             event.consume();
             double x = event.getSceneX();
             double y = event.getSceneY();
-            System.out.println(STR."x-\{x},y-\{y}");
+            //System.out.println(STR."x-\{x},y-\{y}");
             double width = root.getWidth();
             double height = root.getHeight();
             Cursor cursorType = Cursor.DEFAULT;// 鼠标光标初始为默认类型，若未进入调整窗口状态，保持默认类型
@@ -52,10 +52,10 @@ public class DrawUtil {
             // 保存窗口改变后的x、y坐标和宽度、高度，用于预判是否会小于最小宽度、最小高度
             double nextX = stage.getX();
             double nextY = stage.getY();
-            System.out.println(STR."x-\{x},y-\{y}nextX-\{nextX},nextY-\{nextY}");
+            //System.out.println(STR."x-\{x},y-\{y}nextX-\{nextX},nextY-\{nextY}");
             double nextWidth = root.getWidth();
             double nextHeight = root.getHeight();
-            System.out.println(STR."isR-\{isRight},isBottomR=\{isBottomRight}");
+            //System.out.println(STR."isR-\{isRight},isBottomR=\{isBottomRight}");
             if (isRight || isBottomRight) {// 所有右边调整窗口状态
                 nextWidth = x;
             }
@@ -72,7 +72,7 @@ public class DrawUtil {
             stage.setX(nextX);
             stage.setY(nextY);
             root.myResize(nextWidth,nextHeight);
-            System.out.println(STR."nextWidth-\{nextWidth},nextHeight-\{nextHeight}");
+            //System.out.println(STR."nextWidth-\{nextWidth},nextHeight-\{nextHeight}");
             stage.setWidth(nextWidth);
             stage.setHeight(nextHeight);
         });
