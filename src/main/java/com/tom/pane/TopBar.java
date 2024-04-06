@@ -33,6 +33,14 @@ public class TopBar {
         this.topBar = new AnchorPane();
         topBar.setPrefHeight(25);
         topBar.setStyle("-fx-background-color: rgb(216, 218, 219)");
+        FlowPane rightIcons = createRightPart(recWindows);
+        topBar.getChildren().addAll(rightIcons);
+        AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
+    }
+
+
+    
+    private FlowPane createRightPart(RecWindows recWindows) {
         FlowPane rightIcons = new FlowPane();
         rightIcons.setPrefWidth(152);
 
@@ -54,8 +62,7 @@ public class TopBar {
         closeBox.setOnMouseClicked(_ -> Platform.exit());
 
         rightIcons.getChildren().addAll(h1,minimizeBox,maximizeBox,closeBox);
-        topBar.getChildren().addAll(rightIcons);
-        AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
+        return rightIcons;
     }
 
     private static HBox createSquareIconBox(String image, int size, int resize,int padding,EventHandler<MouseEvent> moveOnHandler) {

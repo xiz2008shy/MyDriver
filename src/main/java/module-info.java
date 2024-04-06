@@ -1,4 +1,4 @@
-module MyDriver {
+module my_driver {
     opens com.tom to java.desktop;
     requires javafx.controls;
     requires javafx.swing;
@@ -6,5 +6,4 @@ module MyDriver {
     requires cn.hutool.core;
     requires javafx.fxml;
     exports com.tom;
-
 }

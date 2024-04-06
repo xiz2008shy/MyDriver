@@ -10,9 +10,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>22</maven.compiler.source>
-        <maven.compiler.target>22</maven.compiler.target>
-        <maven.compiler.compilerVersion>22</maven.compiler.compilerVersion>
+<!--        <maven.compiler.source>22</maven.compiler.source>-->
+<!--        <maven.compiler.target>22</maven.compiler.target>-->
+<!--        <maven.compiler.compilerVersion>22</maven.compiler.compilerVersion>-->
+        <maven.compiler.release>22</maven.compiler.release>
+        <javafx.version>22</javafx.version>
     </properties>
 
 
@@ -20,29 +22,29 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>22</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>22</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>22</version>
+            <version>${javafx.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>22</version>
+            <version>${javafx.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>22</version>
+            <version>${javafx.version}</version>
         </dependency>
 
         <dependency>
@@ -58,31 +60,134 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.10.1</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
-<!--                    <verbose>true</verbose>-->
-<!--                    <fork>true</fork>-->
+                    <release>${maven.compiler.release}</release>
                     <compilerArgs>
-                        --enable-preview
+                        <arg>--enable-preview</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>image</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jpackage</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>-n</argument>
+                                <argument>MyDriver</argument>
+                                <argument>-t</argument>
+                                <argument>app-image</argument>
+                                <argument>-p</argument>
+                                <argument>
+                                    ${project.build.directory}/alternateLocation${path.separator}${project.build.directory}/${project.artifactId}-${project.version}.jar
+                                </argument>
+                                <argument>-d</argument>
+                                <argument>${project.build.directory}/mvnPackage</argument>
+                                <argument>-m</argument>
+                                <argument>my_driver/com.tom.JavafxMain</argument>
+                                <argument>--icon</argument>
+                                <argument>
+                                    ${project.basedir}/src/main/resources/favicon.ico
+                                </argument>
+                                <argument>--app-version</argument>
+                                <argument>1.0.0</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>installer</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jpackage</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>-n</argument>
+                                <argument>MyDriver</argument>
+                                <argument>-t</argument>
+                                <argument>dmg</argument>
+                                <argument>-p</argument>
+                                <argument>
+                                    ${project.build.directory}/alternateLocation${path.separator}${project.build.directory}/${project.artifactId}-${project.version}.jar
+                                </argument>
+                                <argument>-d</argument>
+                                <argument>${project.build.directory}/mvnInstaller</argument>
+                                <argument>-m</argument>
+                                <argument>my_driver/com.tom.JavafxMain</argument>
+                                <argument>--icon</argument>
+                                <argument>
+                                    ${project.basedir}/src/main/resources/favicon.ico
+                                </argument>
+                                <argument>--app-version</argument>
+                                <argument>1.0.0</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.tom.JavafxMain</mainClass>
-                    <launcher>com.tom.JavafxMain</launcher>
-                    <jlinkZipName>app</jlinkZipName>
-                    <jlinkImageName>app</jlinkImageName>
-                    <noManPages>true</noManPages>
                     <stripDebug>true</stripDebug>
+                    <compress>2</compress>
                     <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <launcher>MyDriver</launcher>
+                    <jlinkImageName>build-link</jlinkImageName>
+                    <jlinkZipName>MyDriver</jlinkZipName>
+                    <mainClass>my_driver/com.tom.JavafxMain</mainClass>
+                    <options>
+                        <option>--enable-preview</option>
+                    </options>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>com.gluonhq</groupId>
+                <artifactId>gluonfx-maven-plugin</artifactId>
+                <version>1.0.22</version>
+                <configuration>
+                    <mainClass>com.tom.JavafxMain</mainClass>
+<!--                    <bundlesList>-->
+<!--                        <list>LanguageResource</list>-->
+<!--                        <list>LanguageResource_en</list>-->
+<!--                        <list>LanguageResource_zh_CN</list>-->
+<!--                    </bundlesList>-->
+                </configuration>
+            </plugin>
+
         </plugins>
 
         <resources>
