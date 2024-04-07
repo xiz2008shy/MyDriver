@@ -1,15 +1,13 @@
 package com.tom;
 
 import com.tom.component.center.MainFlowContentPart;
-import com.tom.component.center.MainScrollPart;
+import com.tom.component.center.MainScrollPane;
+import com.tom.component.center.MyDriverPane;
 import com.tom.component.top.AddressTab;
 import com.tom.model.AddressProperty;
 import com.tom.pane.RecWindows;
 import com.tom.utils.ImageUtils;
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class FileManagementApp extends Application {
@@ -23,33 +21,35 @@ public class FileManagementApp extends Application {
     @Override
     public void start(Stage stage) {
 
+        MyDriverPane myDriverPane = createMyDriverPane();
+
+
+        RecWindows recWindowsPane = new RecWindows(myDriverPane, 900.0,
+                600.0, 12.0, stage);
+        recWindowsPane.initStage();
+
+        MyDriverPane myDriverPane2 = createMyDriverPane();
+        recWindowsPane.createNewTab(myDriverPane2,true);
+
+        // 增加图标
+        stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));
+        stage.show();
+    }
+
+    private MyDriverPane createMyDriverPane() {
         AddressProperty addressProperty = new AddressProperty(curPath);
         // 最内层的流布局
         MainFlowContentPart mainFlowContentPart = new MainFlowContentPart(addressProperty);
 
         // 中层的滚动布局
-        MainScrollPart mainScrollPart = new MainScrollPart(mainFlowContentPart);
-        ScrollPane scrollPane = mainScrollPart.getScrollPane();
+        MainScrollPane mainScrollPane = new MainScrollPane(mainFlowContentPart);
 
         // 地址栏组件
-        AddressTab topPart = new AddressTab(addressProperty,mainFlowContentPart);
+        AddressTab addressTab = new AddressTab(addressProperty,mainFlowContentPart);
 
         // 最外层的方位布局组件
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(topPart.getAddressPane());
-        borderPane.setCenter(scrollPane);
-
-        BorderPane.setMargin(scrollPane,new Insets(0,5,0,20));
-
-        RecWindows recWindowsPane = new RecWindows(borderPane, 900.0,
-                600.0, 12.0, stage, addressProperty.fileProperty());
-        // scene
-        recWindowsPane.initStage();
-
-        // 增加图标
-        stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));
-
-        stage.show();
+        MyDriverPane myDriverPane = new MyDriverPane(addressTab,mainScrollPane);
+        return myDriverPane;
     }
 
 }

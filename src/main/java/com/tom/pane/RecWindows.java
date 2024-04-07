@@ -5,8 +5,6 @@ import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DrawUtil;
 import com.tom.utils.ImageUtils;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -15,7 +13,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -24,31 +21,53 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class RecWindows extends AnchorPane {
 
     private final Rectangle rectangle;
     private final TopBar topBar;
+    private final Stage stage;
 
-    private Stage stage;
+    private final VBox showBox = new VBox();
 
-    public RecWindows( Node node, double prefWidth, double prefHeight, double radius ,Stage stage, ObjectProperty<?> obj) {
+    private final List<Node> tabNodes = new ArrayList<>();
+
+    public <N extends Node & TabWatcher<W>,W>RecWindows( N node, double prefWidth, double prefHeight, double radius ,Stage stage) {
         super();
         this.rectangle = new Rectangle(prefWidth,prefHeight);
+        this.topBar = new TopBar<>(this, node);
+        this.stage = stage;
+        publicCreate(node, prefWidth, prefHeight, radius);
+    }
+
+
+    public RecWindows(Node node, double prefWidth, double prefHeight, double radius ,Stage stage,TabWatcher<?> tabWatcher) {
+        super();
+        this.rectangle = new Rectangle(prefWidth,prefHeight);
+        this.topBar = new TopBar<>(this, tabWatcher);
+        this.stage = stage;
+        publicCreate(node, prefWidth, prefHeight, radius);
+    }
+
+
+    private void publicCreate(Node node, double prefWidth, double prefHeight, double radius) {
         rectangle.setArcWidth(radius);
         rectangle.setArcHeight(radius);
         this.setShape(rectangle);
-        this.setPrefSize(prefWidth,prefHeight);
+        this.setPrefSize(prefWidth, prefHeight);
         this.setClip(rectangle);
-        this.topBar = new TopBar(this,obj);
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(topBar.getTopBar(),node);
-        this.getChildren().add(vBox);
-        AnchorPaneUtil.setNode(vBox,0.5,0.5,10.0,0.5);
-        this.stage = stage;
+        showBox.getChildren().addAll(topBar.getTopBar(), node);
+        this.getChildren().add(showBox);
+        AnchorPaneUtil.setNode(showBox,0.5,0.5,10.0,0.5);
     }
 
+
+    /**
+     * 务必构造器执行后手动调用该方法
+     */
     public void initStage(){
         Scene scene = new Scene(this);
         scene.setFill(Color.TRANSPARENT);
@@ -125,5 +144,35 @@ public class RecWindows extends AnchorPane {
         };
     }
 
+
+
+    public void setActiveNode(int activeIndex){
+        if (activeIndex < tabNodes.size()){
+            ObservableList<Node> children = this.showBox.getChildren();
+            if (children.size() > 1){
+                children.remove(1);
+            }
+            children.add(tabNodes.get(activeIndex));
+        }
+    }
+
+    void addNodeToTabs(Node tab){
+        this.tabNodes.add(tab);
+    }
+
+    void removeNodeFromTabs(int index){
+        if (index < tabNodes.size()){
+            this.tabNodes.remove(index);
+        }
+    }
+
+
+    public <T>void createNewTab(TabWatcher<T> tabWatcher, boolean isActive){
+        this.topBar.getTabManager().createTab(tabWatcher,isActive,false);
+    }
+
+    public <T>void createNewTab(Node node, TabWatcher<T> tabWatcher, boolean isActive){
+        this.topBar.getTabManager().createTab(node,tabWatcher,isActive,false);
+    }
 
 }

@@ -106,6 +106,4 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
         return anchorPane;
     }
 
-
-
 }

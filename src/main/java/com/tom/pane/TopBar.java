@@ -2,35 +2,21 @@ package com.tom.pane;
 
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.shape.Shape;
-
-import java.io.File;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 public class TopBar<T> {
 
-    public static final String ACTIVE_STYLE = "-fx-background-color: rgb(246, 243, 243)";
-    public static final String INACTIVE_STYLE = "-fx-background-color: rgb(216, 218, 219)";
-    public static final String MOVE_ON_STYLE = "-fx-background-color: rgb(213, 208, 206)";
-    public static final Shape ACTIVE_SHARP = HeadTab.headTabSharp(260, 35, 7);
-    public static final Shape INACTIVE_SHARP = HeadTab.headTabSecSharp(260, 35, 7);
-    private final AnchorPane topBar;
 
-    private RecWindows recWindows;
+    private final AnchorPane topBar = new AnchorPane();
+    private final TabManager tabManager;
 
     private HBox closeBox;
 
@@ -38,91 +24,28 @@ public class TopBar<T> {
 
     private HBox minimizeBox;
 
-    private HBox leftTabs;
 
-    private IntegerProperty activeProperty = new SimpleIntegerProperty(0);
-
-    public TopBar(RecWindows recWindows, ObjectProperty<T> obj) {
-        this.recWindows = recWindows;
-        this.topBar = new AnchorPane();
-        topBar.setPrefHeight(25);
-        topBar.setStyle("-fx-background-color: rgb(216, 218, 219)");
-        HBox rightIcons = createRightPart(recWindows);
-        this.leftTabs = new HBox();
-        createTab(obj,true);
-        createTab(obj,false);
-        createTab(obj,false);
-        topBar.getChildren().addAll(leftTabs,rightIcons);
-        AnchorPaneUtil.setNode(leftTabs,7.0,160.0,0.0, 0.0);
-        AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
+    public TopBar(RecWindows recWindows, TabWatcher<T> tabWatcher) {
+        this.tabManager = new TabManager(recWindows);
+        tabManager.createTab(tabWatcher,true,true);
+        initTopBar(recWindows);
     }
 
 
-    public void createTab(ObjectProperty<T> title,boolean isActive) {
-        AnchorPane ap = new AnchorPane();
-
-        if (isActive){
-            ap.setShape(ACTIVE_SHARP);
-            ap.setStyle(ACTIVE_STYLE);
-        }else {
-            ap.setShape(INACTIVE_SHARP);
-            ap.setStyle(INACTIVE_STYLE);
-        }
+    public TopBar(RecWindows recWindows, Node node ,TabWatcher<T> tabWatcher) {
+        this.tabManager = new TabManager(recWindows);
+        tabManager.createTab(node,tabWatcher,true,true);
+        initTopBar(recWindows);
+    }
 
 
-        ap.setPrefSize(260,35);
-        ImageView imageView = ImageUtils.getImageView("/img/fileDir32.png", 19, 19);
-        Label label = new Label();
-        File file = (File)title.get();
-        label.setText(file.getName());
-        title.addListener((_,  _, newValue) -> {
-            File lF = (File)newValue;
-            label.setText(lF.getName());
-        });
-        label.setStyle("-fx-text-overrun: ellipsis");
-        HBox textBox = new HBox(label);
-        textBox.setAlignment(Pos.CENTER_LEFT);
-        ap.getChildren().addAll(imageView,textBox);
-
-        AnchorPaneUtil.setNode(imageView,5.0,null,0.0, 15.0);
-        AnchorPaneUtil.setNode(textBox,0.0,15.0,0.0, 45.0);
-        HBox.setHgrow(textBox, Priority.ALWAYS);
-        int size = leftTabs.getChildren().size();
-        IntegerProperty curIndex = new SimpleIntegerProperty(size);
-        if (isActive){
-            this.activeProperty.set(curIndex.get());
-        }
-
-        if(size != 0){
-            HBox.setMargin(ap,new Insets(0,0,0,-7));
-        }
-
-        ap.addEventHandler(MouseEvent.MOUSE_ENTERED,_ -> {
-            if (curIndex.get() != activeProperty.get()) {
-                ap.setStyle(MOVE_ON_STYLE);
-            }
-        });
-        ap.addEventHandler(MouseEvent.MOUSE_EXITED,_ -> {
-            if (curIndex.get() != activeProperty.get()) {
-                ap.setStyle(INACTIVE_STYLE);
-            }
-        });
-        ap.addEventHandler(MouseEvent.MOUSE_DRAGGED, Event::consume);
-        ap.addEventHandler(MouseEvent.MOUSE_CLICKED,_ -> {
-            if (curIndex.get() != activeProperty.get()) {
-                activeProperty.set(curIndex.get());
-            }
-        });
-        activeProperty.addListener((_,  _, newValue) -> {
-            if ( (int)newValue == curIndex.get()){
-                ap.setShape(ACTIVE_SHARP);
-                ap.setStyle(ACTIVE_STYLE);
-            }else {
-                ap.setShape(INACTIVE_SHARP);
-                ap.setStyle(INACTIVE_STYLE);
-            }
-        });
-        leftTabs.getChildren().add(ap);
+    private void initTopBar(RecWindows recWindows) {
+        topBar.setPrefHeight(25);
+        topBar.setStyle("-fx-background-color: rgb(216, 218, 219)");
+        HBox rightIcons = createRightPart(recWindows);
+        AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
+        topBar.getChildren().addAll(tabManager.getTabs(),rightIcons);
+        AnchorPaneUtil.setNode(tabManager.getTabs(),7.0,160.0,0.0, 0.0);
     }
 
 
@@ -173,11 +96,11 @@ public class TopBar<T> {
     }
 
 
-    public <T extends Pane>EventHandler<MouseEvent> getBlueOrRedMoveOnHandler(boolean blueOrRed,ImageView normal,ImageView closed) {
+    public <R extends Pane>EventHandler<MouseEvent> getBlueOrRedMoveOnHandler(boolean blueOrRed,ImageView normal,ImageView closed) {
         final boolean[] flag = {true};
         final String colorStyle = blueOrRed ? "-fx-background-color: #dce9f1" : "-fx-background-color: rgb(196, 43, 28)";
         return  e -> {
-            Pane source = (T)e.getSource();
+            Pane source = (R)e.getSource();
             if (flag[0]) {
                 source.setStyle(colorStyle);
                 if (!blueOrRed){
@@ -207,5 +130,9 @@ public class TopBar<T> {
 
     public HBox getMaximizeBox() {
         return maximizeBox;
+    }
+
+    public TabManager getTabManager() {
+        return tabManager;
     }
 }

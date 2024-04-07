@@ -2,13 +2,13 @@ package com.tom.pane;
 
 import javafx.scene.shape.*;
 
-public class HeadTab {
+public class HeadTabShape {
 
     private double width;
 
     private double height;
 
-    public static Shape headTabSharp(double width,double height,double radius){
+    public static Shape headTabShape(double width,double height,double radius){
         double dr = 2 * radius;
         // 右下角的x坐标
         double w2 = width + radius;
@@ -55,7 +55,7 @@ public class HeadTab {
         return path;
     }
 
-    public static Shape headTabSecSharp(double width,double height,double radius){
+    public static Shape headTabSecShape(double width,double height,double radius){
         Rectangle rectangle = new Rectangle(width, height);
         rectangle.setArcWidth(radius);
         rectangle.setArcHeight(radius);
