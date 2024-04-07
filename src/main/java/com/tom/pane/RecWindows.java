@@ -101,8 +101,11 @@ public class RecWindows extends AnchorPane {
         AtomicReference<Double> nh = new AtomicReference<>(rectangle.getHeight());
         System.out.println(STR."nw-\{nw.get()},nh-\{nh.get()}");
         return e -> {
+            System.out.println("maximizedHandler");
             e.consume();
-            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && pane.equals(e.getPickResult().getIntersectedNode())) {
+            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode())
+                || pane.getChildren().get(0).equals(e.getPickResult().getIntersectedNode()))
+            ) {
                 if (!stage.isMaximized()) {
                     Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
                     nw.set(rectangle.getWidth());
@@ -129,7 +132,8 @@ public class RecWindows extends AnchorPane {
     public EventHandler<MouseEvent> minimizedHandler(Pane pane) {
         return e -> {
             e.consume();
-            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && pane.equals(e.getPickResult().getIntersectedNode())) {
+            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode()) ||
+                    pane.getChildren().get(0).equals(e.getPickResult().getIntersectedNode()))) {
                 stage.setIconified(true);
             }
         };
@@ -138,7 +142,9 @@ public class RecWindows extends AnchorPane {
     public EventHandler<MouseEvent> closeHandler(Pane pane) {
         return e -> {
             e.consume();
-            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && pane.equals(e.getPickResult().getIntersectedNode())) {
+            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode())
+                    || pane.getChildren().get(0).equals(e.getPickResult().getIntersectedNode()))
+            ) {
                 Platform.exit();
             }
         };
