@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -25,13 +26,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+
 public class RecWindows extends AnchorPane {
 
     private final Rectangle rectangle;
     private final TopBar topBar;
     private final Stage stage;
 
+    /**
+     * 带顶栏和下面真实节点内容的面板
+     */
     private final VBox showBox = new VBox();
+
+    private final StackPane secPane = new StackPane();
 
     private final List<Node> tabNodes = new ArrayList<>();
 
@@ -59,9 +66,10 @@ public class RecWindows extends AnchorPane {
         this.setShape(rectangle);
         this.setPrefSize(prefWidth, prefHeight);
         this.setClip(rectangle);
+        secPane.getChildren().add(showBox);
         showBox.getChildren().addAll(topBar.getTopBar(), node);
-        this.getChildren().add(showBox);
-        AnchorPaneUtil.setNode(showBox,0.5,0.5,10.0,0.5);
+        this.getChildren().add(secPane);
+        AnchorPaneUtil.setNode(secPane,0.5,0.5,10.0,0.5);
     }
 
 
@@ -181,4 +189,8 @@ public class RecWindows extends AnchorPane {
         this.topBar.getTabManager().createTab(node,tabWatcher,isActive,false);
     }
 
+
+    public StackPane getSecPane() {
+        return secPane;
+    }
 }
