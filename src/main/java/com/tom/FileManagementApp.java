@@ -32,7 +32,7 @@ public class FileManagementApp extends Application {
                 600.0, 12.0, stage);
         recWindowsPane.initStage();
 
-        BaseMenu baseMenu = new BaseMenu(200, 65,recWindowsPane);
+        BaseMenu baseMenu = new BaseMenu(200, 30,recWindowsPane);
 
         MyMenuContext menu1 = new MyMenuContext(new Label("复制"), baseMenu);
         menu1.whenActiveByMouse( e -> {
@@ -43,12 +43,12 @@ public class FileManagementApp extends Application {
             System.out.println("menu2 active!");
         });
 
-        myDriverPane.getMainScrollPane().getMainFlowPane().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+        myDriverPane.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             System.out.println("menu mouse clicked!");
             e.consume();
             if (e.getButton().equals(MouseButton.SECONDARY)){
                 baseMenu.showMenu(e,recWindowsPane);
-            }else if(baseMenu.isShow() && e.getButton().equals(MouseButton.PRIMARY)){
+            }else if(baseMenu.isShow()){
                 baseMenu.closeMenu();
             }
         });

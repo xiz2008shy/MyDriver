@@ -40,10 +40,17 @@
     -fx-background-color: rgba(191, 203, 217,0.5);
 }
 
+.my_icon {
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+}
+
 .my_icon:hover {
-    -fx-background-color: rgba(63,175,229,0.3);
+    -fx-background-color: rgba(229, 243, 255,1);
 }
 
 .my_icon_click {
-    -fx-background-color: rgba(46, 46, 46, 0.3);
+    -fx-background-color: rgba(204, 232, 255, 1);
+    -fx-border-color: rgb(153, 209, 255);
+    -fx-border-width: 1px;
 }

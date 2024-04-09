@@ -2,12 +2,9 @@ package com.tom.menu;
 
 import com.tom.general.RecWindows;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
@@ -16,9 +13,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BaseMenu extends StackPane{
 
@@ -35,7 +29,7 @@ public class BaseMenu extends StackPane{
 
     private Rectangle rectangle;
 
-    private final HBox realPane;
+    private final HBox realPane = new HBox();
 
     private double myTransX = 0;
     private double myTransY = 0;
@@ -48,14 +42,11 @@ public class BaseMenu extends StackPane{
         this.preHeight = preHeight;
         this.intWidth = (int)width;
         this.intHeight = (int)preHeight;
-
-        this.rectangle = new Rectangle(width, myHeight);
+        this.rectangle = new Rectangle(width,myHeight);
         rectangle.setArcWidth(20);
         rectangle.setArcHeight(20);
 
         myResize(width,myHeight);
-
-        this.realPane = new HBox();
         realPane.getChildren().add(this);
         DropShadow dropShadow = new DropShadow();
         // 设置阴影的模糊半径
@@ -70,7 +61,6 @@ public class BaseMenu extends StackPane{
         dropShadow.setWidth(10.0);
         //dropShadow.setSpread(0.5);
         realPane.setEffect(dropShadow);
-
         this.bg = new ImageView();
         bg.setEffect(new GaussianBlur(20));
         this.menuContent = new VBox();
@@ -83,9 +73,15 @@ public class BaseMenu extends StackPane{
     }
 
     private void myResize(double width,double height) {
-        this.setPrefSize(width,myHeight);
+        this.myHeight = height;
+        this.intHeight = (int)height;
+        this.rectangle.setWidth(width);
+        this.rectangle.setHeight(height);
+        this.realPane.setMaxWidth(width);
+        this.realPane.setMaxHeight(height);
+        this.setPrefSize(width,height);
         this.setMaxWidth(width);
-        this.setMaxHeight(myHeight);
+        this.setMaxHeight(height);
         this.setShape(rectangle);
         this.setClip(rectangle);
     }
@@ -112,28 +108,44 @@ public class BaseMenu extends StackPane{
 
 
     public void showMenu( MouseEvent event,RecWindows pane){
-        closeMenu();
-        double transX = 0;
-        double transY = 0;
-        if (myTransX > event.getSceneX()) {
-            transX = myTransX - event.getSceneX();
+        double originX ;
+        double originY ;
+        double maxWWhI = pane.getWidth() - myWidth;
+        double halfW = (int)pane.getWidth() >> 1;
+        double maxHWhI = pane.getHeight() - myHeight;
+        double halfH = (int)pane.getHeight() >> 1;
+        int menuHalfWidth = intWidth >> 1;
+        int menuHalfHeight = intHeight >> 1;
+        /**
+         * 这里根据当前鼠标点击位置坐标和原菜单面版的 宽度/高度比较 确定选取菜单面板四角中的一角坐标作为计算原点
+         */
+        if (event.getSceneX() < maxWWhI){
+            if (event.getSceneY() < maxHWhI) {
+                originX = halfW - menuHalfWidth;
+                originY = halfH - menuHalfHeight;
+            }else {
+                originX = halfW - menuHalfWidth;
+                originY = halfH + menuHalfHeight;
+            }
         }else {
-            transX = event.getSceneX() - myTransX;
+            if (event.getSceneY() < maxHWhI) {
+                originX = halfW + menuHalfWidth;
+                originY = halfH - menuHalfHeight;
+            }else {
+                originX = halfW + menuHalfWidth;
+                originY = halfH + menuHalfHeight;
+            }
         }
 
-        if (myTransY > event.getSceneY()) {
-            transY = myTransY - event.getSceneY();
-        }else {
-            transY = event.getSceneY() - myTransY;
-        }
-        this.myTransX = event.getSceneX();
-        this.myTransY = event.getSceneY();
 
-        this.realPane.setTranslateX(transX);
-        this.realPane.setTranslateY(transY);
-        System.out.println(STR."myTranX-\{myTransX},myTranY-\{myTransY}");
-        System.out.println(STR."tranX-\{transX},tranY-\{transY}");
-        System.out.println(STR."realTransX-\{this.realPane.getTranslateX()},realTransY-\{this.realPane.getTranslateY()}");
+        myTransX =  event.getSceneX() - originX;
+        myTransY =  event.getSceneY() - originY;
+
+        this.realPane.setTranslateX(myTransX);
+        this.realPane.setTranslateY(myTransY);
+        /*System.out.println(STR."myTranX-\{myTransX},myTranY-\{myTransY}");
+        System.out.println(STR."originX-\{originX},originY-\{originY}");
+        System.out.println(STR."sX-\{event.getSceneX()},sY-\{event.getSceneY()}");*/
 
         this.setMenuBg(pane.getShowBox(),event.getSceneX(),event.getSceneY());
 
