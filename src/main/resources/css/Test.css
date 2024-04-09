@@ -1,9 +1,0 @@
-.my_menu_item {
-    -fx-pref-width: 200px;
-}
-
-.my_menu {
-    -fx-background-color: transparent;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.5), 10, 0, 0, 5);
-    -fx-background-radius: 5;
-}

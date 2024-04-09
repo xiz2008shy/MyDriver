@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @Date 2024/4/2 22:00
  */
 public class CopyHandler implements EventHandler<KeyEvent> {
-    private final KeyCodeCombination codeCombination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
+    private final KeyCodeCombination codeCombination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY);
 
     private MainFlowContentPart content;
 
@@ -25,13 +25,16 @@ public class CopyHandler implements EventHandler<KeyEvent> {
         this.content = mainFlowContentPart;
     }
 
+
     @Override
     public void handle(KeyEvent keyEvent) {
+        System.out.println("copy handler");
         if (codeCombination.match(keyEvent)){
             Clipboard systemClipboard = Clipboard.getSystemClipboard();
             List<File> files = systemClipboard.getFiles();
             Set<String> set = null;
             if (files != null) {
+                //TODO 待优化，发现存在同名文件的场合需要在复制文件后添加副本名称
                 for (File file : files) {
                     copyFile(file,content.getFile().getAbsolutePath());
                 }

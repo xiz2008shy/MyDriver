@@ -59,10 +59,11 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
         for (File file : files) {
             AnchorPane anchorPane = genFileNode( fileSystemView,file);
             children.add(anchorPane);
+            anchorPane.getStyleClass().add("my_icon");
             IconHandlerFactory<MouseEvent> factory = instance.createFactory(file,this);
-            anchorPane.addEventFilter(MouseEvent.MOUSE_CLICKED, factory.getIconClickHandler());
-            anchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED, factory.getIconInOutHandler());
-            anchorPane.addEventFilter(MouseEvent.MOUSE_EXITED, factory.getIconInOutHandler());
+            anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, factory.getIconClickHandler());
+            //anchorPane.addEventHandler(MouseEvent.MOUSE_ENTERED, factory.getIconInOutHandler());
+            //anchorPane.addEventHandler(MouseEvent.MOUSE_EXITED, factory.getIconInOutHandler());
             if (findFileSet != null && findFileSet.contains(file.getName())){
                 Event.fireEvent(anchorPane,new MouseEvent(MouseEvent.MOUSE_CLICKED,
                         1,1,1,1, MouseButton.PRIMARY, 1,

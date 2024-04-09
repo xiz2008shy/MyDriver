@@ -1,17 +1,18 @@
 package com.tom.component.center;
 
 import com.tom.handler.key.CopyHandler;
-import com.tom.pane.TabWatcher;
+import com.tom.general.TabWatcher;
 import javafx.beans.property.Property;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
 
 import java.io.File;
 
 
 public class MainScrollPane extends ScrollPane implements TabWatcher<File> {
 
-    private MainFlowContentPart mainFlowContentPart;
+    private final MainFlowContentPart mainFlowContentPart;
 
     public MainScrollPane(MainFlowContentPart mainFlowContentPart) {
         this.mainFlowContentPart = mainFlowContentPart;
@@ -38,5 +39,9 @@ public class MainScrollPane extends ScrollPane implements TabWatcher<File> {
     @Override
     public String refreshTitle(File oldValue, File newValue) {
         return newValue.getName();
+    }
+
+    public FlowPane getMainFlowPane() {
+        return mainFlowContentPart.getFlowPane();
     }
 }

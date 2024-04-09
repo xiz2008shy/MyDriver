@@ -1,4 +1,4 @@
-package com.tom.pane;
+package com.tom.general;
 
 import com.tom.listener.DragListener;
 import com.tom.utils.AnchorPaneUtil;
@@ -88,7 +88,7 @@ public class RecWindows extends AnchorPane {
         DragListener dragListener = new DragListener(stage);
         topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_PRESSED,dragListener);
         topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_DRAGGED,dragListener);
-        scene.getStylesheets().add(this.getClass().getResource("/css/myTooltip.css").toExternalForm());
+        scene.getStylesheets().add(this.getClass().getResource("/css/rec_windows.css").toExternalForm());
         this.getStyleClass().add("my-windows");
     }
 
@@ -192,5 +192,9 @@ public class RecWindows extends AnchorPane {
 
     public StackPane getSecPane() {
         return secPane;
+    }
+
+    public VBox getShowBox() {
+        return showBox;
     }
 }

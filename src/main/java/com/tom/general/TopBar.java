@@ -1,4 +1,4 @@
-package com.tom.pane;
+package com.tom.general;
 
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
@@ -27,14 +27,18 @@ public class TopBar<T> {
 
     public TopBar(RecWindows recWindows, TabWatcher<T> tabWatcher) {
         this.tabManager = new TabManager(recWindows);
-        tabManager.createTab(tabWatcher,true,true);
+        if (tabWatcher != null) {
+            tabManager.createTab(tabWatcher,true,true);
+        }
         initTopBar(recWindows);
     }
 
 
     public TopBar(RecWindows recWindows, Node node ,TabWatcher<T> tabWatcher) {
         this.tabManager = new TabManager(recWindows);
-        tabManager.createTab(node,tabWatcher,true,true);
+        if (tabWatcher != null) {
+            tabManager.createTab(node,tabWatcher,true,true);
+        }
         initTopBar(recWindows);
     }
 

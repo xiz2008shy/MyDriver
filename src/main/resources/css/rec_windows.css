@@ -11,17 +11,6 @@
     -fx-background-radius: 4;
 }
 
-/*!*.my-text-field .content {*!*/
-/*!*    -fx-background-color: transparent, white, transparent, white;*!*/
-/*!*    -fx-background-radius: 10;*!*/
-/*!*}*!*/
-
-
-/*.my-text-field:editable {*/
-/*    -fx-border-color:  blue, blue, blue, blue;*/
-/*    -fx-background-radius: 10;*/
-/*}*/
-
 .my-windows {
     -fx-background-color: white;
     -fx-background-radius: 20;
@@ -38,4 +27,23 @@
     -fx-border-color: rgb(183, 183, 183);
     -fx-border-width: 0.5;
     -fx-effect: dropshadow(three-pass-box, rgb(142, 142, 142), 10,0, 2, 2);
+}
+
+
+.top_border {
+    -fx-border-width: 1px;  /* 上边框宽度 */
+    -fx-border-color: rgba(191, 203, 217,0.5) transparent transparent transparent; /* 上边框颜色 */
+    -fx-border-top-style: solid;
+}
+
+.my_menu_context:hover {
+    -fx-background-color: rgba(191, 203, 217,0.5);
+}
+
+.my_icon:hover {
+    -fx-background-color: rgba(63,175,229,0.3);
+}
+
+.my_icon_click {
+    -fx-background-color: rgba(46, 46, 46, 0.3);
 }

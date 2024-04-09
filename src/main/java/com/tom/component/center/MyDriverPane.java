@@ -1,7 +1,7 @@
 package com.tom.component.center;
 
 import com.tom.component.top.AddressTab;
-import com.tom.pane.TabWatcher;
+import com.tom.general.TabWatcher;
 import javafx.beans.property.Property;
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
@@ -30,6 +30,10 @@ public class MyDriverPane extends BorderPane implements TabWatcher<File> {
     @Override
     public String getInitTitle() {
         return mainScrollPane.getInitTitle();
+    }
+
+    public MainScrollPane getMainScrollPane() {
+        return mainScrollPane;
     }
 
     @Override

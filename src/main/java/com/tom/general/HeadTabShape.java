@@ -1,4 +1,4 @@
-package com.tom.pane;
+package com.tom.general;
 
 import javafx.scene.shape.*;
 

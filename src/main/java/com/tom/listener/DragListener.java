@@ -5,6 +5,9 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+/**
+ * topBar的窗体拖拽监听器
+ */
 public class DragListener implements EventHandler<MouseEvent> {
 
     private double xOffset = 0;

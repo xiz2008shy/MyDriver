@@ -1,6 +1,6 @@
 package com.tom.utils;
 
-import com.tom.pane.RecWindows;
+import com.tom.general.RecWindows;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -16,10 +16,10 @@ public class DrawUtil {
 
     public static void addDrawFunc(Stage stage, RecWindows root) {
 
-        root.setOnMouseClicked(e -> System.out.println(STR."x-\{e.getSceneX()},y-\{e.getSceneY()},isRight-\{isRight},isBottom-\{isBottom},isBottomRight-\{isBottomRight}"));
+        //root.setOnMouseClicked(e -> System.out.println(STR."x-\{e.getSceneX()},y-\{e.getSceneY()},isRight-\{isRight},isBottom-\{isBottom},isBottomRight-\{isBottomRight}"));
 
-        root.setOnMouseMoved((MouseEvent event) -> {
-            event.consume();
+        root.addEventHandler(MouseEvent.MOUSE_MOVED,(MouseEvent event) -> {
+            //event.consume();
             double x = event.getSceneX();
             double y = event.getSceneY();
             //System.out.println(STR."x-\{x},y-\{y}");
@@ -46,7 +46,7 @@ public class DrawUtil {
             root.setCursor(cursorType);
         });
 
-        root.setOnMouseDragged((MouseEvent event) -> {
+        root.addEventHandler(MouseEvent.MOUSE_DRAGGED,(MouseEvent event) -> {
             double x = event.getSceneX();
             double y = event.getSceneY();
             // 保存窗口改变后的x、y坐标和宽度、高度，用于预判是否会小于最小宽度、最小高度
