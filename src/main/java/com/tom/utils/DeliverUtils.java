@@ -6,22 +6,24 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class DeliverUtils {
 
-    private final static ObjectProperty<Map<String,File>> pathIndexP = new SimpleObjectProperty<>();
+    private final static List<Map<String,File>> pathIndexP = new ArrayList<>();
     private final static ObjectProperty<File> curFile =new SimpleObjectProperty<>();
     private final static ObjectProperty<AnchorPane> lastSelectFileP =new SimpleObjectProperty<>();
 
     private final static ObjectProperty<BaseMenu> baseMenuP = new SimpleObjectProperty<>();
 
     public static void setPathIndex(Map<String, File> pathIndex){
-        pathIndexP.set(pathIndex);
+        pathIndexP.add(pathIndex);
     }
 
-    public static Map<String, File> getPathIndex(){
-        return pathIndexP.get();
+    public static Map<String, File> getPathIndex(int index){
+        return pathIndexP.get(index);
     }
 
 

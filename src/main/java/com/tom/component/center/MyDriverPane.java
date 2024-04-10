@@ -79,7 +79,7 @@ public class MyDriverPane extends BorderPane implements TabWatcher<File> {
                 if (index > -1){
                     id = id.substring(0,index);
                 }
-                file = DeliverUtils.getPathIndex().get(id);
+                file = DeliverUtils.getPathIndex(recWindowsPane.getActiveIndex()).get(id);
                 if (file != null ){
                     DeliverUtils.setCurPath(file);
                 }

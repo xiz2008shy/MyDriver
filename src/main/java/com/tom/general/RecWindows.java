@@ -45,6 +45,8 @@ public class RecWindows extends AnchorPane {
 
     private BiConsumer<RecWindows,Node> whenActive = null;
 
+    private int activeIndex = 0;
+
     public <N extends Node & TabWatcher<W>,W>RecWindows( N node, double prefWidth, double prefHeight, double radius ,Stage stage) {
         super();
         this.rectangle = new Rectangle(prefWidth,prefHeight);
@@ -174,6 +176,7 @@ public class RecWindows extends AnchorPane {
 
     public void setActiveNode(int activeIndex){
         if (activeIndex < tabNodes.size()){
+            this.activeIndex = activeIndex;
             ObservableList<Node> children = this.showBox.getChildren();
             if (children.size() > 1){
                 children.remove(1);
@@ -212,5 +215,9 @@ public class RecWindows extends AnchorPane {
 
     public VBox getShowBox() {
         return showBox;
+    }
+
+    public int getActiveIndex() {
+        return activeIndex;
     }
 }
