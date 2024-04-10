@@ -25,6 +25,7 @@ import javafx.stage.StageStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 
 
 public class RecWindows extends AnchorPane {
@@ -41,6 +42,8 @@ public class RecWindows extends AnchorPane {
     private final StackPane secPane = new StackPane();
 
     private final List<Node> tabNodes = new ArrayList<>();
+
+    private BiConsumer<RecWindows,Node> whenActive = null;
 
     public <N extends Node & TabWatcher<W>,W>RecWindows( N node, double prefWidth, double prefHeight, double radius ,Stage stage) {
         super();
@@ -67,16 +70,25 @@ public class RecWindows extends AnchorPane {
         this.setPrefSize(prefWidth, prefHeight);
         this.setClip(rectangle);
         secPane.getChildren().add(showBox);
-        showBox.getChildren().addAll(topBar.getTopBar(), node);
+        showBox.getChildren().add(topBar.getTopBar());
         this.getChildren().add(secPane);
         AnchorPaneUtil.setNode(secPane,0.5,0.5,10.0,0.5);
     }
 
 
     /**
+     * 注册面板激活（主要是指node加入recWindows 内部时触发，比如多标签页的情况下，实际会切换不同的node）事件
+     * @param whenActive
+     */
+    public void setWhenActive(BiConsumer<RecWindows,Node> whenActive){
+        this.whenActive = whenActive;
+    }
+
+    /**
      * 务必构造器执行后手动调用该方法
      */
     public void initStage(){
+        setActiveNode(0);
         Scene scene = new Scene(this);
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
@@ -166,7 +178,11 @@ public class RecWindows extends AnchorPane {
             if (children.size() > 1){
                 children.remove(1);
             }
-            children.add(tabNodes.get(activeIndex));
+            Node node = tabNodes.get(activeIndex);
+            children.add(node);
+            if (whenActive != null){
+                whenActive.accept(this,node);
+            }
         }
     }
 

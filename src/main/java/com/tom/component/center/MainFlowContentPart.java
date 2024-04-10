@@ -5,9 +5,8 @@ import com.tom.component.pub.DefaultAddressGetterImpl;
 import com.tom.handler.icon.IconClickHandler;
 import com.tom.model.AddressProperty;
 import com.tom.utils.AnchorPaneUtil;
+import com.tom.utils.DeliverUtils;
 import com.tom.utils.ImageUtils;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.geometry.Insets;
@@ -36,10 +35,9 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
 
     private Map<String,File> pathIndex = new HashMap<>(128);
 
-    private ObjectProperty<AnchorPane> os = new SimpleObjectProperty<>();
-
     public MainFlowContentPart(AddressProperty addressProperty) {
         super(addressProperty);
+        DeliverUtils.setPathIndex(pathIndex);
         this.flowPane = new FlowPane();
         flowPane.setStyle("-fx-background-color: white");
         refreshFileNode();
@@ -68,7 +66,7 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
             anchorPane.setPadding(new Insets(5,10,5,10));
             children.add(anchorPane);
             anchorPane.getStyleClass().add("my_icon");
-            anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED,new IconClickHandler(os,selectedSet,file,this));
+            anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED,new IconClickHandler(DeliverUtils.getLastSelectFileP(),selectedSet,file,this));
             if (findFileSet != null && findFileSet.contains(file.getName())){
                 Event.fireEvent(anchorPane,new MouseEvent(MouseEvent.MOUSE_CLICKED,
                         1,1,1,1, MouseButton.PRIMARY, 1,
@@ -122,4 +120,8 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
         return anchorPane;
     }
 
+
+    public Map<String, File> getPathIndex() {
+        return pathIndex;
+    }
 }

@@ -44,4 +44,8 @@ public class MainScrollPane extends ScrollPane implements TabWatcher<File> {
     public FlowPane getMainFlowPane() {
         return mainFlowContentPart.getFlowPane();
     }
+
+    public MainFlowContentPart getMainFlowContentPart() {
+        return mainFlowContentPart;
+    }
 }

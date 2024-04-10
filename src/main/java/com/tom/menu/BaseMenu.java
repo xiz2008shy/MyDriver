@@ -14,6 +14,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.function.Consumer;
+
 public class BaseMenu extends StackPane{
 
     private final ImageView bg;
@@ -33,6 +35,8 @@ public class BaseMenu extends StackPane{
 
     private double myTransX = 0;
     private double myTransY = 0;
+
+    private Consumer<BaseMenu> closeMenuHandler;
 
 
     public BaseMenu(double width,double preHeight, RecWindows windows) {
@@ -62,10 +66,10 @@ public class BaseMenu extends StackPane{
         //dropShadow.setSpread(0.5);
         realPane.setEffect(dropShadow);
         this.bg = new ImageView();
-        bg.setEffect(new GaussianBlur(20));
+        bg.setEffect(new GaussianBlur(30));
         this.menuContent = new VBox();
         menuContent.setPrefSize(width,myHeight);
-        menuContent.setStyle("-fx-background-color: rgba(232,232,232,0.55);");
+        menuContent.setStyle("-fx-background-color: rgba(251, 251, 252,0.75);");
         this.getChildren().add(bg);
         this.getChildren().add(menuContent);
         windows.getSecPane().getChildren().add(this.realPane);
@@ -98,7 +102,7 @@ public class BaseMenu extends StackPane{
         ObservableList<Node> children = menuContent.getChildren();
         children.add(myMenuContext);
         VBox.setVgrow(myMenuContext, Priority.ALWAYS);
-        this.myResize(myWidth, this.getChildren().size() * preHeight);
+        this.myResize(myWidth, this.menuContent.getChildren().size() * preHeight);
         myMenuContext.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             myMenuContext.getMouseActiveHandler().handle(e);
             this.closeMenu();
@@ -143,11 +147,22 @@ public class BaseMenu extends StackPane{
 
         this.realPane.setTranslateX(myTransX);
         this.realPane.setTranslateY(myTransY);
-        /*System.out.println(STR."myTranX-\{myTransX},myTranY-\{myTransY}");
-        System.out.println(STR."originX-\{originX},originY-\{originY}");
-        System.out.println(STR."sX-\{event.getSceneX()},sY-\{event.getSceneY()}");*/
-
         this.setMenuBg(pane.getShowBox(),event.getSceneX(),event.getSceneY());
+        for (Node child : this.menuContent.getChildren()) {
+            MyMenuContext menuContext = (MyMenuContext) child;
+            if (menuContext.getVisiblePredicate().test(event)){
+                menuContext.setVisible(true);
+                if (menuContext.getDisabledPredicate().test(event)) {
+                    menuContext.getStyleClass().add("my_disabled");
+                    menuContext.setDisable(true);
+                }else {
+                    menuContext.getStyleClass().remove("my_disabled");
+                    menuContext.setDisable(false);
+                }
+            }else {
+                menuContext.setVisible(false);
+            }
+        }
 
         this.realPane.setVisible(true);
     }
@@ -158,10 +173,21 @@ public class BaseMenu extends StackPane{
         this.myTransX = 0 ;
         this.myTransY = 0 ;
         this.realPane.setVisible(false);
+        if (closeMenuHandler != null){
+            closeMenuHandler.accept(this);
+        }
     }
 
 
     public boolean isShow() {
         return this.realPane.isVisible();
+    }
+
+    public void setCloseMenuHandler(Consumer<BaseMenu> closeMenuHandler) {
+        this.closeMenuHandler = closeMenuHandler;
+    }
+
+    public VBox getMenuContent() {
+        return menuContent;
     }
 }

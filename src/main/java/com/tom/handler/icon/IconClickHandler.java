@@ -4,6 +4,7 @@ import com.tom.component.center.MainFlowContentPart;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
@@ -46,7 +47,7 @@ public class IconClickHandler implements EventHandler<MouseEvent> {
         curOs.getStyleClass().add("my_icon_click");
         curOs.getStyleClass().remove("my_icon");
         os.set(curOs);
-        if (event.getClickCount() == 2) {
+        if (event.getClickCount() == 2 && event.getButton().equals(MouseButton.PRIMARY)) {
             if (file.isDirectory()){
                 this.mainFlowContentPart.getAddressProperty().setCurPath(file);
                 this.mainFlowContentPart.refreshFileNode();

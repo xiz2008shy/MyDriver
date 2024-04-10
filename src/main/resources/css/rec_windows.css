@@ -36,8 +36,12 @@
     -fx-border-top-style: solid;
 }
 
+.my_menu_context {
+    -fx-font-size: 14;
+}
+
 .my_menu_context:hover {
-    -fx-background-color: rgba(191, 203, 217,0.5);
+    -fx-background-color: rgba(243, 243, 243,0.8);
 }
 
 .my_icon {
@@ -53,4 +57,8 @@
     -fx-background-color: rgba(204, 232, 255, 1);
     -fx-border-color: rgb(153, 209, 255);
     -fx-border-width: 1px;
+}
+
+.my_disabled .label {
+    -fx-text-fill: #8d8d8d;
 }
