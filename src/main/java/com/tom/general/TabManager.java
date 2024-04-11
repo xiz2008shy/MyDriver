@@ -30,6 +30,8 @@ public class TabManager {
 
     private IntegerProperty activeProperty = new SimpleIntegerProperty(0);
 
+    private AnchorPane activeTab = null;
+
     public TabManager(RecWindows recWindows) {
         this.recWindows = recWindows;
     }
@@ -55,14 +57,28 @@ public class TabManager {
         }
     }
 
+
+    /**
+     * <AnchorPane>
+     *     <ImageView></ImageView> -icon
+     *     <HBox>
+     *         <Label></Label> -title
+     *     </HBox>
+     *     <ImageView></ImageView> -close
+     * </AnchorPane>
+     * @param tabWatcher
+     * @param isActive
+     * @return
+     */
     private int doCreateTab(TabWatcher tabWatcher, boolean isActive) {
         AnchorPane ap = new AnchorPane();
+        ap.getStyleClass().add("my_tabs");
         if (isActive){
             ap.setShape(ACTIVE_SHARP);
-            ap.setStyle(ACTIVE_STYLE);
+            ap.getStyleClass().add("my_tabs_active");
+            this.activeTab = ap;
         }else {
             ap.setShape(INACTIVE_SHARP);
-            ap.setStyle(INACTIVE_STYLE);
         }
 
         ap.setPrefSize(260,35);
@@ -74,13 +90,16 @@ public class TabManager {
             String title = tabWatcher.refreshTitle(oldValue, newValue);
             label.setText(title);
         });
-        label.setStyle("-fx-text-overrun: ellipsis");
+        //label.setStyle("-fx-text-overrun: ellipsis");
         HBox textBox = new HBox(label);
-        textBox.setAlignment(Pos.CENTER_LEFT);
-        ap.getChildren().addAll(imageView,textBox);
+        textBox.getStyleClass().add("my_tabs_hbox");
+        //textBox.setAlignment(Pos.CENTER_LEFT);
 
+        ImageView close = ImageUtils.getImageView("/img/close.png", 16, 12);
+        ap.getChildren().addAll(imageView,textBox,close);
         AnchorPaneUtil.setNode(imageView,5.0,null,0.0, 15.0);
-        AnchorPaneUtil.setNode(textBox,0.0,15.0,0.0, 45.0);
+        AnchorPaneUtil.setNode(textBox,0.0,25.0,0.0, 45.0);
+        AnchorPaneUtil.setNode(close,6.0,15.0,0.0, null);
         HBox.setHgrow(textBox, Priority.ALWAYS);
         int size = tabs.getChildren().size();
         IntegerProperty curIndex = new SimpleIntegerProperty(size);
@@ -92,7 +111,7 @@ public class TabManager {
             HBox.setMargin(ap,new Insets(0,0,0,-7));
         }
 
-        ap.addEventHandler(MouseEvent.MOUSE_ENTERED, _ -> {
+        /*ap.addEventHandler(MouseEvent.MOUSE_ENTERED, _ -> {
             if (curIndex.get() != activeProperty.get()) {
                 ap.setStyle(MOVE_ON_STYLE);
             }
@@ -101,21 +120,23 @@ public class TabManager {
             if (curIndex.get() != activeProperty.get()) {
                 ap.setStyle(INACTIVE_STYLE);
             }
-        });
+        });*/
         ap.addEventHandler(MouseEvent.MOUSE_DRAGGED, Event::consume);
         ap.addEventHandler(MouseEvent.MOUSE_CLICKED,_ -> {
             if (curIndex.get() != activeProperty.get()) {
+                activeTab.getStyleClass().remove("my_tabs_active");
                 activeProperty.set(curIndex.get());
+                activeTab = ap;
                 recWindows.setActiveNode(curIndex.get());
             }
         });
         activeProperty.addListener((_,  _, newValue) -> {
             if ( (int)newValue == curIndex.get()){
                 ap.setShape(ACTIVE_SHARP);
-                ap.setStyle(ACTIVE_STYLE);
+                ap.getStyleClass().add("my_tabs_active");
             }else {
                 ap.setShape(INACTIVE_SHARP);
-                ap.setStyle(INACTIVE_STYLE);
+                ap.getStyleClass().remove("my_tabs_active");
             }
         });
         tabs.getChildren().add(ap);

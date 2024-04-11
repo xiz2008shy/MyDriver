@@ -62,3 +62,23 @@
 .my_disabled .label {
     -fx-text-fill: #8d8d8d;
 }
+
+.my_tabs {
+    -fx-background-color: rgb(216, 218, 219);
+}
+
+.my_tabs:hover {
+    -fx-background-color: rgb(213, 208, 206);
+}
+
+.my_tabs_active,.my_tabs_active:hover {
+    -fx-background-color: rgb(246, 243, 243);
+}
+
+.my_tabs_hbox {
+    -fx-alignment: center-left;
+}
+
+.my_tabs > .my_tabs_hbox > .label {
+    -fx-text-overrun: ellipsis;
+}

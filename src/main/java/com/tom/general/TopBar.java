@@ -25,6 +25,22 @@ public class TopBar<T> {
     private HBox minimizeBox;
 
 
+    /**
+     * <AnchorPane>
+     *     <HBox> * tabs @see com.tom.general.TabManager#doCreateTab </HBox>
+     *     <HBox> -rightIcons
+     *         <HBox> -gear
+     *             <ImageView></ImageView>
+     *         </HBox>
+     *         <HBox> -minimize
+     *              <ImageView></ImageView>
+     *         </HBox>
+     *         ...
+     *     </HBox>
+     * </AnchorPane>
+     * @param recWindows
+     * @param tabWatcher
+     */
     public TopBar(RecWindows recWindows, TabWatcher<T> tabWatcher) {
         this.tabManager = new TabManager(recWindows);
         if (tabWatcher != null) {
