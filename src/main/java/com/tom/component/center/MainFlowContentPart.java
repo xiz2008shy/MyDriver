@@ -78,6 +78,19 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
     }
 
 
+    /**
+     * <AnchorPane>
+     *     <VBox>
+     *         <ImageView></ImageView>
+     *     </VBox>
+     *     <HBox>
+     *         <Label></Label>
+     *     </HBox>
+     * </AnchorPane>
+     * @param fileSystemView
+     * @param file
+     * @return
+     */
     private AnchorPane genFileNode( FileSystemView fileSystemView,File file) {
         String uuid = UUID.fastUUID().toString(true);
         pathIndex.put(uuid,file);

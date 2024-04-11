@@ -59,7 +59,7 @@ public class DeliverUtils {
         return baseMenuP.get();
     }
 
-    public void setBaseMenu(BaseMenu baseMenu){
+    public static void setBaseMenu(BaseMenu baseMenu){
         baseMenuP.set(baseMenu);
     }
 }

@@ -9,6 +9,7 @@ import com.tom.model.AddressProperty;
 import com.tom.utils.DeliverUtils;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -66,36 +67,46 @@ public class MyDriverPane extends BorderPane implements TabWatcher<File> {
                 pane.baseMenu = pane.createBaseMenu(recWindowsPane);
             }
         }
-        pane.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            System.out.println("menu mouse clicked!");
-            e.consume();
-            if(pane.baseMenu.isShow()){
-                pane.baseMenu.closeMenu();
-            }
-            String id = e.getPickResult().getIntersectedNode().getId();
-            File file = null;
-            if (id != null) {
-                int index = id.indexOf("_");
-                if (index > -1){
-                    id = id.substring(0,index);
+        pane.baseMenu.closeMenu();
+        ObservableMap<Object, Object> myMap = node.getProperties();
+        if (myMap.get("isAddMenuHandler") == null){
+            pane.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                System.out.println("menu mouse clicked!");
+                e.consume();
+                if(pane.baseMenu.isShow()){
+                    pane.baseMenu.closeMenu();
                 }
-                file = DeliverUtils.getPathIndex(recWindowsPane.getActiveIndex()).get(id);
-                if (file != null ){
-                    DeliverUtils.setCurPath(file);
+                Node intersectedNode = e.getPickResult().getIntersectedNode();
+                String id = intersectedNode.getId();
+                File file = null;
+                if (id != null || (id = intersectedNode.getParent().getId()) != null) {
+                    int index = id.indexOf("_");
+                    if (index > -1){
+                        id = id.substring(0,index);
+                    }
+                    file = DeliverUtils.getPathIndex(recWindowsPane.getActiveIndex()).get(id);
+                    if (file != null ){
+                        DeliverUtils.setCurPath(file);
+                    }
                 }
-            }
-            if (file == null) {
-                AnchorPane selectedFileNode = DeliverUtils.getLastSelectedFileNode();
-                if (selectedFileNode != null) {
-                    ObservableList<String> styleClass = selectedFileNode.getStyleClass();
-                    styleClass.add("my_icon");
-                    styleClass.remove("my_icon_click");
+                System.out.println(e.getPickResult().getIntersectedNode());
+                System.out.println(id);
+                System.out.println(file);
+                if (file == null) {
+                    AnchorPane selectedFileNode = DeliverUtils.getLastSelectedFileNode();
+                    if (selectedFileNode != null) {
+                        ObservableList<String> styleClass = selectedFileNode.getStyleClass();
+                        styleClass.add("my_icon");
+                        styleClass.remove("my_icon_click");
+                    }
                 }
-            }
-            if (e.getButton().equals(MouseButton.SECONDARY)){
-                pane.baseMenu.showMenu(e,recWindowsPane);
-            }
-        });
+                if (e.getButton().equals(MouseButton.SECONDARY)){
+                    pane.baseMenu.showMenu(e,recWindowsPane);
+                }
+            });
+            myMap.put("isAddMenuHandler",true);
+        }
+
     }
 
     private BaseMenu createBaseMenu(RecWindows recWindowsPane) {
@@ -111,11 +122,12 @@ public class MyDriverPane extends BorderPane implements TabWatcher<File> {
         });
         MyMenuContext menu0 = new MyMenuContext(new Label("新标签页中打开"), baseMenu);
         menu0.whenActiveByMouse( e -> {
-            MyDriverPane myDriverPane2 = this.createMyDriverPane(DeliverUtils.getCurPath().getAbsolutePath());
+            MyDriverPane myDriverPane2 = MyDriverPane.createMyDriverPane(DeliverUtils.getCurPath().getAbsolutePath());
             recWindowsPane.createNewTab(myDriverPane2,true);
         });
         menu0.setDisabledPredicate(_ -> {
             File curPath = DeliverUtils.getCurPath();
+            System.out.println(curPath);
             return curPath == null || !curPath.isDirectory();
         });
         MyMenuContext menu1 = new MyMenuContext(new Label("复制"), baseMenu);

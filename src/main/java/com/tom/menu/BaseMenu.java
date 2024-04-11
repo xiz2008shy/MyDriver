@@ -1,6 +1,7 @@
 package com.tom.menu;
 
 import com.tom.general.RecWindows;
+import com.tom.utils.DeliverUtils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -74,6 +75,7 @@ public class BaseMenu extends StackPane{
         this.getChildren().add(menuContent);
         windows.getSecPane().getChildren().add(this.realPane);
         this.realPane.setVisible(false);
+        DeliverUtils.setBaseMenu(this);
     }
 
     private void myResize(double width,double height) {
