@@ -1,4 +1,4 @@
-package com.tom.menu;
+package com.tom.general.menu;
 
 import com.tom.general.RecWindows;
 import com.tom.utils.DeliverUtils;
@@ -40,6 +40,23 @@ public class BaseMenu extends StackPane{
     private Consumer<BaseMenu> closeMenuHandler;
 
 
+    /**
+     * <StackPane> - secPane (recWindows)
+     *     <HBox> - realPane(this.realPane)
+     *         <StackPane> - this
+     *             <ImageView></ImageView> - background
+     *             <VBox> - menuContent(this)
+     *                 <HBox> - MyMenuContent
+     *                      <Label></Label>
+     *                 </HBox>
+     *             </VBox>
+     *         </StackPane>
+     *     </HBox>
+     * </StackPane>
+     * @param width
+     * @param preHeight
+     * @param windows
+     */
     public BaseMenu(double width,double preHeight, RecWindows windows) {
         super();
         this.myWidth = width;

@@ -6,7 +6,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.Event;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -16,11 +15,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.shape.Shape;
 
+
+/**
+ * 标签切卡管理器
+ */
 public class TabManager {
 
-    public static final String ACTIVE_STYLE = "-fx-background-color: rgb(246, 243, 243)";
-    public static final String INACTIVE_STYLE = "-fx-background-color: rgb(216, 218, 219)";
-    public static final String MOVE_ON_STYLE = "-fx-background-color: rgb(213, 208, 206)";
     public static final Shape ACTIVE_SHARP = HeadTabShape.headTabShape(260, 35, 7);
     public static final Shape INACTIVE_SHARP = HeadTabShape.headTabSecShape(260, 35, 7);
 
@@ -90,10 +90,9 @@ public class TabManager {
             String title = tabWatcher.refreshTitle(oldValue, newValue);
             label.setText(title);
         });
-        //label.setStyle("-fx-text-overrun: ellipsis");
+
         HBox textBox = new HBox(label);
         textBox.getStyleClass().add("my_tabs_hbox");
-        //textBox.setAlignment(Pos.CENTER_LEFT);
 
         ImageView close = ImageUtils.getImageView("/img/close.png", 16, 12);
         ap.getChildren().addAll(imageView,textBox,close);
@@ -111,16 +110,6 @@ public class TabManager {
             HBox.setMargin(ap,new Insets(0,0,0,-7));
         }
 
-        /*ap.addEventHandler(MouseEvent.MOUSE_ENTERED, _ -> {
-            if (curIndex.get() != activeProperty.get()) {
-                ap.setStyle(MOVE_ON_STYLE);
-            }
-        });
-        ap.addEventHandler(MouseEvent.MOUSE_EXITED,_ -> {
-            if (curIndex.get() != activeProperty.get()) {
-                ap.setStyle(INACTIVE_STYLE);
-            }
-        });*/
         ap.addEventHandler(MouseEvent.MOUSE_DRAGGED, Event::consume);
         ap.addEventHandler(MouseEvent.MOUSE_CLICKED,_ -> {
             if (curIndex.get() != activeProperty.get()) {

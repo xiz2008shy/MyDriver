@@ -2,7 +2,7 @@ package com.tom.component.center;
 
 import cn.hutool.core.lang.UUID;
 import com.tom.component.pub.DefaultAddressGetterImpl;
-import com.tom.handler.icon.IconClickHandler;
+import com.tom.handler.icon.DesktopIconClickHandler;
 import com.tom.model.AddressProperty;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DeliverUtils;
@@ -66,7 +66,7 @@ public class MainFlowContentPart extends DefaultAddressGetterImpl {
             anchorPane.setPadding(new Insets(5,10,5,10));
             children.add(anchorPane);
             anchorPane.getStyleClass().add("my_icon");
-            anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED,new IconClickHandler(DeliverUtils.getLastSelectFileP(),selectedSet,file,this));
+            anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED,new DesktopIconClickHandler(DeliverUtils.getLastSelectFileP(),selectedSet,file,this));
             if (findFileSet != null && findFileSet.contains(file.getName())){
                 Event.fireEvent(anchorPane,new MouseEvent(MouseEvent.MOUSE_CLICKED,
                         1,1,1,1, MouseButton.PRIMARY, 1,

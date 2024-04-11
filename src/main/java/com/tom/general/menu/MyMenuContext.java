@@ -1,4 +1,4 @@
-package com.tom.menu;
+package com.tom.general.menu;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;

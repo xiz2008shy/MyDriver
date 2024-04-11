@@ -1,6 +1,7 @@
 package com.tom.general;
 
 import com.tom.listener.DragListener;
+import com.tom.general.menu.BaseMenu;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DrawUtil;
 import com.tom.utils.ImageUtils;
@@ -25,7 +26,7 @@ import javafx.stage.StageStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 
 public class RecWindows extends AnchorPane {
@@ -41,11 +42,19 @@ public class RecWindows extends AnchorPane {
 
     private final StackPane secPane = new StackPane();
 
+    /**
+     * 多标签下的多真实节点
+     * 在RecWindows创建时，通过TabManager将节点添加进集合，随后在 setActiveNode 方法中被添加到showBox的子元素中
+     */
     private final List<Node> tabNodes = new ArrayList<>();
 
-    private BiConsumer<RecWindows,Node> whenActive = null;
+    private Consumer<RecWindows> whenActive = null;
 
     private int activeIndex = 0;
+
+    private BaseMenu baseMenu;
+
+    private Node activeNode;
 
     public <N extends Node & TabWatcher<W>,W>RecWindows( N node, double prefWidth, double prefHeight, double radius ,Stage stage) {
         super();
@@ -82,7 +91,7 @@ public class RecWindows extends AnchorPane {
      * 注册面板激活（主要是指node加入recWindows 内部时触发，比如多标签页的情况下，实际会切换不同的node）事件
      * @param whenActive
      */
-    public void setWhenActive(BiConsumer<RecWindows,Node> whenActive){
+    public void setWhenActive(Consumer<RecWindows> whenActive){
         this.whenActive = whenActive;
     }
 
@@ -181,10 +190,11 @@ public class RecWindows extends AnchorPane {
             if (children.size() > 1){
                 children.remove(1);
             }
-            Node node = tabNodes.get(activeIndex);
-            children.add(node);
+            this.activeNode = tabNodes.get(activeIndex);
+            children.add(activeNode);
+            // 替换完内部节点后，执行whenActive方法
             if (whenActive != null){
-                whenActive.accept(this,node);
+                whenActive.accept(this);
             }
         }
     }
@@ -219,5 +229,17 @@ public class RecWindows extends AnchorPane {
 
     public int getActiveIndex() {
         return activeIndex;
+    }
+
+    public BaseMenu getBaseMenu() {
+        return baseMenu;
+    }
+
+    public void setBaseMenu(BaseMenu baseMenu) {
+        this.baseMenu = baseMenu;
+    }
+
+    public Node getActiveNode() {
+        return activeNode;
     }
 }

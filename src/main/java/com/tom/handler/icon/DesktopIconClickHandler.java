@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class IconClickHandler implements EventHandler<MouseEvent> {
+public class DesktopIconClickHandler implements EventHandler<MouseEvent> {
 
     private final ObjectProperty<AnchorPane> os;
 
@@ -23,7 +23,7 @@ public class IconClickHandler implements EventHandler<MouseEvent> {
 
     private final MainFlowContentPart mainFlowContentPart;
 
-    public IconClickHandler(ObjectProperty<AnchorPane> os,Set<AnchorPane> selectedSet,File file, MainFlowContentPart mainFlowContentPart) {
+    public DesktopIconClickHandler(ObjectProperty<AnchorPane> os,Set<AnchorPane> selectedSet,File file, MainFlowContentPart mainFlowContentPart) {
         if (os == null) {
             throw new RuntimeException("os cannot be null!");
         }
@@ -41,11 +41,9 @@ public class IconClickHandler implements EventHandler<MouseEvent> {
         AnchorPane lastOs = os.get();
         if (lastOs != null) {
             ObservableList<String> styleClass = lastOs.getStyleClass();
-            styleClass.add("my_icon");
             styleClass.remove("my_icon_click");
         }
         curOs.getStyleClass().add("my_icon_click");
-        curOs.getStyleClass().remove("my_icon");
         os.set(curOs);
         if (event.getClickCount() == 2 && event.getButton().equals(MouseButton.PRIMARY)) {
             if (file.isDirectory()){
