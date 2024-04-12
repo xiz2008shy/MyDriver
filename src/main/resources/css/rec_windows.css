@@ -82,3 +82,14 @@
 .my_tabs > .my_tabs_hbox > .label {
     -fx-text-overrun: ellipsis;
 }
+
+.my_tabs_close {
+    -fx-alignment: center;
+    -fx-pref-width: 20;
+    -fx-pref-height: 20;
+}
+
+.my_tabs_close:hover {
+    -fx-background-color: rgba(229, 229, 229, 0.5);
+    -fx-background-radius: 5;
+}

@@ -199,7 +199,7 @@ public class RecWindows extends AnchorPane {
         }
     }
 
-    void addNodeToTabs(Node tab){
+    void addNodeToWindows(Node tab){
         this.tabNodes.add(tab);
     }
 

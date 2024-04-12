@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -24,6 +25,9 @@ public class TabManager {
     public static final Shape ACTIVE_SHARP = HeadTabShape.headTabShape(260, 35, 7);
     public static final Shape INACTIVE_SHARP = HeadTabShape.headTabSecShape(260, 35, 7);
 
+    /**
+     * 标签切卡的存放容器
+     */
     private HBox tabs = new HBox();
 
     private RecWindows recWindows;
@@ -39,11 +43,10 @@ public class TabManager {
     public <T>void createTab(TabWatcher<T> tabWatcher, boolean isActive,boolean isFirst) {
         if (tabWatcher instanceof Node){
             int index = doCreateTab(tabWatcher, isActive);
-            recWindows.addNodeToTabs((Node)tabWatcher);
+            recWindows.addNodeToWindows((Node)tabWatcher);
             if (isActive && !isFirst) {
                 recWindows.setActiveNode(index);
             }
-
         }else {
             throw new RuntimeException("TabManager.createTab is called by error,please check again!");
         }
@@ -51,7 +54,7 @@ public class TabManager {
 
     public <T>void createTab(Node node, TabWatcher<T> tabWatcher, boolean isActive,boolean isFirst) {
         int index = doCreateTab(tabWatcher, isActive);
-        recWindows.addNodeToTabs(node);
+        recWindows.addNodeToWindows(node);
         if (isActive && !isFirst) {
             recWindows.setActiveNode(index);
         }
@@ -59,12 +62,14 @@ public class TabManager {
 
 
     /**
-     * <AnchorPane>
+     * <AnchorPane> - tab
      *     <ImageView></ImageView> -icon
      *     <HBox>
      *         <Label></Label> -title
      *     </HBox>
-     *     <ImageView></ImageView> -close
+     *     <HBox> -close
+     *         <ImageView></ImageView> -closeIcon
+     *     </HBox>
      * </AnchorPane>
      * @param tabWatcher
      * @param isActive
@@ -94,12 +99,16 @@ public class TabManager {
         HBox textBox = new HBox(label);
         textBox.getStyleClass().add("my_tabs_hbox");
 
-        ImageView close = ImageUtils.getImageView("/img/close.png", 16, 12);
+        ImageView closeIcon = ImageUtils.getImageView("/img/close.png", 16, 12);
+        HBox close = new HBox(closeIcon);
+        //close.setAlignment(Pos.CENTER);
+        close.getStyleClass().add("my_tabs_close");
         ap.getChildren().addAll(imageView,textBox,close);
         AnchorPaneUtil.setNode(imageView,5.0,null,0.0, 15.0);
-        AnchorPaneUtil.setNode(textBox,0.0,25.0,0.0, 45.0);
-        AnchorPaneUtil.setNode(close,6.0,15.0,0.0, null);
+        AnchorPaneUtil.setNode(textBox,0.0,30.0,0.0, 45.0);
+        AnchorPaneUtil.setNode(close,6.0,20.0,5.0, null);
         HBox.setHgrow(textBox, Priority.ALWAYS);
+
         int size = tabs.getChildren().size();
         IntegerProperty curIndex = new SimpleIntegerProperty(size);
         if (isActive){
@@ -117,6 +126,16 @@ public class TabManager {
                 activeProperty.set(curIndex.get());
                 activeTab = ap;
                 recWindows.setActiveNode(curIndex.get());
+            }
+        });
+        close.addEventHandler(MouseEvent.MOUSE_CLICKED,e -> {
+            if (e.getButton().equals(MouseButton.PRIMARY)){
+                e.consume();
+                int nodeIndex = curIndex.get();
+                int activeIndex = activeProperty.get();
+                if ( nodeIndex == activeIndex){
+                    // TODO 当前切卡为激活切卡时，关闭后需要将激活切卡左侧的标签激活，但如果左侧没有，就需要激活右侧
+                }
             }
         });
         activeProperty.addListener((_,  _, newValue) -> {
