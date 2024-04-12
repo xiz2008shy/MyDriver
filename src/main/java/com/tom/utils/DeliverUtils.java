@@ -25,6 +25,10 @@ public class DeliverUtils {
         pathIndexP.add(pathIndex);
     }
 
+    public static void removePathIndex(int index){
+        pathIndexP.remove(index);
+    }
+
     public static Map<String, File> getPathIndex(int index){
         return pathIndexP.get(index);
     }

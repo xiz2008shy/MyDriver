@@ -13,12 +13,12 @@ public class FileManagementApp extends Application {
         Application.launch(args);
     }
 
-    private final String curPath = "C:\\Users\\TOMQI\\Desktop";
+
 
     @Override
     public void start(Stage stage) {
 
-        MyDriverPane myDriverPane = MyDriverPane.createMyDriverPane(curPath);
+        MyDriverPane myDriverPane = MyDriverPane.createMyDriverPane(RightClickMenu.curPath,RightClickMenu.curPath);
 
         RecWindows recWindowsPane = new RecWindows(myDriverPane, 900.0,
                 600.0, 12.0, stage);
@@ -29,6 +29,8 @@ public class FileManagementApp extends Application {
         stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));
         stage.show();
     }
+
+
 
 
 

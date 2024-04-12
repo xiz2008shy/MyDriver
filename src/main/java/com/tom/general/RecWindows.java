@@ -50,8 +50,6 @@ public class RecWindows extends AnchorPane {
 
     private Consumer<RecWindows> whenActive = null;
 
-    private int activeIndex = 0;
-
     private BaseMenu baseMenu;
 
     private Node activeNode;
@@ -81,7 +79,7 @@ public class RecWindows extends AnchorPane {
         this.setPrefSize(prefWidth, prefHeight);
         this.setClip(rectangle);
         secPane.getChildren().add(showBox);
-        showBox.getChildren().add(topBar.getTopBar());
+        showBox.getChildren().add(topBar);
         this.getChildren().add(secPane);
         AnchorPaneUtil.setNode(secPane,0.5,0.5,10.0,0.5);
     }
@@ -109,8 +107,8 @@ public class RecWindows extends AnchorPane {
         // 添加窗体拉伸效果
         DrawUtil.addDrawFunc(stage, this);
         DragListener dragListener = new DragListener(stage);
-        topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_PRESSED,dragListener);
-        topBar.getTopBar().addEventHandler(MouseEvent.MOUSE_DRAGGED,dragListener);
+        topBar.addEventHandler(MouseEvent.MOUSE_PRESSED,dragListener);
+        topBar.addEventHandler(MouseEvent.MOUSE_DRAGGED,dragListener);
         scene.getStylesheets().add(this.getClass().getResource("/css/rec_windows.css").toExternalForm());
         this.getStyleClass().add("my-windows");
     }
@@ -185,16 +183,19 @@ public class RecWindows extends AnchorPane {
 
     public void setActiveNode(int activeIndex){
         if (activeIndex < tabNodes.size()){
-            this.activeIndex = activeIndex;
-            ObservableList<Node> children = this.showBox.getChildren();
-            if (children.size() > 1){
-                children.remove(1);
-            }
-            this.activeNode = tabNodes.get(activeIndex);
-            children.add(activeNode);
-            // 替换完内部节点后，执行whenActive方法
-            if (whenActive != null){
-                whenActive.accept(this);
+            Node node = tabNodes.get(activeIndex);
+            this.topBar.setActiveIndex(activeIndex);
+            if (!node.equals(activeNode)) {
+                ObservableList<Node> children = this.showBox.getChildren();
+                if (children.size() > 1 ){
+                    children.remove(1);
+                }
+                this.activeNode = node;
+                children.add(activeNode);
+                // 替换完内部节点后，执行whenActive方法
+                if (whenActive != null){
+                    whenActive.accept(this);
+                }
             }
         }
     }
@@ -227,9 +228,6 @@ public class RecWindows extends AnchorPane {
         return showBox;
     }
 
-    public int getActiveIndex() {
-        return activeIndex;
-    }
 
     public BaseMenu getBaseMenu() {
         return baseMenu;
@@ -241,5 +239,9 @@ public class RecWindows extends AnchorPane {
 
     public Node getActiveNode() {
         return activeNode;
+    }
+
+    public TopBar getTopBar() {
+        return topBar;
     }
 }

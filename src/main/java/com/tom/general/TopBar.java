@@ -12,10 +12,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-public class TopBar<T> {
+public class TopBar<T> extends AnchorPane{
 
-
-    private final AnchorPane topBar = new AnchorPane();
     private final TabManager tabManager;
 
     private HBox closeBox;
@@ -24,10 +22,13 @@ public class TopBar<T> {
 
     private HBox minimizeBox;
 
+    private Pane activeTab = null;
+    private int activeIndex = 0;
+
 
     /**
-     * <AnchorPane>
-     *     <HBox> * tabs @see com.tom.general.TabManager#doCreateTab </HBox>
+     * <TopBar>
+     *     <TabManager> * tabs @see com.tom.general.TabManager#doCreateTab </TabManager>
      *     <HBox> -rightIcons
      *         <HBox> -gear
      *             <ImageView></ImageView>
@@ -37,12 +38,12 @@ public class TopBar<T> {
      *         </HBox>
      *         ...
      *     </HBox>
-     * </AnchorPane>
+     * </TopBar>
      * @param recWindows
      * @param tabWatcher
      */
     public TopBar(RecWindows recWindows, TabWatcher<T> tabWatcher) {
-        this.tabManager = new TabManager(recWindows);
+        this.tabManager = new TabManager(recWindows,this);
         if (tabWatcher != null) {
             tabManager.createTab(tabWatcher,true,true);
         }
@@ -51,7 +52,7 @@ public class TopBar<T> {
 
 
     public TopBar(RecWindows recWindows, Node node ,TabWatcher<T> tabWatcher) {
-        this.tabManager = new TabManager(recWindows);
+        this.tabManager = new TabManager(recWindows,this);
         if (tabWatcher != null) {
             tabManager.createTab(node,tabWatcher,true,true);
         }
@@ -60,12 +61,12 @@ public class TopBar<T> {
 
 
     private void initTopBar(RecWindows recWindows) {
-        topBar.setPrefHeight(25);
-        topBar.setStyle("-fx-background-color: rgb(216, 218, 219)");
+        this.setPrefHeight(25);
+        this.setStyle("-fx-background-color: rgb(216, 218, 219)");
         HBox rightIcons = createRightPart(recWindows);
         AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
-        topBar.getChildren().addAll(tabManager.getTabs(),rightIcons);
-        AnchorPaneUtil.setNode(tabManager.getTabs(),7.0,160.0,0.0, 0.0);
+        this.getChildren().addAll(tabManager,rightIcons);
+        AnchorPaneUtil.setNode(tabManager,7.0,160.0,0.0, 0.0);
     }
 
 
@@ -140,9 +141,6 @@ public class TopBar<T> {
         };
     }
 
-    public AnchorPane getTopBar() {
-        return topBar;
-    }
 
     public HBox getCloseBox() {
         return closeBox;
@@ -154,5 +152,21 @@ public class TopBar<T> {
 
     public TabManager getTabManager() {
         return tabManager;
+    }
+
+    public Pane getActiveTab() {
+        return activeTab;
+    }
+
+    public int getActiveIndex() {
+        return activeIndex;
+    }
+
+    public void setActiveTab(Pane activeTab) {
+        this.activeTab = activeTab;
+    }
+
+    public void setActiveIndex(int activeIndex) {
+        this.activeIndex = activeIndex;
     }
 }

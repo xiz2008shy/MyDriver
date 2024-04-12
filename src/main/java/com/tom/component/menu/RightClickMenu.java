@@ -21,6 +21,9 @@ import java.util.List;
 
 public class RightClickMenu {
 
+    public static final String curPath = "C:\\Users\\TOMQI\\Desktop";
+
+
     /**
      * <StackPane> - secPane (recWindows)
      *     <HBox> - realPane(this.realPane)
@@ -57,8 +60,8 @@ public class RightClickMenu {
             return curPath == null;
         });
         MyMenuContext menu0 = new MyMenuContext(new Label("新标签页中打开"), baseMenu);
-        menu0.whenActiveByMouse( e -> {
-            MyDriverPane myDriverPane2 = MyDriverPane.createMyDriverPane(DeliverUtils.getCurPath().getAbsolutePath());
+        menu0.whenActiveByMouse( _ -> {
+            MyDriverPane myDriverPane2 = MyDriverPane.createMyDriverPane(DeliverUtils.getCurPath().getAbsolutePath(), curPath);
             recWindowsPane.createNewTab(myDriverPane2,true);
         });
         menu0.setDisabledPredicate(_ -> {
@@ -113,12 +116,12 @@ public class RightClickMenu {
                 Node intersectedNode = e.getPickResult().getIntersectedNode();
                 String id = intersectedNode.getId();
                 File file = null;
-                if (id != null || (id = intersectedNode.getParent().getId()) != null) {
+                if (id != null || (intersectedNode.getParent() != null && (id = intersectedNode.getParent().getId()) != null)) {
                     int index = id.indexOf("_");
                     if (index > -1){
                         id = id.substring(0,index);
                     }
-                    file = DeliverUtils.getPathIndex(windows.getActiveIndex()).get(id);
+                    file = DeliverUtils.getPathIndex(windows.getTopBar().getActiveIndex()).get(id);
                     if (file != null ){
                         DeliverUtils.setCurPath(file);
                     }
@@ -139,6 +142,5 @@ public class RightClickMenu {
             });
             myMap.put("isAddMenuHandler",true);
         }
-
     }
 }

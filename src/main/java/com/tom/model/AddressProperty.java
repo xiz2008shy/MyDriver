@@ -15,8 +15,8 @@ public class AddressProperty {
 
     private ObjectProperty<File> file = new SimpleObjectProperty<>();
 
-    public AddressProperty(String curPath) {
-        this.basePath = curPath;
+    public AddressProperty(String curPath,String basePath) {
+        this.basePath = basePath;
         this.curPath = new SimpleStringProperty(curPath);
         this.file.set(new File(curPath));
     }

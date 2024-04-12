@@ -43,8 +43,8 @@ public class MyDriverPane extends BorderPane implements TabWatcher<File> {
     }
 
 
-    public static MyDriverPane createMyDriverPane(String curPath) {
-        AddressProperty addressProperty = new AddressProperty(curPath);
+    public static MyDriverPane createMyDriverPane(String curPath,String basePath) {
+        AddressProperty addressProperty = new AddressProperty(curPath,basePath);
         // 最内层的流布局
         MainFlowContentPart mainFlowContentPart = new MainFlowContentPart(addressProperty);
 
