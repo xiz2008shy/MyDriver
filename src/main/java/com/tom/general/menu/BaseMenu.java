@@ -169,13 +169,13 @@ public class BaseMenu extends StackPane{
         this.setMenuBg(pane.getShowBox(),event.getSceneX(),event.getSceneY());
         for (Node child : this.menuContent.getChildren()) {
             MyMenuContext menuContext = (MyMenuContext) child;
+            menuContext.getStyleClass().remove("my_disabled");
             if (menuContext.getVisiblePredicate().test(event)){
                 menuContext.setVisible(true);
                 if (menuContext.getDisabledPredicate().test(event)) {
                     menuContext.getStyleClass().add("my_disabled");
                     menuContext.setDisable(true);
                 }else {
-                    menuContext.getStyleClass().remove("my_disabled");
                     menuContext.setDisable(false);
                 }
             }else {

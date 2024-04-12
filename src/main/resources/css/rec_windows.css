@@ -41,7 +41,7 @@
 }
 
 .my_menu_context:hover {
-    -fx-background-color: rgba(243, 243, 243,0.8);
+    -fx-background-color: rgba(231, 231, 231, 0.8);
 }
 
 .my_icon {
