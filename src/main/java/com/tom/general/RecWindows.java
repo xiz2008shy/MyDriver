@@ -1,7 +1,7 @@
 package com.tom.general;
 
-import com.tom.listener.DragListener;
 import com.tom.general.menu.BaseMenu;
+import com.tom.handler.DragHandler;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DrawUtil;
 import com.tom.utils.ImageUtils;
@@ -53,6 +53,12 @@ public class RecWindows extends AnchorPane {
     private BaseMenu baseMenu;
 
     private Node activeNode;
+
+    /**
+     * 最大化/恢复时临时保存位置数据
+     */
+    private AtomicReference<Double> nw = new AtomicReference<>();
+    private AtomicReference<Double> nh = new AtomicReference<>();
 
     public <N extends Node & TabWatcher<W>,W>RecWindows( N node, double prefWidth, double prefHeight, double radius ,Stage stage) {
         super();
@@ -106,9 +112,10 @@ public class RecWindows extends AnchorPane {
         stage.setHeight(rectangle.getHeight());
         // 添加窗体拉伸效果
         DrawUtil.addDrawFunc(stage, this);
-        DragListener dragListener = new DragListener(stage);
+        DragHandler dragListener = new DragHandler(this);
         topBar.addEventHandler(MouseEvent.MOUSE_PRESSED,dragListener);
         topBar.addEventHandler(MouseEvent.MOUSE_DRAGGED,dragListener);
+        topBar.addEventHandler(MouseEvent.MOUSE_CLICKED,dragListener::clickHandle);
         scene.getStylesheets().add(this.getClass().getResource("/css/rec_windows.css").toExternalForm());
         this.getStyleClass().add("my-windows");
     }
@@ -126,8 +133,6 @@ public class RecWindows extends AnchorPane {
      * @return
      */
     public EventHandler<MouseEvent> maximizedHandler(Pane pane) {
-        AtomicReference<Double> nw = new AtomicReference<>(rectangle.getWidth());
-        AtomicReference<Double> nh = new AtomicReference<>(rectangle.getHeight());
         System.out.println(STR."nw-\{nw.get()},nh-\{nh.get()}");
         return e -> {
             System.out.println("maximizedHandler");
@@ -135,26 +140,30 @@ public class RecWindows extends AnchorPane {
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode())
                 || pane.getChildren().get(0).equals(e.getPickResult().getIntersectedNode()))
             ) {
-                if (!stage.isMaximized()) {
-                    Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
-                    nw.set(rectangle.getWidth());
-                    nh.set(rectangle.getHeight());
-                    this.myResize(visualBounds.getWidth(),visualBounds.getHeight());
-                    stage.setMaximized(true);
-                    ImageView restore = ImageUtils.getImageView("/img/restore.png",16,14);
-                    ObservableList<Node> children = topBar.getMaximizeBox().getChildren();
-                    children.clear();
-                    children.add(restore);
-                }else {
-                    this.myResize(nw.get(),nh.get());
-                    stage.setMaximized(false);
-                    ImageView restore = ImageUtils.getImageView("/img/maximize.png",16,14);
-                    ObservableList<Node> children = topBar.getMaximizeBox().getChildren();
-                    children.clear();
-                    children.add(restore);
-                }
+                RecWindows.maximizedOrRestore(this);
             }
         };
+    }
+
+    public static void maximizedOrRestore(RecWindows recWindows) {
+        if (!recWindows.stage.isMaximized()) {
+            Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
+            recWindows.nw.set(recWindows.rectangle.getWidth());
+            recWindows.nh.set(recWindows.rectangle.getHeight());
+            recWindows.myResize(visualBounds.getWidth(),visualBounds.getHeight());
+            recWindows.stage.setMaximized(true);
+            ImageView restore = ImageUtils.getImageView("/img/restore.png",16,14);
+            ObservableList<Node> children = recWindows.topBar.getMaximizeBox().getChildren();
+            children.clear();
+            children.add(restore);
+        }else {
+            recWindows.myResize(recWindows.nw.get(), recWindows.nh.get());
+            recWindows.stage.setMaximized(false);
+            ImageView restore = ImageUtils.getImageView("/img/maximize.png",16,14);
+            ObservableList<Node> children = recWindows.topBar.getMaximizeBox().getChildren();
+            children.clear();
+            children.add(restore);
+        }
     }
 
 
@@ -243,5 +252,9 @@ public class RecWindows extends AnchorPane {
 
     public TopBar getTopBar() {
         return topBar;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

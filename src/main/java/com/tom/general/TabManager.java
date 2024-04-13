@@ -3,6 +3,7 @@ package com.tom.general;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DeliverUtils;
 import com.tom.utils.ImageUtils;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.geometry.Insets;
@@ -111,30 +112,41 @@ public class TabManager extends HBox {
         }
 
         ap.addEventHandler(MouseEvent.MOUSE_DRAGGED, Event::consume);
-        ap.addEventHandler(MouseEvent.MOUSE_CLICKED,_ -> {
-            if (!ap.equals(this.recWindows.getTopBar().getActiveTab())) {
-                switchTab(ap);
-                recWindows.setActiveNode(this.getChildren().indexOf(ap));
+        ap.addEventHandler(MouseEvent.MOUSE_CLICKED,e -> {
+            e.consume();
+            if (e.getButton().equals(MouseButton.PRIMARY)){
+                if (!ap.equals(this.recWindows.getTopBar().getActiveTab())) {
+                    switchTab(ap);
+                    recWindows.setActiveNode(this.getChildren().indexOf(ap));
+                }else if (e.getClickCount() == 2){
+                    closeTab(ap);
+                }
             }
         });
         close.addEventHandler(MouseEvent.MOUSE_CLICKED,e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)){
                 e.consume();
-                ObservableList<Node> list = this.getChildren();
-                int nodeIndex = list.indexOf(ap);
-                this.recWindows.removeNodeFromTabs(nodeIndex);
-                list.remove(nodeIndex);
-                DeliverUtils.removePathIndex(nodeIndex);
-                if (nodeIndex > 0){
-                    int i = nodeIndex - 1;
-                    closeAndActiveBesideTab(list, i);
-                }else {
-                    closeAndActiveBesideTab(list, nodeIndex);
-                }
+                closeTab(ap);
             }
         });
 
         return size - 1;
+    }
+
+    private void closeTab(AnchorPane ap) {
+        ObservableList<Node> list = this.getChildren();
+        int nodeIndex = list.indexOf(ap);
+        this.recWindows.removeNodeFromTabs(nodeIndex);
+        list.remove(nodeIndex);
+        DeliverUtils.removePathIndex(nodeIndex);
+        if (nodeIndex > 0){
+            int i = nodeIndex - 1;
+            closeAndActiveBesideTab(list, i);
+        }else if(list.size() > 0){
+            closeAndActiveBesideTab(list, nodeIndex);
+        }else {
+            Platform.exit();
+        }
     }
 
     private void closeAndActiveBesideTab(ObservableList<Node> list, int i) {
