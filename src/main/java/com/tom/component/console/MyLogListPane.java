@@ -1,23 +1,24 @@
 package com.tom.component.console;
 
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
 
 
-public class MyLogListPane extends ScrollPane {
+public class MyLogListPane {
 
     private static final ListView<String> listView = new ListView<>();
+
+    static {
+        listView.setPrefHeight(100);
+        listView.setStyle("-fx-background-insets: 0;-fx-background-color: white;");
+    }
+
+    public static void resize(double width,double height){
+        listView.setPrefWidth(width);
+        listView.setPrefHeight(height);
+    }
 
     public static ListView<String> getListView(){
         return listView;
     }
 
-    public MyLogListPane() {
-        super();
-        this.setContent(listView);
-        this.setFitToWidth(true);
-        this.setPrefHeight(100);
-        listView.setStyle("-fx-background-insets: 0;-fx-background-color: white;");
-        this.setStyle("-fx-padding: 0;-fx-background-insets: 0;-fx-background-color: white;");
-    }
 }

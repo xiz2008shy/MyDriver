@@ -17,14 +17,14 @@ public class MyDriverPane extends BorderPane implements TabWatcher<File> {
 
     private AddressTab addressTab;
 
-    public MyDriverPane(AddressTab addressTab,MainScrollPane mainScrollPane,MyLogListPane myLogListPane) {
+    public MyDriverPane(AddressTab addressTab,MainScrollPane mainScrollPane) {
         this.mainScrollPane = mainScrollPane;
         this.addressTab = addressTab;
         this.setTop(addressTab.getAddressPane());
         this.setCenter(mainScrollPane);
-        this.setBottom(myLogListPane);
+        this.setBottom(MyLogListPane.getListView());
         BorderPane.setMargin(mainScrollPane,new Insets(0,5,0,20));
-        BorderPane.setMargin(myLogListPane,new Insets(0,5,0,5));
+        BorderPane.setMargin(MyLogListPane.getListView(),new Insets(0,5,0,5));
     }
 
     @Override
@@ -61,6 +61,6 @@ public class MyDriverPane extends BorderPane implements TabWatcher<File> {
         MyLogListPane myLogListPane = new MyLogListPane();
 
         // 最外层的方位布局组件
-        return new MyDriverPane(addressTab,mainScrollPane,myLogListPane);
+        return new MyDriverPane(addressTab,mainScrollPane);
     }
 }
