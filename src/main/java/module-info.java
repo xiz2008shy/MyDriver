@@ -5,5 +5,9 @@ module my_driver {
     requires java.desktop;
     requires cn.hutool.core;
     requires javafx.fxml;
+    requires lombok;
+    requires com.fasterxml.jackson.databind;
     exports com.tom;
+    exports com.tom.component.setting;
+
 }

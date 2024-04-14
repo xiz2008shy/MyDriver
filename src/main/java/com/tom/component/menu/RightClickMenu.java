@@ -21,8 +21,6 @@ import java.util.List;
 
 public class RightClickMenu {
 
-    public static final String curPath = "C:\\Users\\TOMQI\\Desktop";
-
 
     /**
      * <StackPane> - secPane (recWindows)
@@ -61,7 +59,7 @@ public class RightClickMenu {
         });
         MyMenuContext menu0 = new MyMenuContext(new Label("新标签页中打开"), baseMenu);
         menu0.whenActiveByMouse( _ -> {
-            MyDriverPane myDriverPane2 = MyDriverPane.createMyDriverPane(DeliverUtils.getCurPath().getAbsolutePath(), curPath);
+            MyDriverPane myDriverPane2 = MyDriverPane.createMyDriverPane(DeliverUtils.getCurPath().getAbsolutePath());
             recWindowsPane.createNewTab(myDriverPane2,true);
         });
         menu0.setDisabledPredicate(_ -> {

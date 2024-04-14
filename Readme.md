@@ -42,7 +42,29 @@ https://www.cnblogs.com/zeromi/p/javaFX_package.html
 jpackage --type app-image -n MyDriver -m "my_driver/com.tom.JavafxMain"  --icon ".\src\main\resources\favicon.ico" --java-options --enable-preview --runtime-image ".\target\build-link\" --dest ".\target\build-package" 
 ```
 
-打包完成后就能在./target/build-package/MyDriver 目录下看到MyDriver.exe了
+上面这个命令也可以通过maven命令执行，因为项目里配了exec-maven-plugin插件，idea的话可以在maven，Run Configurations里找到这个快捷命令直接执行
+```shell
+mvn exec:exec@image -f pom.xml
+```
+
+综合一下，总体的打包命令可以分成下面几种方式
+方式一
+```shell
+mvn clean
+mvn javafx:jlink
+mvn exec:exec@image -f pom.xml
+```
+打包输出./target/build-package/MyDriver
+
+方式二
+```shell
+mvn clean
+mvn package
+mvn exec:exec@imageFromPackage -f pom.xml
+```
+打包输出./target/mvnPackage/MyDriver
+
+目录下看到MyDriver.exe了，输出路径也可以在pom文件中进行调整
 
 jpackage打包部分参考了 
 https://github.com/JavaFX-Starter/JavaFX-Package-Sample

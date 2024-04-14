@@ -65,7 +65,7 @@ public class RecWindows extends AnchorPane {
         this.rectangle = new Rectangle(prefWidth,prefHeight);
         this.topBar = new TopBar<>(this, node);
         this.stage = stage;
-        publicCreate(node, prefWidth, prefHeight, radius);
+        publicCreate( prefWidth, prefHeight, radius);
     }
 
 
@@ -74,11 +74,27 @@ public class RecWindows extends AnchorPane {
         this.rectangle = new Rectangle(prefWidth,prefHeight);
         this.topBar = new TopBar<>(this, tabWatcher);
         this.stage = stage;
-        publicCreate(node, prefWidth, prefHeight, radius);
+        publicCreate( prefWidth, prefHeight, radius);
     }
 
+    /**
+     * <scene>
+     *     <AnchorPane> - this
+     *         <StackPane> - secPane
+     *             <VBox> - showBox
+     *                 <TopBar>...</TopBar>
+     *                 <Node>...</Node> - activeNode
+     *             </VBox>
+     *             <BaseMenu>...</BaseMenu> - rightClickMenu
+     *         </StackPane>
+     *     </AnchorPane>
+     * </scene>
+     * @param prefWidth
+     * @param prefHeight
+     * @param radius
+     */
 
-    private void publicCreate(Node node, double prefWidth, double prefHeight, double radius) {
+    private void publicCreate( double prefWidth, double prefHeight, double radius) {
         rectangle.setArcWidth(radius);
         rectangle.setArcHeight(radius);
         this.setShape(rectangle);
