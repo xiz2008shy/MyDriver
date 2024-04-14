@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<AnchorPane fx:id="myAnchorPane" xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.tom.controller.MyTabController"
+            prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: red" >
+    <children>
+        <ImageView fx:id="iconImage"
+                   AnchorPane.topAnchor="100" AnchorPane.bottomAnchor="200" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="500"/>
+        <HBox style="-fx-background-color: green">
+            <Label fx:id="title" alignment="CENTER"></Label>
+        </HBox>
+        <HBox AnchorPane.topAnchor="200" AnchorPane.bottomAnchor="100" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="500" style="-fx-background-color: blue">
+            <ImageView fx:id="closeImage"
+                       fitWidth="100" fitHeight="50"/>
+        </HBox>
+    </children>
+
+</AnchorPane>

@@ -9,5 +9,7 @@ module my_driver {
     requires com.fasterxml.jackson.databind;
     exports com.tom;
     exports com.tom.component.setting;
+    exports com.tom.controller;
+    opens com.tom.controller;
 
 }
