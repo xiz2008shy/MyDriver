@@ -3,9 +3,14 @@ package com.tom.controller;
 import com.tom.component.setting.MySetting;
 import com.tom.handler.address.IconBakChangeHandler;
 import com.tom.utils.ImageUtils;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -17,14 +22,35 @@ import javafx.scene.text.Font;
 
 import java.io.File;
 
-public class MyDriverPaneController {
+public class AddressPaneController {
 
     @FXML
-    public Region backSvg;
+    private Region backSvg;
 
     @FXML
-    public HBox urlBox;
+    private HBox urlBox;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ImageView searchIcon;
 
+    private ObjectProperty<File> curFile = new SimpleObjectProperty<>();
+
+    private StringProperty tips = new SimpleStringProperty();
+
+    public String getTips() {
+        return tips.get();
+    }
+
+    public StringProperty tipsProperty() {
+        return tips;
+    }
+
+    public AddressPaneController() {
+        // 初始化你的File对象
+        String basePath = MySetting.getConfig().getBasePath();
+        setCurFile(new File(basePath));
+    }
 
     public void initialize() {
         SVGPath svg = new SVGPath();
@@ -32,18 +58,22 @@ public class MyDriverPaneController {
                 "M588.8 262.4c6.4-6.4 32-6.4 44.8 0 6.4 12.8 6.4 38.4 0 44.8L428.8 512l204.8 204.8c12.8 12.8 12.8 32 0 44.8-12.8 12.8-32 12.8-44.8 0L364.8 537.6c-12.8-12.8-12.8-32 0-44.8l224-230.4z");
 
         this.backSvg.setShape(svg);
-        freshAddrTab(null);
-        //HBox.setMargin(backSvg,new Insets(10,0,10,10));
-        HBox.setMargin(urlBox,new Insets(0,0,0,15));
+        freshAddrTab(curFile.get());
+        this.searchIcon.setImage(ImageUtils.getImageFromResources("/img/searchIcon.png",32,32));
+        this.curFile.addListener((_,_,nf) -> {
+            searchField.setPromptText(STR."在 \{nf.getName()} 中搜索");
+        });
+        this.searchField.textProperty().addListener((_,_,t)->{
+            System.out.println(t);
+            searchField.setPromptText(t);
+            System.out.println(t);
+        });
     }
 
-    public void freshAddrTab(File curAddr) {
+    public void freshAddrTab(File file) {
         urlBox.getChildren().clear();
         String basePath = MySetting.getConfig().getBasePath();
-        if (curAddr == null){
-            curAddr = new File(basePath);
-        }
-        addDirNodeExcludeBaseDir(urlBox, curAddr, basePath);
+        addDirNodeExcludeBaseDir(urlBox, file, basePath);
     }
 
 
@@ -81,5 +111,10 @@ public class MyDriverPaneController {
         dirLabel.addEventHandler(MouseEvent.MOUSE_EXITED,iconBakChangeHandler);
         //dirLabel.addEventHandler(MouseEvent.MOUSE_CLICKED,new AddressJumpHandler(file,this));
         return true;
+    }
+
+    public void setCurFile(File curFile) {
+        this.curFile.set(curFile);
+        this.tips.set(STR."在 \{curFile.getName()} 中搜索");
     }
 }

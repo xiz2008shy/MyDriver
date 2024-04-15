@@ -1,3 +1,11 @@
+.my_addr_back {
+    -fx-background-color: #777777;
+}
+
+.my_addr_back:hover {
+    -fx-background-color: #1c94cf;
+}
+
 .my-tooltip {
     -fx-background-color: white;
     -fx-background-radius: 2.0;
