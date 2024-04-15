@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.tom.controller.MyDriverPaneController" style="-fx-background-color: rgb(244, 244, 244)">
+
+
+    <HBox AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="0"
+          style="-fx-background-color: rgb(0,197,248)" alignment="CENTER">
+        <Region fx:id="backSvg" HBox.margin="new Insets(10,0,10,10)" prefWidth="25" prefHeight="25" style="-fx-background-color: #777777;"/>
+    </HBox>
+    <HBox fx:id="urlBox" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="250" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="45" alignment="CENTER_LEFT"/>
+    <HBox></HBox>
+
+</AnchorPane>
