@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<ScrollPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.tom.controller.FileContentPaneController"
+            fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER"
+            style="-fx-padding: 0;-fx-background-insets: 0;-fx-background-color: white;">
+
+    <FlowPane fx:id="flowPaneContent" style="-fx-background-color: white"/>
+
+</ScrollPane>

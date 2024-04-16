@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<fx:root xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         type="AnchorPane"
+         prefHeight="90.0" prefWidth="90.0" style="-fx-padding: 5,10,5,10;" styleClass="my_icon"
+         FlowPane.margin="$h">
+    <fx:define>
+        <Insets fx:id="h" topRightBottomLeft="10"/>
+    </fx:define>
+
+    <VBox fx:id="imageBox" prefHeight="60" alignment="CENTER" AnchorPane.topAnchor="5.0"
+          AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" >
+        <ImageView fx:id="imageView" fitWidth="48" fitHeight="48"/>
+    </VBox>
+
+    <HBox AnchorPane.topAnchor="65.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <Label fx:id="fileNameLabel" maxWidth="90" prefWidth="90" style="-fx-text-overrun: ellipsis" alignment="CENTER"/>
+    </HBox>
+</fx:root>

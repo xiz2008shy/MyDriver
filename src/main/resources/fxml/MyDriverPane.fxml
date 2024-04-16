@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<fx:root xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="@../css/rec_windows.css"
+         type="AnchorPane" style="-fx-background-color: white">
+
+
+    <fx:include source="AddressPane.fxml" fx:id="addr"  AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0"/>
+
+
+    <fx:include source="FileContentPane.fxml" fx:id="fileContent" AnchorPane.topAnchor="45"
+        AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="5" AnchorPane.bottomAnchor="0"/>
+
+</fx:root>

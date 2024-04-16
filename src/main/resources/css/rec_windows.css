@@ -6,6 +6,10 @@
     -fx-background-color: #1c94cf;
 }
 
+.my_addr_url:hover {
+    -fx-background-color: #dce9f1;
+}
+
 .my-tooltip {
     -fx-background-color: white;
     -fx-background-radius: 2.0;

@@ -1,13 +1,12 @@
 package com.tom.controller;
 
 import com.tom.component.setting.MySetting;
-import com.tom.handler.address.IconBakChangeHandler;
+import com.tom.handler.fxml.AddressJumpHandler;
+import com.tom.model.ModelData;
 import com.tom.utils.ImageUtils;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -19,10 +18,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class AddressPaneController {
+public class AddressPaneController implements Initializable {
 
     @FXML
     private Region backSvg;
@@ -34,43 +37,39 @@ public class AddressPaneController {
     @FXML
     private ImageView searchIcon;
 
-    private ObjectProperty<File> curFile = new SimpleObjectProperty<>();
+    @Getter
+    @Setter
+    private ModelData modelData;
 
-    private StringProperty tips = new SimpleStringProperty();
 
-    public String getTips() {
-        return tips.get();
-    }
-
-    public StringProperty tipsProperty() {
-        return tips;
-    }
-
-    public AddressPaneController() {
-        // 初始化你的File对象
-        String basePath = MySetting.getConfig().getBasePath();
-        setCurFile(new File(basePath));
-    }
-
-    public void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        System.out.println("AddressPaneController initialize");
         SVGPath svg = new SVGPath();
         svg.setContent("M512 0c281.6 0 512 230.4 512 512s-230.4 512-512 512-512-230.4-512-512 230.4-512 512-512z m0 960c249.6 0 448-198.4 448-448s-198.4-448-448-448-448 198.4-448 448 198.4 448 448 448z " +
                 "M588.8 262.4c6.4-6.4 32-6.4 44.8 0 6.4 12.8 6.4 38.4 0 44.8L428.8 512l204.8 204.8c12.8 12.8 12.8 32 0 44.8-12.8 12.8-32 12.8-44.8 0L364.8 537.6c-12.8-12.8-12.8-32 0-44.8l224-230.4z");
 
         this.backSvg.setShape(svg);
-        freshAddrTab(curFile.get());
         this.searchIcon.setImage(ImageUtils.getImageFromResources("/img/searchIcon.png",32,32));
-        this.curFile.addListener((_,_,nf) -> {
-            searchField.setPromptText(STR."在 \{nf.getName()} 中搜索");
-        });
-        this.searchField.textProperty().addListener((_,_,t)->{
-            System.out.println(t);
-            searchField.setPromptText(t);
-            System.out.println(t);
-        });
+
     }
 
-    public void freshAddrTab(File file) {
+    /**
+     * 当modelData的curPath发生变化时，变更地址栏信息
+     */
+    public void doBind(){
+        this.searchField.promptTextProperty().bind(modelData.getCurPath());
+        freshAddrTab(modelData.getCurDir().get());
+        modelData.getCurDir().addListener(this::freshAddWhenListener);
+    }
+
+
+    private void freshAddWhenListener(ObservableValue<?> observable, File oldValue, File newValue){
+        freshAddrTab(newValue);
+    }
+
+
+    private void freshAddrTab(File file) {
         urlBox.getChildren().clear();
         String basePath = MySetting.getConfig().getBasePath();
         addDirNodeExcludeBaseDir(urlBox, file, basePath);
@@ -105,16 +104,8 @@ public class AddressPaneController {
         Tooltip tooltip = new Tooltip(file.getName());
         tooltip.getStyleClass().add("my-tooltip");
         dirLabel.setTooltip(tooltip);
-
-        IconBakChangeHandler<Label> iconBakChangeHandler = new IconBakChangeHandler<>(file);
-        dirLabel.addEventHandler(MouseEvent.MOUSE_ENTERED,iconBakChangeHandler);
-        dirLabel.addEventHandler(MouseEvent.MOUSE_EXITED,iconBakChangeHandler);
-        //dirLabel.addEventHandler(MouseEvent.MOUSE_CLICKED,new AddressJumpHandler(file,this));
+        dirLabel.getStyleClass().add("my_addr_url");
+        dirLabel.addEventHandler(MouseEvent.MOUSE_CLICKED,new AddressJumpHandler(file,modelData));
         return true;
-    }
-
-    public void setCurFile(File curFile) {
-        this.curFile.set(curFile);
-        this.tips.set(STR."在 \{curFile.getName()} 中搜索");
     }
 }

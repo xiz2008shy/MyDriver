@@ -67,6 +67,18 @@ public class ImageUtils {
         return imageView;
     }
 
+    public static Image getBigIconImage (FileSystemView fileSystemView,File file) {
+        SoftReference<Image> sr = imageViewCache.get(file.getName());
+        Image image = sr != null ? sr.get() : null;
+        if (image == null) {
+            ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file, 48, 48);
+            BufferedImage bufferedImage = toBufferedImage(iconImage,true);
+            image = SwingFXUtils.toFXImage(bufferedImage,null);
+            imageViewCache.put(file.getName(),new SoftReference<>(image));
+        }
+        return image;
+    }
+
 
 
     /**
