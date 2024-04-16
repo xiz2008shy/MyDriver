@@ -1,7 +1,10 @@
 package com.tom;
 
+import com.tom.component.menu.RightClickMenu;
 import com.tom.component.setting.MySetting;
 import com.tom.controller.MyDriverPaneController;
+import com.tom.general.RecWindows;
+import com.tom.utils.ImageUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -15,13 +18,16 @@ public class FXMLVersionApp extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage stage) throws Exception {
         MySetting.initSetting(this.getParameters());
         File baseFile = new File(MySetting.getConfig().getBasePath());
-        MyDriverPaneController controller = new MyDriverPaneController(baseFile);
+        MyDriverPaneController myDriverPane = new MyDriverPaneController(baseFile);
 
-        Scene scene = new Scene(controller,1000,600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        RecWindows recWindowsPane = new RecWindows(myDriverPane, 900.0,
+                600.0, 12.0, stage,myDriverPane.getModelData());
+        recWindowsPane.setWhenActive(RightClickMenu::addMenu);
+        recWindowsPane.initStage();
+        stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));
+        stage.show();
     }
 }

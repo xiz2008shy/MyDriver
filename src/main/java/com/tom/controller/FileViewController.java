@@ -1,5 +1,6 @@
 package com.tom.controller;
 
+import cn.hutool.core.lang.UUID;
 import com.tom.handler.fxml.DesktopIconClickHandler;
 import com.tom.model.ModelData;
 import com.tom.utils.ImageUtils;
@@ -10,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import javax.swing.filechooser.FileSystemView;
@@ -29,10 +31,16 @@ public class FileViewController extends AnchorPane implements Initializable {
     @FXML
     private Label fileNameLabel;
 
+    @FXML
+    private HBox fileNameBox;
+
     private final File file;
+
+    private ModelData modelData;
 
     public FileViewController(File file, ModelData modelData) {
         this.file = file;
+        this.modelData = modelData;
         this.addEventHandler(MouseEvent.MOUSE_CLICKED,new DesktopIconClickHandler(file,modelData));
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(this.getClass().getResource("/fxml/OriginFileView.fxml"));
@@ -54,5 +62,13 @@ public class FileViewController extends AnchorPane implements Initializable {
             imageView.setImage(ImageUtils.getBigIconImage(fileSystemView,file));
         }
         fileNameLabel.setText(file.getName());
+
+        String uuid = UUID.fastUUID().toString(true);
+        imageBox.setId(STR."\{uuid}_imgBox");
+        imageView.setId(STR."\{uuid}_imageView");
+        fileNameLabel.setId(STR."\{uuid}_fileNameLabel");
+        fileNameBox.setId(STR."\{uuid}_fileNameBox");
+        this.setId(uuid);
+        modelData.getCacheMap().put(uuid,file);
     }
 }

@@ -1,5 +1,6 @@
 package com.tom.general;
 
+import com.tom.model.ModelData;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
 import javafx.collections.ObservableList;
@@ -40,21 +41,11 @@ public class TopBar<T> extends AnchorPane{
      *     </HBox>
      * </TopBar>
      * @param recWindows
-     * @param tabWatcher
      */
-    public TopBar(RecWindows recWindows, TabWatcher<T> tabWatcher) {
+    public TopBar(RecWindows recWindows, Node node , ModelData modelData) {
         this.tabManager = new TabManager(recWindows,this);
-        if (tabWatcher != null) {
-            tabManager.createTab(tabWatcher,true,true);
-        }
-        initTopBar(recWindows);
-    }
-
-
-    public TopBar(RecWindows recWindows, Node node ,TabWatcher<T> tabWatcher) {
-        this.tabManager = new TabManager(recWindows,this);
-        if (tabWatcher != null) {
-            tabManager.createTab(node,tabWatcher,true,true);
+        if (modelData != null) {
+            tabManager.createTab(node,modelData,true,true);
         }
         initTopBar(recWindows);
     }

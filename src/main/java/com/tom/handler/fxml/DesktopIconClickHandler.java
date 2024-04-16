@@ -35,6 +35,7 @@ public class DesktopIconClickHandler implements EventHandler<MouseEvent> {
         }
         curOs.getStyleClass().add("my_icon_click");
         modelData.setSelectedFile(curOs);
+        modelData.setRealSelectedFile(file);
         if (event.getClickCount() == 2 && event.getButton().equals(MouseButton.PRIMARY)) {
             if (file.isDirectory()){
                 this.modelData.setFile(file);

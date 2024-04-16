@@ -58,13 +58,13 @@ public class AddressPaneController implements Initializable {
      * 当modelData的curPath发生变化时，变更地址栏信息
      */
     public void doBind(){
-        this.searchField.promptTextProperty().bind(modelData.getCurPath());
-        freshAddrTab(modelData.getCurDir().get());
-        modelData.getCurDir().addListener(this::freshAddWhenListener);
+        this.searchField.promptTextProperty().bind(modelData.getTipsProperty());
+        freshAddrTab(modelData.getCurDirProperty().get());
+        modelData.getCurDirProperty().addListener(this::freshListener);
     }
 
 
-    private void freshAddWhenListener(ObservableValue<?> observable, File oldValue, File newValue){
+    private void freshListener(ObservableValue<?> observable, File oldValue, File newValue){
         freshAddrTab(newValue);
     }
 

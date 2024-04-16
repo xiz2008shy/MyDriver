@@ -1,15 +1,7 @@
 package com.tom.handler.key;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
-import com.tom.component.center.MainFlowContentPart;
 import javafx.event.EventHandler;
-import javafx.scene.input.*;
-
-import java.io.*;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import javafx.scene.input.KeyEvent;
 
 /**
  * @author TOMQI
@@ -17,7 +9,11 @@ import java.util.stream.Collectors;
  * @Date 2024/4/2 22:00
  */
 public class CopyHandler implements EventHandler<KeyEvent> {
-    private final KeyCodeCombination codeCombination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY);
+    @Override
+    public void handle(KeyEvent event) {
+
+    }
+    /*private final KeyCodeCombination codeCombination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY);
 
     private MainFlowContentPart content;
 
@@ -65,5 +61,5 @@ public class CopyHandler implements EventHandler<KeyEvent> {
                 throw new RuntimeException(e);
             }
         }
-    }
+    }*/
 }

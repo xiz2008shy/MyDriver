@@ -1,5 +1,6 @@
 package com.tom.general;
 
+import com.tom.model.ModelData;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DeliverUtils;
 import com.tom.utils.ImageUtils;
@@ -37,20 +38,9 @@ public class TabManager extends HBox {
         this.topBar = topBar;
     }
 
-    public <T>void createTab(TabWatcher<T> tabWatcher, boolean isActive,boolean isFirst) {
-        if (tabWatcher instanceof Node){
-            int index = doCreateTab(tabWatcher, isActive);
-            recWindows.addNodeToWindows((Node)tabWatcher);
-            if (isActive && !isFirst) {
-                recWindows.setActiveNode(index);
-            }
-        }else {
-            throw new RuntimeException("TabManager.createTab is called by error,please check again!");
-        }
-    }
 
-    public <T>void createTab(Node node, TabWatcher<T> tabWatcher, boolean isActive,boolean isFirst) {
-        int index = doCreateTab(tabWatcher, isActive);
+    public <T>void createTab(Node node, ModelData modelData, boolean isActive,boolean isFirst) {
+        int index = doCreateTab(modelData, isActive);
         recWindows.addNodeToWindows(node);
         if (isActive && !isFirst) {
             recWindows.setActiveNode(index);
@@ -68,11 +58,11 @@ public class TabManager extends HBox {
      *         <ImageView></ImageView> -closeIcon
      *     </HBox>
      * </AnchorPane>
-     * @param tabWatcher
+     * @param modelData
      * @param isActive
      * @return
      */
-    private int doCreateTab(TabWatcher tabWatcher, boolean isActive) {
+    private int doCreateTab(ModelData modelData, boolean isActive) {
         AnchorPane ap = new AnchorPane();
         ap.getStyleClass().add("my_tabs");
         if (isActive){
@@ -84,11 +74,10 @@ public class TabManager extends HBox {
         ap.setPrefSize(260,35);
         ImageView imageView = ImageUtils.getImageView("/img/fileDir32.png", 19, 19);
         Label label = new Label();
-        String initTitle = tabWatcher.getInitTitle();
+        String initTitle = modelData.getCurDirProperty().get().getName();
         label.setText(initTitle);
-        tabWatcher.getWatcher().addListener((_, oldValue, newValue) -> {
-            String title = tabWatcher.refreshTitle(oldValue, newValue);
-            label.setText(title);
+        modelData.getCurDirProperty().addListener((_, old, newValue) -> {
+            label.setText(newValue.getName());
         });
 
         HBox textBox = new HBox(label);
@@ -138,7 +127,7 @@ public class TabManager extends HBox {
         int nodeIndex = list.indexOf(ap);
         this.recWindows.removeNodeFromTabs(nodeIndex);
         list.remove(nodeIndex);
-        DeliverUtils.removePathIndex(nodeIndex);
+        //DeliverUtils.removePathIndex(nodeIndex);
         if (nodeIndex > 0){
             int i = nodeIndex - 1;
             closeAndActiveBesideTab(list, i);

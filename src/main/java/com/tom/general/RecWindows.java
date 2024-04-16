@@ -2,6 +2,7 @@ package com.tom.general;
 
 import com.tom.general.menu.BaseMenu;
 import com.tom.handler.DragHandler;
+import com.tom.model.ModelData;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DrawUtil;
 import com.tom.utils.ImageUtils;
@@ -22,6 +23,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +35,17 @@ import java.util.function.Consumer;
 public class RecWindows extends AnchorPane {
 
     private final Rectangle rectangle;
+    @Getter
     private final TopBar topBar;
+    @Getter
     private final Stage stage;
 
     /**
      * 带顶栏和下面真实节点内容的面板
      */
+    @Getter
     private final VBox showBox = new VBox();
-
+    @Getter
     private final StackPane secPane = new StackPane();
 
     /**
@@ -50,8 +56,11 @@ public class RecWindows extends AnchorPane {
 
     private Consumer<RecWindows> whenActive = null;
 
+    @Getter
+    @Setter
     private BaseMenu baseMenu;
 
+    @Getter
     private Node activeNode;
 
     /**
@@ -60,22 +69,20 @@ public class RecWindows extends AnchorPane {
     private AtomicReference<Double> nw = new AtomicReference<>();
     private AtomicReference<Double> nh = new AtomicReference<>();
 
-    public <N extends Node & TabWatcher<W>,W>RecWindows( N node, double prefWidth, double prefHeight, double radius ,Stage stage) {
+    @Getter
+    private ModelData modelData;
+
+    public RecWindows(Node node, double prefWidth, double prefHeight, double radius , Stage stage, ModelData modelData) {
         super();
         this.rectangle = new Rectangle(prefWidth,prefHeight);
-        this.topBar = new TopBar<>(this, node);
+        this.topBar = new TopBar<>(this, node,modelData);
         this.stage = stage;
+        this.modelData = modelData;
         publicCreate( prefWidth, prefHeight, radius);
     }
 
 
-    public RecWindows(Node node, double prefWidth, double prefHeight, double radius ,Stage stage,TabWatcher<?> tabWatcher) {
-        super();
-        this.rectangle = new Rectangle(prefWidth,prefHeight);
-        this.topBar = new TopBar<>(this, tabWatcher);
-        this.stage = stage;
-        publicCreate( prefWidth, prefHeight, radius);
-    }
+
 
     /**
      * <scene>
@@ -236,41 +243,8 @@ public class RecWindows extends AnchorPane {
     }
 
 
-    public <T>void createNewTab(TabWatcher<T> tabWatcher, boolean isActive){
-        this.topBar.getTabManager().createTab(tabWatcher,isActive,false);
+    public <T>void createNewTab(Node node,ModelData modelData, boolean isActive){
+        this.topBar.getTabManager().createTab(node,modelData,isActive,false);
     }
 
-    public <T>void createNewTab(Node node, TabWatcher<T> tabWatcher, boolean isActive){
-        this.topBar.getTabManager().createTab(node,tabWatcher,isActive,false);
-    }
-
-
-    public StackPane getSecPane() {
-        return secPane;
-    }
-
-    public VBox getShowBox() {
-        return showBox;
-    }
-
-
-    public BaseMenu getBaseMenu() {
-        return baseMenu;
-    }
-
-    public void setBaseMenu(BaseMenu baseMenu) {
-        this.baseMenu = baseMenu;
-    }
-
-    public Node getActiveNode() {
-        return activeNode;
-    }
-
-    public TopBar getTopBar() {
-        return topBar;
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
 }

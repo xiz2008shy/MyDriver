@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,15 +19,20 @@ public class MyDriverPaneController extends AnchorPane implements Initializable 
     @FXML
     private FileContentPaneController fileContentController;
 
+    @Getter
     private final ModelData modelData;
 
-    public MyDriverPaneController(File file) throws IOException {
+    public MyDriverPaneController(File file) {
         this.modelData = new ModelData(file);
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(this.getClass().getResource("/fxml/MyDriverPane.fxml"));
         loader.setRoot(this);
         loader.setController(this);
-        loader.load();
+        try {
+            loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("MyDriverPaneController After loaded");
         modelData.setMyDriverPaneController(this);
     }

@@ -1,6 +1,5 @@
 package com.tom.utils;
 
-import com.tom.component.center.MainFlowContentPart;
 import com.tom.general.menu.BaseMenu;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -12,14 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 public class DeliverUtils {
-
+/*
     private final static List<Map<String,File>> pathIndexP = new ArrayList<>();
     private final static ObjectProperty<File> curFile =new SimpleObjectProperty<>();
     private final static ObjectProperty<AnchorPane> lastSelectFileP =new SimpleObjectProperty<>();
 
     private final static ObjectProperty<BaseMenu> baseMenuP = new SimpleObjectProperty<>();
 
-    /*private final static ObjectProperty<MainFlowContentPart> mainFlowPart = new SimpleObjectProperty<>();*/
+    *//*private final static ObjectProperty<MainFlowContentPart> mainFlowPart = new SimpleObjectProperty<>();*//*
 
     public static void setPathIndex(Map<String, File> pathIndex){
         pathIndexP.add(pathIndex);
@@ -67,7 +66,7 @@ public class DeliverUtils {
 
     public static void setBaseMenu(BaseMenu baseMenu){
         baseMenuP.set(baseMenu);
-    }
+    }*/
 
    /* public static void setMainFlowPart(MainFlowContentPart flowPart){
         mainFlowPart.set(flowPart);

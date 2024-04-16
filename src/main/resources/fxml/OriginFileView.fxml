@@ -19,7 +19,7 @@
         <ImageView fx:id="imageView" fitWidth="48" fitHeight="48"/>
     </VBox>
 
-    <HBox AnchorPane.topAnchor="65.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+    <HBox fx:id="fileNameBox" AnchorPane.topAnchor="65.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <Label fx:id="fileNameLabel" maxWidth="90" prefWidth="90" style="-fx-text-overrun: ellipsis" alignment="CENTER"/>
     </HBox>
 </fx:root>

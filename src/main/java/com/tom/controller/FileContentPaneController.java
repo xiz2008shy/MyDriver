@@ -35,8 +35,8 @@ public class FileContentPaneController implements Initializable {
      * 绑定监听器，当modelData的curDir发生变化时，变更浏览内容
      */
     public void bindListener(){
-        changeContentWhenChangeDir(modelData.getCurDir().get());
-        modelData.getCurDir().addListener((e,o,n) -> {
+        changeContentWhenChangeDir(modelData.getCurDirProperty().get());
+        modelData.getCurDirProperty().addListener((e,o,n) -> {
             changeContentWhenChangeDir(n);
         });
     }
@@ -45,6 +45,7 @@ public class FileContentPaneController implements Initializable {
         flowPaneContent.getChildren().clear();
         File[] files = n.listFiles();
         assert files != null;
+        modelData.getCacheMap().clear();
         for (File file : files) {
             addFileNode(file);
         }

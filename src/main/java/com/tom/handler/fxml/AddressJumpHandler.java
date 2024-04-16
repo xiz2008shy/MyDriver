@@ -21,7 +21,7 @@ public class AddressJumpHandler implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent event) {
         if (event.getButton().equals(MouseButton.PRIMARY)) {
-            if (!modelData.getCurPath().get().equals(file.getAbsolutePath())) {
+            if (!modelData.getCurDirProperty().get().equals(file.getAbsolutePath())) {
                 this.modelData.setFile(file);
             }
         }
