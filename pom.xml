@@ -69,6 +69,36 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.13</version>
+        </dependency>-->
+
+        <!--<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-reload4j</artifactId>
+            <version>2.0.13</version>
+        </dependency>-->
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.2</version>
@@ -154,12 +184,15 @@
                                 </argument>
                                 <argument>--java-options</argument>
                                 <argument>--enable-preview</argument>
+                                <argument>--java-options</argument>
+                                <argument>--add-reads org.slf4j=org.apache.logging.log4j.slf4j.impl</argument>
                                 <argument>--runtime-image</argument>
                                 <argument>
                                     ${project.build.directory}/build-link
                                 </argument>
                                 <argument>--dest</argument>
-                                <argument>${project.build.directory}/${project.artifactId}-${project.version}-EXE</argument>
+                                <argument>${project.build.directory}/${project.artifactId}-${project.version}-EXE
+                                </argument>
                                 <argument>--app-version</argument>
                                 <argument>1.0.0</argument>
                             </arguments>
@@ -223,6 +256,8 @@
                                 </argument>
                                 <argument>--java-options</argument>
                                 <argument>--enable-preview</argument>
+                                <argument>--java-options</argument>
+                                <argument>--add-reads org.slf4j=org.apache.logging.log4j.slf4j.impl</argument>
                                 <argument>--app-version</argument>
                                 <argument>1.0.0</argument>
                             </arguments>
@@ -242,10 +277,11 @@
                     <noManPages>true</noManPages>
                     <launcher>MyDriver</launcher>
                     <jlinkImageName>build-link</jlinkImageName>
-<!--                    <jlinkZipName>MyDriver</jlinkZipName>-->
+                    <!--                    <jlinkZipName>MyDriver</jlinkZipName>-->
                     <mainClass>my_driver/com.tom.JavafxMain</mainClass>
                     <options>
                         <option>--enable-preview</option>
+                        <option>--add-reads org.slf4j=org.apache.logging.log4j.slf4j.impl</option>
                     </options>
                 </configuration>
             </plugin>
@@ -257,27 +293,17 @@
                 <configuration>
                     <mainClass>com.tom.JavafxMain</mainClass>
                     <graalvmHome>D:\java\graalvm-jdk-22_36.1</graalvmHome>
-<!--                    <bundlesList>-->
-<!--                        <list>LanguageResource</list>-->
-<!--                        <list>LanguageResource_en</list>-->
-<!--                        <list>LanguageResource_zh_CN</list>-->
-<!--                    </bundlesList>-->
+                    <!--                    <bundlesList>-->
+                    <!--                        <list>LanguageResource</list>-->
+                    <!--                        <list>LanguageResource_en</list>-->
+                    <!--                        <list>LanguageResource_zh_CN</list>-->
+                    <!--                    </bundlesList>-->
                 </configuration>
             </plugin>
 
         </plugins>
 
         <resources>
-            <resource>
-                <!--把src/main/java目录下的properties、xm文件打包打进程序中-->
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-
             <resource>
                 <!--把src/main/resources目录下的properties、xml、css文件打包打进程序中-->
                 <directory>src/main/resources</directory>
@@ -304,7 +330,6 @@
             </resource>
         </resources>
     </build>
-
 
 
 </project>

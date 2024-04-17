@@ -6,12 +6,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class MyDriverPaneController extends AnchorPane implements Initializable {
 
     @FXML
@@ -33,13 +35,13 @@ public class MyDriverPaneController extends AnchorPane implements Initializable 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("MyDriverPaneController After loaded");
+        log.info("MyDriverPaneController After loaded");
         modelData.setMyDriverPaneController(this);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("MyDriverPaneController initialize");
+        log.info("MyDriverPaneController initialize");
         modelData.setAddressPaneController(addrController);
         modelData.setFileContentPaneController(fileContentController);
         addrController.setModelData(modelData);

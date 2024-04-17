@@ -4,11 +4,13 @@ import com.tom.general.RecWindows;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * topBar的窗体拖拽监听器
  */
+@Slf4j
 public class DragHandler implements EventHandler<MouseEvent> {
 
     private double xOffset = 0;
@@ -21,7 +23,7 @@ public class DragHandler implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-        System.out.println("press");
+        log.info("DragHandler.handle press");
         event.consume();
         if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
             xOffset = event.getSceneX();

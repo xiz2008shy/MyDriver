@@ -7,11 +7,14 @@ module my_driver {
     requires javafx.fxml;
     requires lombok;
     requires com.fasterxml.jackson.databind;
+    requires org.slf4j;
+    requires org.apache.logging.log4j;
+    requires org.apache.logging.log4j.slf4j.impl;
+    requires org.apache.logging.log4j.core;
     exports com.tom;
     exports com.tom.component.setting;
     exports com.tom.controller;
     exports com.tom.model;
     opens com.tom.controller;
     opens com.tom.model;
-
 }

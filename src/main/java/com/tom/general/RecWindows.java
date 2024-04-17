@@ -25,13 +25,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-
+@Slf4j
 public class RecWindows extends AnchorPane {
 
     private final Rectangle rectangle;
@@ -152,9 +153,9 @@ public class RecWindows extends AnchorPane {
      * @return
      */
     public EventHandler<MouseEvent> maximizedHandler(Pane pane) {
-        System.out.println(STR."nw-\{nw.get()},nh-\{nh.get()}");
+        log.info(STR."nw-\{nw.get()},nh-\{nh.get()}");
         return e -> {
-            System.out.println("maximizedHandler");
+            log.info("maximizedHandler");
             e.consume();
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode())
                 || pane.getChildren().get(0).equals(e.getPickResult().getIntersectedNode()))

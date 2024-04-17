@@ -4,7 +4,9 @@ import com.tom.general.RecWindows;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DrawUtil {
     //窗体拉伸属性
     private static boolean isRight;// 是否处于右边界调整窗口状态

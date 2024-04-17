@@ -26,12 +26,17 @@ public class MySetting {
         ListView<String> listView = MyLogListPane.getListView();
         String debug = namedArgs.get("debug");
         String runConfFile;
+        String runLogDir;
         if ("1".equals(debug)) {
             listView.getItems().add(STR."debug=\{debug}");
             runConfFile = STR."\{System.getProperty("user.dir")}\{File.separator}target\{File.separator}conf\{File.separator}setting.json";
+            runLogDir = STR."\{System.getProperty("user.dir")}\{File.separator}target\{File.separator}log";
         }else {
             runConfFile = STR."\{System.getProperty("user.dir")}\{File.separator}conf\{File.separator}setting.json";
+            runLogDir = STR."\{System.getProperty("user.dir")}\{File.separator}log";
         }
+
+        System.setProperty("LogHomeRoot", runLogDir);
         listView.getItems().add(STR."runConfFile=\{runConfFile}");
         Path path = Paths.get(runConfFile);
         try {

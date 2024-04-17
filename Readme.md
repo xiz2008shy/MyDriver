@@ -9,15 +9,17 @@
 
 处理步骤可以分为3步
 
-1 创建非模块化包的module-info.java文件，通过以下命令
+1 创建非模块化包的module-info.java文件，通过以下命令(本项目中需要使用)
 ```shell
 jdeps --ignore-missing-deps --generate-module-info . hutool-core-5.8.27.jar
+jdeps --ignore-missing-deps --generate-module-info . slf4j-api-1.7.36.jar
 ```
 实际情况可能会更复杂，比如你直接依赖的非模块包依赖了其他第三方的非模块包，这种情况以上操作就需要将相关的这些包都执行到
 
-2 对创建出的module-info.java进行编译
+2 对创建出的module-info.java进行编译(本项目中需要使用)
 ```shell
 javac --patch-module cn.hutool.core=hutool-core-5.8.27.jar cn.hutool.core/module-info.java
+javac --patch-module org.slf4j=slf4j-api-1.7.36.jar org.slf4j/module-info.java
 ```
 如果这个第三方库本身还引用了其他第三方库，需要通过-p指定，举例如下(这个例子来源参考资料，myDriver暂时没有遇到)
 ```
@@ -25,9 +27,10 @@ javac -p .\slf4j-api-1.7.36.jar --patch-module com.rabbitmq.client=amqp-client-5
 ```
 上面的操作中对amqp-client-5.16.0.jar包的module-info.java文件编译，还指明了包中引用的其他第三方包 slf4j-api-1.7.36.jar
 
-3 将上面编译后的module-info.class文件混进原jar包之中
+3 将上面编译后的module-info.class文件混进原jar包之中(本项目中需要使用)
 ```shell
 jar uf hutool-core-5.8.27.jar -C cn.hutool.core module-info.class
+jar uf slf4j-api-1.7.36.jar -C org.slf4j module-info.class
 ```
 这个操作过后就可以查看原本的jar包中多了module-info文件了
 
@@ -128,3 +131,23 @@ resize事件待优化
 </ul>
 
 ![20240413](http://8.142.121.115:8080/crm_pack/v20240413.png)
+
+### 20240417
+引入log4j2，增加了日志文件输出和输出位置动态调整
+
+其中遇到的几个问题，包括1.slf4j的门面在打包时可能遇到的非模块化问题，2.给org.slf4j混打module-info.class后，又会遇到使用log4j-core中的类时
+出现下面这个异常
+> Caused by: java.lang.IllegalAccessError: class org.slf4j.LoggerFactory (in module org.slf4j) cannot access class org.slf4j.impl.StaticLoggerBinder (in module org.apache.logging.log4j.slf4j.impl) because module org.slf4j does not read module org.apache.logging.log4j.slf4j.impl
+
+解决方案是添加vm参数，或者在module-info中添加require，但这里由于slf4j并没有直接引用log4j，所以也不好直接在slf4j-api的module-info中申明，
+所以这里选择了添加vm参数的方式
+```java
+--add-reads org.slf4j=org.apache.logging.log4j.slf4j.impl
+```
+
+我猜应该还有其他方式，比如可以通过引用sfl4j官方的一些包可以解决上面的问题，理论上只要官方某个包里把module-info准备好就可以解决上面的问题
+
+至于怎么给org.slf4j混打module-info，指令也都在前面打包的部分补充进去了
+
+
+

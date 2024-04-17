@@ -6,12 +6,13 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-
+@Slf4j
 public class DesktopIconClickHandler implements EventHandler<MouseEvent> {
 
     private final File file;
@@ -25,7 +26,7 @@ public class DesktopIconClickHandler implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-        System.out.println("iconClickHandler");
+        log.info("iconClickHandler");
         //event.consume();
         AnchorPane curOs = (AnchorPane)event.getSource();
         AnchorPane lastOs = modelData.getSelectedFile();
@@ -50,7 +51,7 @@ public class DesktopIconClickHandler implements EventHandler<MouseEvent> {
         try {
             Desktop.getDesktop().open(file);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("executeFile occurred an error,cause:", e);
         }
     }
 }

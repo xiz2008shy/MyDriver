@@ -6,12 +6,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.FlowPane;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class FileContentPaneController implements Initializable {
 
     @FXML
@@ -28,7 +30,7 @@ public class FileContentPaneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("FileContentPaneController initialized");
+        log.info("FileContentPaneController initialized");
     }
 
     /**

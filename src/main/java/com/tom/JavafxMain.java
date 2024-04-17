@@ -8,6 +8,6 @@ package com.tom;
 public class JavafxMain {
 
     public static void main(String[] args) {
-        FileManagementApp.main(args);
+        FXMLVersionApp.main(args);
     }
 }

@@ -20,11 +20,13 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class AddressPaneController implements Initializable {
 
     @FXML
@@ -44,7 +46,7 @@ public class AddressPaneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("AddressPaneController initialize");
+        log.info("AddressPaneController initialize");
         SVGPath svg = new SVGPath();
         svg.setContent("M512 0c281.6 0 512 230.4 512 512s-230.4 512-512 512-512-230.4-512-512 230.4-512 512-512z m0 960c249.6 0 448-198.4 448-448s-198.4-448-448-448-448 198.4-448 448 198.4 448 448 448z " +
                 "M588.8 262.4c6.4-6.4 32-6.4 44.8 0 6.4 12.8 6.4 38.4 0 44.8L428.8 512l204.8 204.8c12.8 12.8 12.8 32 0 44.8-12.8 12.8-32 12.8-44.8 0L364.8 537.6c-12.8-12.8-12.8-32 0-44.8l224-230.4z");

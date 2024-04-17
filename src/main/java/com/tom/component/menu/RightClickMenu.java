@@ -5,6 +5,7 @@ import com.tom.controller.MyDriverPaneController;
 import com.tom.general.RecWindows;
 import com.tom.general.menu.BaseMenu;
 import com.tom.general.menu.MyMenuContext;
+import com.tom.handler.fxml.DesktopIconClickHandler;
 import com.tom.model.ModelData;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -14,10 +15,12 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import com.tom.handler.fxml.DesktopIconClickHandler;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.util.List;
 
+@Slf4j
 public class RightClickMenu {
 
 
@@ -61,12 +64,12 @@ public class RightClickMenu {
         });
         menu0.setDisabledPredicate(_ -> {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
-            System.out.println(curPath);
+            log.info("menu0.setDisabledPredicate curPath={}",curPath);
             return curPath == null || !curPath.isDirectory();
         });
         MyMenuContext menu1 = new MyMenuContext(new Label("复制"), baseMenu);
         menu1.whenActiveByMouse( e -> {
-            System.out.println("menu1 active!");
+            log.info("复制 active!");
         });
         menu1.setDisabledPredicate(_ -> {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
@@ -74,7 +77,7 @@ public class RightClickMenu {
         });
         MyMenuContext menu2 = new MyMenuContext(new Label("粘贴"), baseMenu);
         menu2.whenActiveByMouse( e -> {
-            System.out.println("menu2 active!");
+            log.info("粘贴 active!");
         });
 
         menu2.setDisabledPredicate(_ -> {
@@ -102,7 +105,7 @@ public class RightClickMenu {
         if (myMap.get("isAddMenuHandler") == null){
             BaseMenu finalBm = bm;
             windows.getSecPane().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                System.out.println("menu mouse clicked!");
+                log.info("menu mouse clicked!");
                 e.consume();
                 if(finalBm.isShow()){
                     finalBm.closeMenu();
@@ -118,9 +121,9 @@ public class RightClickMenu {
                     }
                     file = modelData.getCacheMap().get(id);
                 }
-                System.out.println(e.getPickResult().getIntersectedNode());
-                System.out.println(id);
-                System.out.println(file);
+                log.info("menu target node={}",e.getPickResult().getIntersectedNode());
+                log.info("menu target id={}",id);
+                log.info("menu target id={}",file);
                 if (file == null) {
                     AnchorPane selectedFileNode = modelData.getSelectedFile();
                     if (selectedFileNode != null) {
