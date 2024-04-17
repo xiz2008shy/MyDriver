@@ -55,7 +55,7 @@ public class MySetting {
 
     public static void createFileWithConfig(Path path,String config) throws IOException {
         checkParent(path);
-        Files.write(path,config.getBytes(StandardCharsets.UTF_8), WRITE,CREATE);
+        Files.writeString(path, config, WRITE,CREATE);
     }
 
     private static void checkParent(Path path) throws IOException {

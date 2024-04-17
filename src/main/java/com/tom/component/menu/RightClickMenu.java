@@ -34,33 +34,33 @@ public class RightClickMenu {
      *         </BaseMenu>
      *     </HBox>
      * </StackPane>
-     * @param recWindowsPane
-     * @return
+     * @param windows 窗口对象
+     * @return 返回右键菜单对象
      */
-    public static BaseMenu createBaseMenu(RecWindows recWindowsPane) {
-        BaseMenu baseMenu = new BaseMenu(160, 40, recWindowsPane);
+    public static BaseMenu createBaseMenu(RecWindows windows) {
+        BaseMenu baseMenu = new BaseMenu(160, 40, windows);
 
         MyMenuContext open = new MyMenuContext(new Label("打开"), baseMenu);
         open.whenActiveByMouse( _ -> {
-            File file = recWindowsPane.getModelData().getRealSelectedFile();
+            File file = windows.getActiveModelData().getRealSelectedFile();
             if (file.isDirectory()){
-                recWindowsPane.getModelData().setFile(file);
+                windows.getActiveModelData().setFile(file);
             }else {
                 DesktopIconClickHandler.executeFile(file);
             }
         });
         open.setDisabledPredicate(_ -> {
-            File curPath = recWindowsPane.getModelData().getRealSelectedFile();
+            File curPath = windows.getActiveModelData().getRealSelectedFile();
             return curPath == null;
         });
         MyMenuContext menu0 = new MyMenuContext(new Label("新标签页中打开"), baseMenu);
         menu0.whenActiveByMouse( _ -> {
-            File file = recWindowsPane.getModelData().getRealSelectedFile();
+            File file = windows.getActiveModelData().getRealSelectedFile();
             MyDriverPaneController myDriverPane2 = new MyDriverPaneController(file);
-            recWindowsPane.createNewTab(myDriverPane2,myDriverPane2.getModelData(),true);
+            windows.createNewTab(myDriverPane2,myDriverPane2.getModelData(),true);
         });
         menu0.setDisabledPredicate(_ -> {
-            File curPath = recWindowsPane.getModelData().getRealSelectedFile();
+            File curPath = windows.getActiveModelData().getRealSelectedFile();
             System.out.println(curPath);
             return curPath == null || !curPath.isDirectory();
         });
@@ -69,7 +69,7 @@ public class RightClickMenu {
             System.out.println("menu1 active!");
         });
         menu1.setDisabledPredicate(_ -> {
-            File curPath = recWindowsPane.getModelData().getRealSelectedFile();
+            File curPath = windows.getActiveModelData().getRealSelectedFile();
             return curPath == null;
         });
         MyMenuContext menu2 = new MyMenuContext(new Label("粘贴"), baseMenu);
@@ -83,9 +83,9 @@ public class RightClickMenu {
             return files == null || files.isEmpty();
         });
 
-        baseMenu.setCloseMenuHandler(m -> {
-            recWindowsPane.getModelData().setSelectedFile(null);
-        });
+        /*baseMenu.setCloseMenuHandler(m -> {
+            windows.getActiveModelData().setSelectedFile(null);
+        });*/
         return baseMenu;
     }
 
@@ -110,7 +110,7 @@ public class RightClickMenu {
                 Node intersectedNode = e.getPickResult().getIntersectedNode();
                 String id = intersectedNode.getId();
                 File file = null;
-                ModelData modelData = windows.getModelData();
+                ModelData modelData = windows.getActiveModelData();
                 if (id != null || (intersectedNode.getParent() != null && (id = intersectedNode.getParent().getId()) != null)) {
                     int index = id.indexOf("_");
                     if (index > -1){
@@ -126,9 +126,9 @@ public class RightClickMenu {
                     if (selectedFileNode != null) {
                         ObservableList<String> styleClass = selectedFileNode.getStyleClass();
                         styleClass.remove("my_icon_click");
+                        modelData.setRealSelectedFile(null);
+                        modelData.setSelectedFile(null);
                     }
-                    modelData.setRealSelectedFile(null);
-                    modelData.setSelectedFile(null);
                 }
                 if (e.getButton().equals(MouseButton.SECONDARY)){
                     finalBm.showMenu(e,windows);

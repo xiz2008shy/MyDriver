@@ -6,6 +6,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.function.Predicate;
 
@@ -14,8 +16,11 @@ public class MyMenuContext extends HBox {
 
     private final BaseMenu baseMenu;
 
+    @Getter
     private EventHandler<MouseEvent> mouseActiveHandler;
+    @Setter
     private Predicate<MouseEvent> disabledPredicate;
+    @Setter
     private Predicate<MouseEvent> visiblePredicate;
 
     public MyMenuContext(Node node,BaseMenu baseMenu) {
@@ -38,10 +43,6 @@ public class MyMenuContext extends HBox {
         this.mouseActiveHandler = handler;
     }
 
-    public EventHandler<MouseEvent> getMouseActiveHandler() {
-        return mouseActiveHandler;
-    }
-
     public Predicate<MouseEvent> getDisabledPredicate() {
         return disabledPredicate == null ? this::nonDisabled : disabledPredicate;
     }
@@ -54,15 +55,8 @@ public class MyMenuContext extends HBox {
         return true;
     }
 
-    public void setDisabledPredicate(Predicate<MouseEvent> disabledPredicate) {
-        this.disabledPredicate = disabledPredicate;
-    }
-
     public Predicate<MouseEvent> getVisiblePredicate() {
         return visiblePredicate == null ? this::visible : visiblePredicate;
     }
 
-    public void setVisiblePredicate(Predicate<MouseEvent> visiablePredicate) {
-        this.visiblePredicate = visiablePredicate;
-    }
 }

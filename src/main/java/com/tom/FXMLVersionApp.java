@@ -6,7 +6,6 @@ import com.tom.controller.MyDriverPaneController;
 import com.tom.general.RecWindows;
 import com.tom.utils.ImageUtils;
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.File;

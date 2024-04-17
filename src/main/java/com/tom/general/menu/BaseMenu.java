@@ -1,7 +1,6 @@
 package com.tom.general.menu;
 
 import com.tom.general.RecWindows;
-import com.tom.utils.DeliverUtils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -123,6 +122,7 @@ public class BaseMenu extends StackPane{
         VBox.setVgrow(myMenuContext, Priority.ALWAYS);
         this.myResize(myWidth, this.menuContent.getChildren().size() * preHeight);
         myMenuContext.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            e.consume();
             myMenuContext.getMouseActiveHandler().handle(e);
             this.closeMenu();
         });

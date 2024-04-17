@@ -12,18 +12,27 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import lombok.Getter;
+import lombok.Setter;
 
 public class TopBar<T> extends AnchorPane{
 
+    @Getter
     private final TabManager tabManager;
 
+    @Getter
     private HBox closeBox;
 
+    @Getter
     private HBox maximizeBox;
 
     private HBox minimizeBox;
 
+    @Setter
+    @Getter
     private Pane activeTab = null;
+    @Setter
+    @Getter
     private int activeIndex = 0;
 
 
@@ -41,6 +50,8 @@ public class TopBar<T> extends AnchorPane{
      *     </HBox>
      * </TopBar>
      * @param recWindows
+     * @param node
+     * @param modelData
      */
     public TopBar(RecWindows recWindows, Node node , ModelData modelData) {
         this.tabManager = new TabManager(recWindows,this);
@@ -130,34 +141,5 @@ public class TopBar<T> extends AnchorPane{
             }
             flag[0] = !flag[0];
         };
-    }
-
-
-    public HBox getCloseBox() {
-        return closeBox;
-    }
-
-    public HBox getMaximizeBox() {
-        return maximizeBox;
-    }
-
-    public TabManager getTabManager() {
-        return tabManager;
-    }
-
-    public Pane getActiveTab() {
-        return activeTab;
-    }
-
-    public int getActiveIndex() {
-        return activeIndex;
-    }
-
-    public void setActiveTab(Pane activeTab) {
-        this.activeTab = activeTab;
-    }
-
-    public void setActiveIndex(int activeIndex) {
-        this.activeIndex = activeIndex;
     }
 }

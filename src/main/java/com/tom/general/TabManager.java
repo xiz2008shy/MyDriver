@@ -2,7 +2,6 @@ package com.tom.general;
 
 import com.tom.model.ModelData;
 import com.tom.utils.AnchorPaneUtil;
-import com.tom.utils.DeliverUtils;
 import com.tom.utils.ImageUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -28,9 +27,9 @@ public class TabManager extends HBox {
     public static final Shape ACTIVE_SHARP = HeadTabShape.headTabShape(260, 35, 7);
     public static final Shape INACTIVE_SHARP = HeadTabShape.headTabSecShape(260, 35, 7);
 
-    private RecWindows recWindows;
+    private final RecWindows recWindows;
 
-    private TopBar topBar;
+    private final TopBar topBar;
 
 
     public TabManager(RecWindows recWindows,TopBar topBar) {
@@ -41,7 +40,7 @@ public class TabManager extends HBox {
 
     public <T>void createTab(Node node, ModelData modelData, boolean isActive,boolean isFirst) {
         int index = doCreateTab(modelData, isActive);
-        recWindows.addNodeToWindows(node);
+        recWindows.addNodeToWindows(node,modelData);
         if (isActive && !isFirst) {
             recWindows.setActiveNode(index);
         }
@@ -127,7 +126,6 @@ public class TabManager extends HBox {
         int nodeIndex = list.indexOf(ap);
         this.recWindows.removeNodeFromTabs(nodeIndex);
         list.remove(nodeIndex);
-        //DeliverUtils.removePathIndex(nodeIndex);
         if (nodeIndex > 0){
             int i = nodeIndex - 1;
             closeAndActiveBesideTab(list, i);

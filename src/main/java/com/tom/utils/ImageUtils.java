@@ -117,28 +117,6 @@ public class ImageUtils {
 
 
     /**
-     * 一个假装在加载svg的方法
-     * svg在fx中的支持程度比较一般，下面这个方法会用固定svg代码创建图片
-     * 这里的svg代码对应back.svg文件
-     * @return 返回back键的region
-     */
-    public static Region getBackSvg(){
-        try {
-            SVGPath svg1 = new SVGPath();
-            svg1.setContent("M512 0c281.6 0 512 230.4 512 512s-230.4 512-512 512-512-230.4-512-512 230.4-512 512-512z m0 960c249.6 0 448-198.4 448-448s-198.4-448-448-448-448 198.4-448 448 198.4 448 448 448z " +
-                    "M588.8 262.4c6.4-6.4 32-6.4 44.8 0 6.4 12.8 6.4 38.4 0 44.8L428.8 512l204.8 204.8c12.8 12.8 12.8 32 0 44.8-12.8 12.8-32 12.8-44.8 0L364.8 537.6c-12.8-12.8-12.8-32 0-44.8l224-230.4z");
-
-            Region region = new Region();
-            region.setShape(svg1);
-            return region;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-    /**
      * 创建一个svgPath构建的region
      * @param content
      * @param color

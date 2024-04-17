@@ -53,7 +53,13 @@ public class RecWindows extends AnchorPane {
      * 在RecWindows创建时，通过TabManager将节点添加进集合，随后在 setActiveNode 方法中被添加到showBox的子元素中
      */
     private final List<Node> tabNodes = new ArrayList<>();
+    private final List<ModelData> modelDatum = new ArrayList<>();
 
+    /**
+     * -- SETTER --
+     *  注册面板激活（主要是指node加入recWindows 内部时触发，比如多标签页的情况下，实际会切换不同的node）事件
+     */
+    @Setter
     private Consumer<RecWindows> whenActive = null;
 
     @Getter
@@ -63,25 +69,23 @@ public class RecWindows extends AnchorPane {
     @Getter
     private Node activeNode;
 
+    @Getter
+    private ModelData activeModelData;
+
     /**
      * 最大化/恢复时临时保存位置数据
      */
     private AtomicReference<Double> nw = new AtomicReference<>();
     private AtomicReference<Double> nh = new AtomicReference<>();
 
-    @Getter
-    private ModelData modelData;
 
     public RecWindows(Node node, double prefWidth, double prefHeight, double radius , Stage stage, ModelData modelData) {
         super();
         this.rectangle = new Rectangle(prefWidth,prefHeight);
         this.topBar = new TopBar<>(this, node,modelData);
         this.stage = stage;
-        this.modelData = modelData;
         publicCreate( prefWidth, prefHeight, radius);
     }
-
-
 
 
     /**
@@ -113,14 +117,6 @@ public class RecWindows extends AnchorPane {
         AnchorPaneUtil.setNode(secPane,0.5,0.5,10.0,0.5);
     }
 
-
-    /**
-     * 注册面板激活（主要是指node加入recWindows 内部时触发，比如多标签页的情况下，实际会切换不同的node）事件
-     * @param whenActive
-     */
-    public void setWhenActive(Consumer<RecWindows> whenActive){
-        this.whenActive = whenActive;
-    }
 
     /**
      * 务必构造器执行后手动调用该方法
@@ -216,6 +212,7 @@ public class RecWindows extends AnchorPane {
     public void setActiveNode(int activeIndex){
         if (activeIndex < tabNodes.size()){
             Node node = tabNodes.get(activeIndex);
+            ModelData modelData = modelDatum.get(activeIndex);
             this.topBar.setActiveIndex(activeIndex);
             if (!node.equals(activeNode)) {
                 ObservableList<Node> children = this.showBox.getChildren();
@@ -223,6 +220,7 @@ public class RecWindows extends AnchorPane {
                     children.remove(1);
                 }
                 this.activeNode = node;
+                this.activeModelData = modelData;
                 children.add(activeNode);
                 // 替换完内部节点后，执行whenActive方法
                 if (whenActive != null){
@@ -232,13 +230,15 @@ public class RecWindows extends AnchorPane {
         }
     }
 
-    void addNodeToWindows(Node tab){
+    void addNodeToWindows(Node tab,ModelData modelData){
         this.tabNodes.add(tab);
+        this.modelDatum.add(modelData);
     }
 
     void removeNodeFromTabs(int index){
         if (index < tabNodes.size()){
             this.tabNodes.remove(index);
+            this.modelDatum.remove(index);
         }
     }
 
