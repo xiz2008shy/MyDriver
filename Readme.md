@@ -70,9 +70,11 @@ mvn exec:exec@imageFromPackage -f pom.xml
 目录下看到MyDriver.exe了，输出路径也可以在pom文件中进行调整
 
 jpackage打包部分参考了 
-https://github.com/JavaFX-Starter/JavaFX-Package-Sample
-https://docs.oracle.com/en/java/javase/17/docs/specs/man/jpackage.html
-https://www.bilibili.com/video/BV1BK4y1W72q/?spm_id_from=333.337.search-card.all.click&vd_source=72d894bf4fb5c4389e3a57d06cb8161b
+> https://github.com/JavaFX-Starter/JavaFX-Package-Sample
+> 
+> https://docs.oracle.com/en/java/javase/17/docs/specs/man/jpackage.html
+> 
+> https://www.bilibili.com/video/BV1BK4y1W72q/?spm_id_from=333.337.search-card.all.click&vd_source=72d894bf4fb5c4389e3a57d06cb8161b
 
 
 截至20240405截图如下
@@ -141,11 +143,11 @@ resize事件待优化
 
 解决方案是添加vm参数，或者在module-info中添加require，但这里由于slf4j并没有直接引用log4j，所以也不好直接在slf4j-api的module-info中申明，
 所以这里选择了添加vm参数的方式
-```java
+```vm option
 --add-reads org.slf4j=org.apache.logging.log4j.slf4j.impl
 ```
 
-我猜应该还有其他方式，比如可以通过引用sfl4j官方的一些包可以解决上面的问题，理论上只要官方某个包里把module-info准备好就可以解决上面的问题
+我推测应该还有其他方式，比如可以通过引用sfl4j官方的一些包可以解决上面的问题，按理说上只要官方某个包里把module-info准备好就可以解决上面的问题
 
 至于怎么给org.slf4j混打module-info，指令也都在前面打包的部分补充进去了
 
