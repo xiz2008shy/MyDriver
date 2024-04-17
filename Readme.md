@@ -137,7 +137,9 @@ resize事件待优化
 ### 20240417
 引入log4j2，增加了日志文件输出和输出位置动态调整
 
-其中遇到的几个问题，包括1.slf4j的门面在打包时可能遇到的非模块化问题，2.给org.slf4j混打module-info.class后，又会遇到使用log4j-core中的类时
+其中遇到的几个问题，包括
+* 1.slf4j-api的门面在打包时可能遇到的非模块化包在jlink打包时提示异常（因为jlink、jpackage就不支持对自动模块打包）
+* 2.给org.slf4j混打module-info.class后，又会遇到使用log4j-core中的类时
 出现下面这个异常
 > Caused by: java.lang.IllegalAccessError: class org.slf4j.LoggerFactory (in module org.slf4j) cannot access class org.slf4j.impl.StaticLoggerBinder (in module org.apache.logging.log4j.slf4j.impl) because module org.slf4j does not read module org.apache.logging.log4j.slf4j.impl
 

@@ -8,7 +8,6 @@ import javafx.scene.control.ListView;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
