@@ -45,7 +45,7 @@ public class TopBar extends AnchorPane{
     /**
      * 用于控制顶栏右侧的4个按钮栏位是否展示，单个按钮值对应8、4、2、1
      */
-    private int topBarIconFlag;
+    private final int topBarIconFlag;
     /**
      * 需要顶栏带切卡时的构造器
      * <TopBar>

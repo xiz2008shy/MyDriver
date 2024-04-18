@@ -6,10 +6,7 @@ import com.tom.controller.MyDriverPaneController;
 import com.tom.general.RecWindows;
 import com.tom.utils.ImageUtils;
 import javafx.application.Application;
-import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.File;
 
@@ -20,7 +17,7 @@ public class FXMLVersionApp extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         MySetting.initSetting(this.getParameters());
         File baseFile = new File(MySetting.getConfig().getBasePath());
         MyDriverPaneController myDriverPane = new MyDriverPaneController(baseFile);
