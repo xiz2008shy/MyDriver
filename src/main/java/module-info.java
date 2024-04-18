@@ -10,7 +10,7 @@ module my_driver {
     requires com.fasterxml.jackson.databind;
     requires org.slf4j;
     requires org.apache.logging.log4j;
-    requires org.apache.logging.log4j.slf4j.impl;
+    requires org.apache.logging.log4j.slf4j2.impl;
     requires org.apache.logging.log4j.core;
     exports com.tom;
     exports com.tom.component.setting;

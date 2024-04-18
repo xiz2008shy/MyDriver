@@ -70,11 +70,9 @@ mvn exec:exec@imageFromPackage -f pom.xml
 目录下看到MyDriver.exe了，输出路径也可以在pom文件中进行调整
 
 jpackage打包部分参考了 
-> https://github.com/JavaFX-Starter/JavaFX-Package-Sample
-> 
-> https://docs.oracle.com/en/java/javase/17/docs/specs/man/jpackage.html
-> 
-> https://www.bilibili.com/video/BV1BK4y1W72q/?spm_id_from=333.337.search-card.all.click&vd_source=72d894bf4fb5c4389e3a57d06cb8161b
+* https://github.com/JavaFX-Starter/JavaFX-Package-Sample
+* https://docs.oracle.com/en/java/javase/17/docs/specs/man/jpackage.html
+* https://www.bilibili.com/video/BV1BK4y1W72q/?spm_id_from=333.337.search-card.all.click&vd_source=72d894bf4fb5c4389e3a57d06cb8161b
 
 
 截至20240405截图如下
@@ -134,6 +132,10 @@ resize事件待优化
 
 ![20240413](http://8.142.121.115:8080/crm_pack/v20240413.png)
 
+### 20240414~15
+将除了窗体部分外的布局用fxml重写了一边，让更多的布局放到fxml中，和逻辑部分分离
+
+
 ### 20240417
 引入log4j2，增加了日志文件输出和输出位置动态调整
 
@@ -153,5 +155,16 @@ resize事件待优化
 
 至于怎么给org.slf4j混打module-info，指令也都在前面打包的部分补充进去了
 
+### 20240418
+打包问题新的一个解决方式是使用log4j-slf4j2-impl依赖替换log4j-slf4j-impl，两者的区别就是对应slf4j-api 1.7之前和2.0之后的api
+而slf4j-api 2.0开始支持JPMS的项目，1.7的api还是采用静态绑定的方式，这对非JPMS的应用来说没有感知，但对模块化应用就很明显。将log4j-slf4j-impl替换成log4j-slf4j2-impl问题就解决了，不需要那些启动参数了
+国内对于slf4j+log4j2的文章就没有看到有提log4j-slf4j2-impl这个包的，去到log4j官网仔细看，确实发现官网有提到这点
+> Due to a break in compatibility in the SLF4J binding, as of release 2.19.0 two SLF4J to Log4j Adapters are provided.
+> * log4j-slf4j-impl should be used with SLF4J 1.7.x releases or older.
+> * log4j-slf4j2-impl should be used with SLF4J 2.0.x releases or newer.
 
+> Applications that take advantage of the Java Module System should use SLF4J 2.0.x and log4j-slf4j2-impl.
 
+参考链接：
+* https://logging.apache.org/log4j/2.x/log4j-slf4j-impl.html
+* https://github.com/qos-ch/slf4j/issues/415
