@@ -2,8 +2,16 @@ package com.tom.component.setting;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tom.component.console.MyLogListPane;
+import com.tom.general.RecWindows;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import lombok.Getter;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -18,7 +26,8 @@ import static java.nio.file.StandardOpenOption.WRITE;
 
 public class MySetting {
 
-    private static ConfigEntity configEntity;
+    @Getter
+    private static ConfigEntity config;
 
     public static void initSetting(Application.Parameters parameters)  {
         Map<String, String> namedArgs = parameters.getNamed();
@@ -42,14 +51,13 @@ public class MySetting {
             if (Files.exists(path) && Files.isRegularFile(path)) {
                 byte[] bytes = Files.readAllBytes(path);
                 ObjectMapper objectMapper = new ObjectMapper();
-                ConfigEntity config = objectMapper.readValue(bytes, ConfigEntity.class);
-                configEntity = config;
+                MySetting.config = objectMapper.readValue(bytes, ConfigEntity.class);
             }else {
                 File desktopDir = FileSystemView.getFileSystemView().getHomeDirectory();
                 String desktopPath = desktopDir.getAbsolutePath();
-                configEntity = new ConfigEntity().setBasePath(desktopPath);
-                String config = new ObjectMapper().writeValueAsString(configEntity);
-                createFileWithConfig(path,config);
+                MySetting.config = new ConfigEntity().setBasePath(desktopPath);
+                String configStr = new ObjectMapper().writeValueAsString(config);
+                createFileWithConfig(path,configStr);
             }
         } catch (IOException e) {
             listView.getItems().add(e.getMessage());
@@ -70,8 +78,29 @@ public class MySetting {
         }
     }
 
-    public static ConfigEntity getConfig(){
-        return configEntity;
+
+
+    public static EventHandler<MouseEvent> openSettingPane(Pane clickButton,RecWindows fromWindows) {
+        return e -> {
+            e.consume();
+            if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (clickButton.equals(e.getPickResult().getIntersectedNode()) ||
+                    clickButton.getChildren().getFirst().equals(e.getPickResult().getIntersectedNode()))) {
+                Stage utility = new Stage();
+                utility.initStyle(StageStyle.UTILITY);
+                utility.setOpacity(0);
+                Stage settingStage = new Stage();
+                RecWindows settingWindows = new RecWindows(new Pane(), 600.0,
+                        600.0, 12.0, settingStage,"setting",1);
+                settingWindows.setFromWindows(fromWindows);
+                settingWindows.initStage();
+                settingStage.initModality(Modality.APPLICATION_MODAL);
+                settingStage.initOwner(utility);
+                utility.show();
+                settingStage.show();
+            }
+        };
     }
+
+
 
 }

@@ -48,6 +48,7 @@ public class RecWindows extends AnchorPane {
     private final VBox showBox = new VBox();
     @Getter
     private final StackPane secPane = new StackPane();
+    private final Pane block = new Pane();
 
     /**
      * 多标签下的多真实节点
@@ -79,12 +80,26 @@ public class RecWindows extends AnchorPane {
     private AtomicReference<Double> nw = new AtomicReference<>();
     private AtomicReference<Double> nh = new AtomicReference<>();
 
+    @Setter @Getter
+    private RecWindows fromWindows;
 
-    public RecWindows(Node node, double prefWidth, double prefHeight, double radius , Stage stage, ModelData modelData) {
+    public RecWindows(Node node, double prefWidth, double prefHeight, double radius ,
+                      Stage stage, ModelData modelData,int topBarIconFlag) {
         super();
         this.rectangle = new Rectangle(prefWidth,prefHeight);
-        this.topBar = new TopBar<>(this, node,modelData);
+        this.topBar = new TopBar(this, node,modelData,topBarIconFlag);
         this.stage = stage;
+        publicCreate( prefWidth, prefHeight, radius);
+    }
+
+
+    public RecWindows(Node node, double prefWidth, double prefHeight, double radius ,
+                      Stage stage, String title,int topBarIconFlag) {
+        super();
+        this.rectangle = new Rectangle(prefWidth,prefHeight);
+        this.topBar = new TopBar(this, title,topBarIconFlag);
+        this.stage = stage;
+        this.showBox.getChildren().add(node);
         publicCreate( prefWidth, prefHeight, radius);
     }
 
@@ -112,10 +127,11 @@ public class RecWindows extends AnchorPane {
         this.setShape(rectangle);
         this.setPrefSize(prefWidth, prefHeight);
         this.setClip(rectangle);
+        this.block.setStyle("-fx-background-color: rgba(235,235,235,0.79)");
         secPane.getChildren().add(showBox);
         showBox.getChildren().add(topBar);
         this.getChildren().add(secPane);
-        AnchorPaneUtil.setNode(secPane,0.5,0.5,10.0,0.5);
+        AnchorPaneUtil.setNode(secPane,0.5,0.5,0.0,0.5);
     }
 
 
@@ -123,11 +139,15 @@ public class RecWindows extends AnchorPane {
      * 务必构造器执行后手动调用该方法
      */
     public void initStage(){
+        if (fromWindows != null) {
+            this.fromWindows.setInActiveStyle();
+        }
         setActiveNode(0);
         Scene scene = new Scene(this);
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
+
         stage.setWidth(rectangle.getWidth());
         stage.setHeight(rectangle.getHeight());
         // 添加窗体拉伸效果
@@ -191,7 +211,7 @@ public class RecWindows extends AnchorPane {
         return e -> {
             e.consume();
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode()) ||
-                    pane.getChildren().get(0).equals(e.getPickResult().getIntersectedNode()))) {
+                    pane.getChildren().getFirst().equals(e.getPickResult().getIntersectedNode()))) {
                 stage.setIconified(true);
             }
         };
@@ -201,9 +221,14 @@ public class RecWindows extends AnchorPane {
         return e -> {
             e.consume();
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode())
-                    || pane.getChildren().get(0).equals(e.getPickResult().getIntersectedNode()))
+                    || pane.getChildren().getFirst().equals(e.getPickResult().getIntersectedNode()))
             ) {
-                Platform.exit();
+                if (this.getFromWindows() == null) {
+                    Platform.exit();
+                }else {
+                    this.getFromWindows().setActiveStyle();
+                    this.stage.close();
+                }
             }
         };
     }
@@ -244,8 +269,16 @@ public class RecWindows extends AnchorPane {
     }
 
 
-    public <T>void createNewTab(Node node,ModelData modelData, boolean isActive){
+    public void createNewTab(Node node,ModelData modelData, boolean isActive){
         this.topBar.getTabManager().createTab(node,modelData,isActive,false);
     }
 
+
+    public void setActiveStyle(){
+        this.secPane.getChildren().remove(block);
+    }
+
+    public void setInActiveStyle(){
+        this.secPane.getChildren().add(block);
+    }
 }

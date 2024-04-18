@@ -6,7 +6,10 @@ import com.tom.controller.MyDriverPaneController;
 import com.tom.general.RecWindows;
 import com.tom.utils.ImageUtils;
 import javafx.application.Application;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.File;
 
@@ -22,11 +25,14 @@ public class FXMLVersionApp extends Application {
         File baseFile = new File(MySetting.getConfig().getBasePath());
         MyDriverPaneController myDriverPane = new MyDriverPaneController(baseFile);
 
-        RecWindows recWindowsPane = new RecWindows(myDriverPane, 900.0,
-                600.0, 12.0, stage,myDriverPane.getModelData());
+        // topBarIconFlag 15 = 8 | 4 | 2 | 1
+        RecWindows recWindowsPane = new RecWindows(myDriverPane, 1200,
+                700, 12.0, stage,myDriverPane.getModelData(),15);
         recWindowsPane.setWhenActive(RightClickMenu::addMenu);
         recWindowsPane.initStage();
         stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));
         stage.show();
+
+
     }
 }

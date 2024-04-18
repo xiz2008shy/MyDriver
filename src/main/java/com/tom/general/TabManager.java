@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -31,10 +32,25 @@ public class TabManager extends HBox {
 
     private final TopBar topBar;
 
+    private final String title;
+
+
+    public TabManager(String title) {
+        this.title = title;
+        this.topBar = null;
+        this.recWindows = null;
+        Label label = new Label(this.title);
+        this.getChildren().add(label);
+        this.setAlignment(Pos.CENTER_LEFT);
+        this.setStyle("-fx-font-size: 14;");
+        HBox.setMargin(label,new Insets(-5,0,0,20));
+    }
+
 
     public TabManager(RecWindows recWindows,TopBar topBar) {
         this.recWindows = recWindows;
         this.topBar = topBar;
+        this.title = null;
     }
 
 
@@ -129,7 +145,7 @@ public class TabManager extends HBox {
         if (nodeIndex > 0){
             int i = nodeIndex - 1;
             closeAndActiveBesideTab(list, i);
-        }else if(list.size() > 0){
+        }else if(!list.isEmpty()){
             closeAndActiveBesideTab(list, nodeIndex);
         }else {
             Platform.exit();

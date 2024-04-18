@@ -16,6 +16,7 @@ module my_driver {
     exports com.tom.component.setting;
     exports com.tom.controller;
     exports com.tom.model;
+    exports com.tom.general;
     opens com.tom.controller;
     opens com.tom.model;
 }

@@ -75,6 +75,11 @@
     -fx-text-fill: #8d8d8d;
 }
 
+.top_bar_normal {
+    -fx-background-color: rgb(216, 218, 219);
+}
+
+
 .my_tabs {
     -fx-background-color: rgb(216, 218, 219);
 }

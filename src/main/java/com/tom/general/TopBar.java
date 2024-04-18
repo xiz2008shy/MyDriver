@@ -1,11 +1,13 @@
 package com.tom.general;
 
+import com.tom.component.setting.MySetting;
 import com.tom.model.ModelData;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -15,10 +17,15 @@ import javafx.scene.layout.Pane;
 import lombok.Getter;
 import lombok.Setter;
 
-public class TopBar<T> extends AnchorPane{
+public class TopBar extends AnchorPane{
+
+    private static final int CL_B_I = 1;
+    private static final int MX_B_I = 2;
+    private static final int MI_B_I = 4;
+    private static final int CU_B_I = 8;
 
     @Getter
-    private final TabManager tabManager;
+    private TabManager tabManager;
 
     @Getter
     private HBox closeBox;
@@ -35,8 +42,12 @@ public class TopBar<T> extends AnchorPane{
     @Getter
     private int activeIndex = 0;
 
-
     /**
+     * 用于控制顶栏右侧的4个按钮栏位是否展示，单个按钮值对应8、4、2、1
+     */
+    private int topBarIconFlag;
+    /**
+     * 需要顶栏带切卡时的构造器
      * <TopBar>
      *     <TabManager> * tabs @see com.tom.general.TabManager#doCreateTab </TabManager>
      *     <HBox> -rightIcons
@@ -53,7 +64,8 @@ public class TopBar<T> extends AnchorPane{
      * @param node
      * @param modelData
      */
-    public TopBar(RecWindows recWindows, Node node , ModelData modelData) {
+    public TopBar(RecWindows recWindows, Node node , ModelData modelData,int topBarIconFlag) {
+        this.topBarIconFlag = topBarIconFlag;
         this.tabManager = new TabManager(recWindows,this);
         if (modelData != null) {
             tabManager.createTab(node,modelData,true,true);
@@ -62,9 +74,21 @@ public class TopBar<T> extends AnchorPane{
     }
 
 
+    /**
+     * 不需要切卡的调用的构造器
+     * @param recWindows
+     * @param title
+     */
+    public TopBar(RecWindows recWindows , String title,int topBarIconFlag) {
+        this.tabManager = new TabManager(title);
+        this.topBarIconFlag = topBarIconFlag;
+        initTopBar(recWindows);
+    }
+
+
     private void initTopBar(RecWindows recWindows) {
         this.setPrefHeight(25);
-        this.setStyle("-fx-background-color: rgb(216, 218, 219)");
+        this.getStyleClass().add("top_bar_normal");
         HBox rightIcons = createRightPart(recWindows);
         AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
         this.getChildren().addAll(tabManager,rightIcons);
@@ -75,31 +99,44 @@ public class TopBar<T> extends AnchorPane{
     private HBox createRightPart(RecWindows recWindows) {
         HBox rightIcons = new HBox();
         rightIcons.setPrefWidth(152);
-
+        rightIcons.setAlignment(Pos.CENTER_RIGHT);
+        ObservableList<Node> children = rightIcons.getChildren();
         EventHandler<MouseEvent> blueMoveOnHandler = getBlueOrRedMoveOnHandler(true,null,null);
-        HBox h1 = createSquareIconBox("/img/gear.png", 32,20, 9,blueMoveOnHandler);
 
-        this.minimizeBox = createSquareIconBox("/img/minimize.png", 32,14, 12,blueMoveOnHandler);
-        EventHandler<MouseEvent> minimizedHandler = recWindows.minimizedHandler(minimizeBox);
-        minimizeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,minimizedHandler);
-        minimizeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,minimizedHandler);
+        if ((topBarIconFlag & CU_B_I) != 0){
+            HBox h1 = createSquareIconBox("/img/gear.png", 32,20, 9,blueMoveOnHandler);
+            h1.addEventHandler(MouseEvent.MOUSE_RELEASED, MySetting.openSettingPane(h1,recWindows));
+            children.add(h1);
+        }
 
-        this.maximizeBox = createSquareIconBox("/img/maximize.png", 16,14, 12,blueMoveOnHandler);
-        EventHandler<MouseEvent> maximizedHandler = recWindows.maximizedHandler(maximizeBox);
-        maximizeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,maximizedHandler);
-        maximizeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,maximizedHandler);
+        if ((topBarIconFlag & MI_B_I) != 0){
+            this.minimizeBox = createSquareIconBox("/img/minimize.png", 32,14, 12,blueMoveOnHandler);
+            EventHandler<MouseEvent> minimizedHandler = recWindows.minimizedHandler(minimizeBox);
+            minimizeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,minimizedHandler);
+            minimizeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,minimizedHandler);
+            children.add(minimizeBox);
+        }
 
-        this.closeBox = createSquareIconBox("/img/close.png", 16,14, 12,null);
+        if ((topBarIconFlag & MX_B_I) != 0){
+            this.maximizeBox = createSquareIconBox("/img/maximize.png", 16,14, 12,blueMoveOnHandler);
+            EventHandler<MouseEvent> maximizedHandler = recWindows.maximizedHandler(maximizeBox);
+            maximizeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,maximizedHandler);
+            maximizeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,maximizedHandler);
+            children.add(maximizeBox);
+        }
 
-        ImageView normal = (ImageView)closeBox.getChildren().getFirst();
-        ImageView closed = ImageUtils.getImageView("/img/close-white.png",16,14);
-        EventHandler<MouseEvent> redMoveOnHandler = getBlueOrRedMoveOnHandler(false,normal,closed);
-        setMoveOnHandler(redMoveOnHandler, closeBox);
-        EventHandler<MouseEvent> closeHandler = recWindows.closeHandler(closeBox);
-        closeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,closeHandler);
-        closeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,closeHandler);
+        if ((topBarIconFlag & CL_B_I) != 0){
+            this.closeBox = createSquareIconBox("/img/close.png", 16,14, 12,null);
+            ImageView normal = (ImageView)closeBox.getChildren().getFirst();
+            ImageView closed = ImageUtils.getImageView("/img/close-white.png",16,14);
+            EventHandler<MouseEvent> redMoveOnHandler = getBlueOrRedMoveOnHandler(false,normal,closed);
+            setMoveOnHandler(redMoveOnHandler, closeBox);
+            EventHandler<MouseEvent> closeHandler = recWindows.closeHandler(closeBox);
+            closeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,closeHandler);
+            closeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,closeHandler);
+            children.addAll(closeBox);
+        }
 
-        rightIcons.getChildren().addAll(h1,minimizeBox,maximizeBox,closeBox);
         return rightIcons;
     }
 
@@ -142,4 +179,5 @@ public class TopBar<T> extends AnchorPane{
             flag[0] = !flag[0];
         };
     }
+
 }
