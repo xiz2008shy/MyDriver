@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         type="AnchorPane">
+
+    <fx:define>
+        <Insets fx:id="vSpc" top="20" left="20" right="20"/>
+        <Insets fx:id="hSpc" left="20" right="20"/>
+        <Insets fx:id="tfPD" topRightBottomLeft="3"/>
+    </fx:define>
+
+    <VBox AnchorPane.bottomAnchor="20" AnchorPane.topAnchor="20" AnchorPane.rightAnchor="40" AnchorPane.leftAnchor="40"
+        prefHeight="550">
+        <HBox style=" -fx-border-color:  transparent transparent rgba(39,39,39,0.5) transparent;
+            -fx-border-top-style: solid;-fx-border-width: 2px;" prefHeight="40">
+            <Label text="基本配置" style="-fx-font-size: 18;"/>
+        </HBox>
+        <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
+            <Label text="MyDriver同步路径" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
+            <HBox fx:id="basePathHBox" padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                <TextField fx:id="basePath" focusTraversable="false"
+                           style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </HBox>
+
+        <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
+            <Label text="数据库url" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
+            <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                <TextField fx:id="mysqlUrl" focusTraversable="false"
+                           style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </HBox>
+
+        <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
+            <Label text="数据库username" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
+            <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                <TextField fx:id="username" focusTraversable="false"
+                           style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </HBox>
+
+        <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
+            <Label text="数据库password" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
+            <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                <PasswordField fx:id="pwd" focusTraversable="false"
+                           style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </HBox>
+    </VBox>
+
+    <HBox AnchorPane.rightAnchor="40" AnchorPane.bottomAnchor="100">
+        <HBox styleClass="my_setting_btn,my_setting_ok_btn"
+              prefWidth="70" prefHeight="40" alignment="CENTER" HBox.margin="$hSpc">
+            <Label text="OK"/>
+        </HBox>
+        <HBox styleClass="my_setting_btn"
+              prefWidth="70" prefHeight="40" alignment="CENTER" HBox.margin="$hSpc">
+            <Label text="Apply"/>
+        </HBox>
+    </HBox>
+
+</fx:root>

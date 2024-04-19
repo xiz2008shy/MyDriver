@@ -99,8 +99,7 @@ public class RecWindows extends AnchorPane {
         this.rectangle = new Rectangle(prefWidth,prefHeight);
         this.topBar = new TopBar(this, title,topBarIconFlag);
         this.stage = stage;
-        this.showBox.getChildren().add(node);
-        publicCreate( prefWidth, prefHeight, radius);
+        publicCreate( node,prefWidth, prefHeight, radius);
     }
 
 
@@ -122,6 +121,11 @@ public class RecWindows extends AnchorPane {
      */
 
     private void publicCreate( double prefWidth, double prefHeight, double radius) {
+        publicCreate(null,  prefWidth,  prefHeight,  radius);
+    }
+
+
+    private void publicCreate(Node node, double prefWidth, double prefHeight, double radius) {
         rectangle.setArcWidth(radius);
         rectangle.setArcHeight(radius);
         this.setShape(rectangle);
@@ -130,6 +134,9 @@ public class RecWindows extends AnchorPane {
         this.block.setStyle("-fx-background-color: rgba(235,235,235,0.79)");
         secPane.getChildren().add(showBox);
         showBox.getChildren().add(topBar);
+        if (node != null){
+            showBox.getChildren().add(node);
+        }
         this.getChildren().add(secPane);
         AnchorPaneUtil.setNode(secPane,0.5,0.5,0.0,0.5);
     }

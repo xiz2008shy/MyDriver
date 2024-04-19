@@ -110,3 +110,33 @@
     -fx-background-color: rgba(229, 229, 229, 0.5);
     -fx-background-radius: 5;
 }
+
+.my_setting_tf_border {
+    -fx-border-color: #3b2a2a;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-border-radius: 3px;
+}
+
+.my_setting_tf_border_bottom {
+    -fx-border-width: 2px;
+    -fx-border-radius: 2px;
+    -fx-border-color: transparent transparent rgba(0, 163, 255, 0.5) transparent;
+}
+
+.my_setting_btn {
+    -fx-border-color: #7a7a7a;
+     -fx-border-radius: 5px;
+     -fx-border-width: 1.5px;
+ }
+
+
+.my_setting_ok_btn {
+    -fx-border-color: #1372f4;
+    -fx-background-color: #1372f4;
+    -fx-background-radius: 5px;
+}
+
+.my_setting_ok_btn > .label {
+    -fx-text-fill: white;
+}

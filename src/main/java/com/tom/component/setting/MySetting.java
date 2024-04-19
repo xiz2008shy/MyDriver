@@ -2,6 +2,7 @@ package com.tom.component.setting;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tom.component.console.MyLogListPane;
+import com.tom.controller.MySettingController;
 import com.tom.general.RecWindows;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -89,7 +90,8 @@ public class MySetting {
                 utility.initStyle(StageStyle.UTILITY);
                 utility.setOpacity(0);
                 Stage settingStage = new Stage();
-                RecWindows settingWindows = new RecWindows(new Pane(), 600.0,
+                MySettingController mySettingController = new MySettingController();
+                RecWindows settingWindows = new RecWindows(mySettingController, 600.0,
                         600.0, 12.0, settingStage,"setting",1);
                 settingWindows.setFromWindows(fromWindows);
                 settingWindows.initStage();
