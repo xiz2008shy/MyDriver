@@ -13,6 +13,7 @@
 ```shell
 jdeps --ignore-missing-deps --generate-module-info . hutool-core-5.8.27.jar
 jdeps --ignore-missing-deps --generate-module-info . slf4j-api-1.7.36.jar
+jdeps --ignore-missing-deps --generate-module-info . mybatis-3.5.16.jar
 ```
 实际情况可能会更复杂，比如你直接依赖的非模块包依赖了其他第三方的非模块包，这种情况以上操作就需要将相关的这些包都执行到
 
@@ -20,6 +21,7 @@ jdeps --ignore-missing-deps --generate-module-info . slf4j-api-1.7.36.jar
 ```shell
 javac --patch-module cn.hutool.core=hutool-core-5.8.27.jar cn.hutool.core/module-info.java
 javac --patch-module org.slf4j=slf4j-api-1.7.36.jar org.slf4j/module-info.java
+javac --patch-module org.mybatis=mybatis-3.5.16.jar org.mybatis/module-info.java
 ```
 如果这个第三方库本身还引用了其他第三方库，需要通过-p指定，举例如下(这个例子来源参考资料，myDriver暂时没有遇到)
 ```
@@ -31,6 +33,7 @@ javac -p .\slf4j-api-1.7.36.jar --patch-module com.rabbitmq.client=amqp-client-5
 ```shell
 jar uf hutool-core-5.8.27.jar -C cn.hutool.core module-info.class
 jar uf slf4j-api-1.7.36.jar -C org.slf4j module-info.class
+jar uf mybatis-3.5.16.jar -C org.mybatis module-info.class
 ```
 这个操作过后就可以查看原本的jar包中多了module-info文件了
 
@@ -168,3 +171,79 @@ resize事件待优化
 参考链接：
 * https://logging.apache.org/log4j/2.x/log4j-slf4j-impl.html
 * https://github.com/qos-ch/slf4j/issues/415
+
+
+### 20240420
+引入mybatis遇到的相关问题
+
+1.在JPMS项目中，需要对相关的mapper包和实体包声明open和export，但这些操作在异常中没有很好的提示
+我也猜测可能是mybatis需要用到我mapper包和映射的实体类，所以对相关模块进行open和export声明，第一个问题就解决了
+```log
+Exception in thread "main" org.apache.ibatis.binding.BindingException: Type interface com.tom.mapper.FileRecordMapper is not known to the MapperRegistry.
+	at org.mybatis@3.5.16/org.apache.ibatis.binding.MapperRegistry.getMapper(MapperRegistry.java:47)
+	at org.mybatis@3.5.16/org.apache.ibatis.session.Configuration.getMapper(Configuration.java:940)
+	at org.mybatis@3.5.16/org.apache.ibatis.session.defaults.DefaultSqlSession.getMapper(DefaultSqlSession.java:291)
+	at my_driver/com.tom.MT.main(MT.java:23)
+```
+我后来又测试了一下，mapper包必须声明open，export不行，说明mybatis一定有对mapper包反射操作。
+
+就这个提示而言，又是一个搜破论坛都找不到原因的问题，还会看到很多其他配置错误导致这个问题的情况，但很遗憾不能解决我这种情况，官方的提示很值得吐槽。
+
+2.第二个问题是 accessExternalDTD 属性设置的限制导致不允许 'http' 访问
+```log
+Caused by: org.xml.sax.SAXParseException; lineNumber: 3; columnNumber: 55; 外部 DTD: 无法读取外部 DTD 'mybatis-3-config.dtd', 因为 accessExternalDTD 属性设置的限制导致不允许 'http' 访问。
+	at java.xml/com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(ErrorHandlerWrapper.java:204)
+	at java.xml/com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(ErrorHandlerWrapper.java:178)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(XMLErrorReporter.java:400)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(XMLErrorReporter.java:327)
+	at java.xml/com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(XMLScanner.java:1471)
+```
+这个问题实际在我昨天解决上面问题之后并没有遇到，但到了第二天再跑时，抛出了这个异常。
+
+解决方案有几种，我自己确定的有两种
+* 1.通过添加vm启动参数 `-Djavax.xml.accessExternalDTD=all` ，可以解决上述问题
+* 2.通过修改jdk目录中jaxp.properties文件，添加以下配置，值得一提的是jdk8之后jre就可以根据项目需要动态生成了，所以网上看到的修改路径`%JAVA_HOME%\jre\lib\`这种都是对j8和之前的，在j8后jaxp.properties处在`%JAVA_HOME%\conf`路径下
+```config
+javax.xml.accessExternalSchema=all
+javax.xml.accessExternalDTD=all
+```
+* 3.还有一种方案是说把相关的dtd文件保存到本地，然后xml里修改dtd的路径为file://xxxx这种，我没再试了，仅作记录
+
+3.第三个问题是mybatis混module-info遇到，module-info编译class时抛出异常，如下
+```shell
+javac --patch-module org.mybatis=mybatis-3.5.16.jar org.mybatis/module-info.java
+
+org.mybatis\module-info.java:13: 错误: 程序包为空或不存在: org.apache.ibatis
+    exports org.apache.ibatis;
+                      ^
+1 个错误
+```
+我看了org.apache.ibatis包下确实只有一个package-info.class，外部并不需要使用。
+
+解决方法就是到module-info.java中把 `export org.apache.ibatis;`  删掉，再次执行就不报错了。
+
+最新情况截图如下
+
+![20240420](http://8.142.121.115:8080/crm_pack/v20240420.png)
+新增
+* 设置窗口基本布局完成
+* 大部分交互逻辑已经完成
+
+待处理
+* apply按钮事件待写
+* 配置更新后的刷新原界面待处理
+* 数据库交互部分逻辑有待处理（比如说测试链接之类的）
+
+好在数据库处理类的结构已经构思好了，基本用例也都调试完了，后面处理起来应该会快很多，剩下就是专注我们的业务场景了。
+
+最近一段时间，这个项目写下来最大的感受是在spring外写东西，就容易出现方法传参过多的问题，参数存在哪里，怎么取需变得至关重要，
+当需要传4以上参数的时候，把这些参数封装到一个对象里去是一种做法，但这样又会让这个对象的通用性降低，而这个对象的创建又需
+要有额外的代码，用spring时很少会关注到这件事，因为对象都是直接被spring注入的，好处是封装对象的含义会比较清晰；另一种做法就考虑做一个容器，
+来存取需要的参数，这种思路其实和spring差不多，这样当某个对象需要在多处被获取时，可以直接从容器中取，如果是个静态容器提供些静态方法，存取也变得简单；
+但即使这样不得不考虑另一件事，是这些对象中到底哪些参数是被需要的。当我传递了一个拥有很多成员的对象时，我开始思考这个问题，这个对象的每一处的成员用意变得模糊，
+原因是这个对象被用在了多个地方，而不同的方法在使用这个对象中的成员也不尽相同，开始可能问题不大，但越到后面这种对原本对象中的成员限制就对越，需要考虑对之前
+逻辑的兼容，然后为了解决这个问题就变成不用原来的成员，转而增加这个对象的成员，一个恶性循环就此开始了...
+
+实际上，上面问题的一系列思考，在工作中也会遇到，但通常如果某个实体类的第一作者不是自己的情况下，稳妥起见我是会选择自己声明一个成员用来传递参数，避免后续的麻烦...随便写点小结吧
+
+

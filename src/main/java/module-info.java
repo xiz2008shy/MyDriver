@@ -12,11 +12,16 @@ module my_driver {
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.slf4j2.impl;
     requires org.apache.logging.log4j.core;
+    requires org.mybatis;
+    requires com.zaxxer.hikari;
     exports com.tom;
-    exports com.tom.component.setting;
     exports com.tom.controller;
     exports com.tom.model;
     exports com.tom.general;
     opens com.tom.controller;
     opens com.tom.model;
+    opens com.tom.mapper;
+    exports com.tom.entity;
+    exports com.tom.config;
+    opens com.tom.config.vo;
 }

@@ -23,7 +23,6 @@ public class DragHandler implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-        log.info("DragHandler.handle press");
         event.consume();
         if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
             xOffset = event.getSceneX();

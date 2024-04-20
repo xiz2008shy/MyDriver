@@ -1,6 +1,14 @@
 package com.tom.controller;
 
-import com.tom.component.setting.MySetting;
+import com.tom.config.MySetting;
+import com.tom.config.vo.ConfigVo;
+import com.tom.general.RecWindows;
+import com.tom.handler.fxml.ConfigChangeCounter;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -8,6 +16,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,14 +30,27 @@ public class MySettingController extends AnchorPane implements Initializable {
     @FXML
     private TextField basePath;
     @FXML
-    private TextField mysqlUrl;
+    private TextField remoteDBUrl;
     @FXML
-    private TextField username;
+    private TextField remoteDBUsername;
     @FXML
-    private PasswordField pwd;
+    private PasswordField remoteDBPwd;
+    @FXML
+    private HBox okBtn;
+    @FXML
+    private HBox applyBtn;
 
     @Getter @Setter
     private TextField focusedOn;
+
+    @Setter @Getter
+    private final IntegerProperty configChange = new SimpleIntegerProperty(0);
+
+    /**
+     * 当前窗口
+     */
+    @Setter @Getter
+    private RecWindows windows;
 
     public MySettingController() {
         FXMLLoader loader = new FXMLLoader();
@@ -45,16 +67,26 @@ public class MySettingController extends AnchorPane implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        basePath.setText(MySetting.getConfig().getBasePath());
+        refreshSettingPaneFromConfig();
         addFocusedCss(basePath);
-        addFocusedCss(mysqlUrl);
-        addFocusedCss(username);
-        addFocusedCss(pwd);
-        this.addEventHandler(MouseEvent.MOUSE_CLICKED,this::loseFocused);
+        addFocusedCss(remoteDBUrl);
+        addFocusedCss(remoteDBUsername);
+        addFocusedCss(remoteDBPwd);
+        this.addEventHandler(MouseEvent.MOUSE_PRESSED,this::loseFocused);
+        this.okBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.saveConfig(this));
+
+        this.configChange.addListener((_,_,n) ->{
+            if ((int)n > 0){
+                this.applyBtn.setDisable(false);
+            }else {
+                this.applyBtn.setDisable(true);
+            }
+        });
     }
 
+    private int textFieldIndex = 0;
     private void addFocusedCss(TextField textField) {
-        textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+        textField.focusedProperty().addListener((_, _, isNowFocused) -> {
             if (isNowFocused) {
                 if (this.getFocusedOn() != null && !this.getFocusedOn().equals(textField)){
                     this.getFocusedOn().getParent().getStyleClass().remove("my_setting_tf_border_bottom");
@@ -63,6 +95,9 @@ public class MySettingController extends AnchorPane implements Initializable {
                 this.setFocusedOn(textField);
             }
         });
+
+        ConfigChangeCounter configChangeCounter = new ConfigChangeCounter(textField, textFieldIndex++, configChange);
+        textField.textProperty().addListener(configChangeCounter);
     }
 
 
@@ -71,5 +106,28 @@ public class MySettingController extends AnchorPane implements Initializable {
             this.requestFocus();
             this.getFocusedOn().getParent().getStyleClass().remove("my_setting_tf_border_bottom");
         }
+    }
+
+
+    public void refreshConfig(){
+        ConfigVo configVo = MySetting.getConfig();
+        configVo.setBasePath(basePath.getText());
+        configVo.setRemoteDBUrl(remoteDBUrl.getText());
+        configVo.setRemoteDBUsername(remoteDBUsername.getText());
+        configVo.setRemoteDBPwd(remoteDBPwd.getText());
+    }
+
+
+    public void refreshSettingPaneFromConfig(){
+        ConfigVo configVo = MySetting.getConfig();
+        basePath.setText(configVo.getBasePath());
+        remoteDBUrl.setText(configVo.getRemoteDBUrl());
+        remoteDBUsername.setText(configVo.getRemoteDBUsername());
+        remoteDBPwd.setText(configVo.getRemoteDBPwd());
+    }
+
+
+    public boolean isConfigChange(){
+        return this.configChange.get() > 0;
     }
 }

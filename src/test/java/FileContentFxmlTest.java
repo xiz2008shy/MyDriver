@@ -1,6 +1,4 @@
-import com.tom.component.setting.MySetting;
-import com.tom.controller.AddressPaneController;
-import com.tom.controller.FileContentPaneController;
+import com.tom.config.MySetting;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

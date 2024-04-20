@@ -1,4 +1,4 @@
-import com.tom.component.setting.MySetting;
+import com.tom.config.MySetting;
 import com.tom.controller.AddressPaneController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

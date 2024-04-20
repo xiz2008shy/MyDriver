@@ -1,6 +1,6 @@
 package com.tom.general;
 
-import com.tom.component.setting.MySetting;
+import com.tom.config.MySetting;
 import com.tom.model.ModelData;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.ImageUtils;

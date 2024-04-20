@@ -1,7 +1,7 @@
 package com.tom;
 
 import com.tom.component.menu.RightClickMenu;
-import com.tom.component.setting.MySetting;
+import com.tom.config.MySetting;
 import com.tom.controller.MyDriverPaneController;
 import com.tom.general.RecWindows;
 import com.tom.utils.ImageUtils;

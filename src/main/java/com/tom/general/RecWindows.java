@@ -230,16 +230,19 @@ public class RecWindows extends AnchorPane {
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode())
                     || pane.getChildren().getFirst().equals(e.getPickResult().getIntersectedNode()))
             ) {
-                if (this.getFromWindows() == null) {
-                    Platform.exit();
-                }else {
-                    this.getFromWindows().setActiveStyle();
-                    this.stage.close();
-                }
+                close();
             }
         };
     }
 
+    public void close() {
+        if (this.getFromWindows() == null) {
+            Platform.exit();
+        }else {
+            this.getFromWindows().setActiveStyle();
+            this.stage.close();
+        }
+    }
 
 
     public void setActiveNode(int activeIndex){
