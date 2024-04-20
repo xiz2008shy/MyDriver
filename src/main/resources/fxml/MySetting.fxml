@@ -30,7 +30,7 @@
         <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
             <Label text="数据库url" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
             <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
-                <TextField fx:id="mysqlUrl" focusTraversable="false"
+                <TextField fx:id="remoteDBUrl" focusTraversable="false"
                            style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
             </HBox>
         </HBox>
@@ -38,7 +38,7 @@
         <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
             <Label text="数据库username" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
             <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
-                <TextField fx:id="username" focusTraversable="false"
+                <TextField fx:id="remoteDBUsername" focusTraversable="false"
                            style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
             </HBox>
         </HBox>
@@ -46,18 +46,18 @@
         <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
             <Label text="数据库password" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
             <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
-                <PasswordField fx:id="pwd" focusTraversable="false"
+                <PasswordField fx:id="remoteDBPwd" focusTraversable="false"
                            style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
             </HBox>
         </HBox>
     </VBox>
 
     <HBox AnchorPane.rightAnchor="40" AnchorPane.bottomAnchor="100">
-        <HBox styleClass="my_setting_btn,my_setting_ok_btn"
+        <HBox fx:id="okBtn" styleClass="my_setting_btn,my_setting_ok_btn"
               prefWidth="70" prefHeight="40" alignment="CENTER" HBox.margin="$hSpc">
             <Label text="OK"/>
         </HBox>
-        <HBox styleClass="my_setting_btn"
+        <HBox fx:id="applyBtn" styleClass="my_setting_btn" disable="true"
               prefWidth="70" prefHeight="40" alignment="CENTER" HBox.margin="$hSpc">
             <Label text="Apply"/>
         </HBox>

@@ -1,5 +1,6 @@
 package com.tom.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
 import com.tom.config.vo.ConfigVo;
 import com.tom.general.RecWindows;
@@ -19,6 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
 import java.net.URL;
@@ -111,10 +113,10 @@ public class MySettingController extends AnchorPane implements Initializable {
 
     public void refreshConfig(){
         ConfigVo configVo = MySetting.getConfig();
-        configVo.setBasePath(basePath.getText());
-        configVo.setRemoteDBUrl(remoteDBUrl.getText());
-        configVo.setRemoteDBUsername(remoteDBUsername.getText());
-        configVo.setRemoteDBPwd(remoteDBPwd.getText());
+        configVo.setBasePath(StrUtil.trim(basePath.getText()));
+        configVo.setRemoteDBUrl(StrUtil.trim(remoteDBUrl.getText()));
+        configVo.setRemoteDBUsername(StrUtil.trim(remoteDBUsername.getText()));
+        configVo.setRemoteDBPwd(StrUtil.trim(remoteDBPwd.getText()));
     }
 
 

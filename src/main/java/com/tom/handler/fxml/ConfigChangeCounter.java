@@ -24,7 +24,7 @@ public class ConfigChangeCounter implements ChangeListener<String> {
     @Override
     public void changed(ObservableValue observable, String oldValue, String newValue) {
         String value = MySetting.getConfig().getValue(textField.getId());
-        if (!value.equals(newValue)) {
+        if (!newValue.equals(value)) {
             this.configChange.set(this.configChange.get() | indexOn);
         }else {
             this.configChange.set(this.configChange.get() & indexMask);
