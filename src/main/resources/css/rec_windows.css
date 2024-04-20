@@ -121,7 +121,7 @@
 .my_setting_tf_border_bottom {
     -fx-border-width: 2px;
     -fx-border-radius: 2px;
-    -fx-border-color: transparent transparent rgba(0, 163, 255, 0.5) transparent;
+    -fx-border-color: transparent transparent rgb(0, 103, 192) transparent;
 }
 
 .my_setting_btn {
