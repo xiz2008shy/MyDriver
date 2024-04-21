@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
 <fx:root xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          type="AnchorPane">
@@ -50,6 +51,11 @@
                            style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
             </HBox>
         </HBox>
+
+        <HBox alignment="CENTER_RIGHT" prefHeight="35" >
+            <ImageView fx:id="testResImg" fitHeight="20" fitWidth="20"/>
+            <Label fx:id="testConnection" styleClass="my_setting_test" text="test connection" HBox.margin="$hSpc"/>
+        </HBox>
     </VBox>
 
     <HBox AnchorPane.rightAnchor="40" AnchorPane.bottomAnchor="100">
@@ -62,5 +68,4 @@
             <Label text="Apply"/>
         </HBox>
     </HBox>
-
 </fx:root>

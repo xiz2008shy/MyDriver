@@ -27,7 +27,7 @@
         </environment>
     </environments>
     <mappers>
-<!--        <mapper resource="mapper/FileRecordMapper.xml"/>-->
-        <package name="com.tom.mapper"/>
+        <mapper resource="com/tom/mapper/FileRecordMapper.xml"/>
+<!--        <package name="com.tom.mapper"/>-->
     </mappers>
 </configuration>

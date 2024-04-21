@@ -15,11 +15,16 @@ public class RemoteHikariDataSource extends UnpooledDataSourceFactory {
         hikariProperties.load(this.getClass().getResourceAsStream("/config/hikariConfig.properties"));
         HikariConfig config = new HikariConfig(hikariProperties);
         ConfigVo configVo = MySetting.getConfig();
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setJdbcUrl(configVo.getRemoteDBUrl());
         config.setUsername(configVo.getRemoteDBUsername());
         config.setPassword(configVo.getRemoteDBPwd());
 
-        this.dataSource = new HikariDataSource(config);
+        try {
+            this.dataSource = new HikariDataSource(config);
+        }catch (Exception e){
+
+        }
     }
 
 }

@@ -5,22 +5,23 @@ import com.tom.config.MySetting;
 import com.tom.config.vo.ConfigVo;
 import com.tom.general.RecWindows;
 import com.tom.handler.fxml.ConfigChangeCounter;
-import javafx.beans.InvalidationListener;
+import com.tom.utils.ImageUtils;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
 import java.net.URL;
@@ -41,11 +42,15 @@ public class MySettingController extends AnchorPane implements Initializable {
     private HBox okBtn;
     @FXML
     private HBox applyBtn;
+    @FXML
+    private ImageView testResImg;
+    @FXML
+    private Label testConnection;
 
     @Getter @Setter
     private TextField focusedOn;
 
-    @Setter @Getter
+    @Getter
     private final IntegerProperty configChange = new SimpleIntegerProperty(0);
 
     /**
@@ -75,7 +80,9 @@ public class MySettingController extends AnchorPane implements Initializable {
         addFocusedCss(remoteDBUsername);
         addFocusedCss(remoteDBPwd);
         this.addEventHandler(MouseEvent.MOUSE_PRESSED,this::loseFocused);
-        this.okBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.saveConfig(this));
+        this.testConnection.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.testConnection(this));
+        this.okBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.okBtnClick(this));
+        this.applyBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.applyBtnClick(this));
 
         this.configChange.addListener((_,_,n) ->{
             if ((int)n > 0){
@@ -131,5 +138,24 @@ public class MySettingController extends AnchorPane implements Initializable {
 
     public boolean isConfigChange(){
         return this.configChange.get() > 0;
+    }
+
+    public void setTestImgRight(){
+        this.testResImg.setImage(ImageUtils.getImageFromResources("/img/rt.png",32,32));
+    }
+
+    public void clearTestImg(){
+        this.testResImg.setImage(null);
+    }
+
+
+    public void disableTestConnection(){
+        this.testConnection.setDisable(true);
+        this.testConnection.setCursor(Cursor.WAIT);
+    }
+
+    public void restoreTestConnection(){
+        this.testConnection.setDisable(false);
+        this.testConnection.setCursor(Cursor.HAND);
     }
 }

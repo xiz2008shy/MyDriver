@@ -130,6 +130,9 @@
      -fx-border-width: 1.5px;
  }
 
+.my_setting_btn > .label {
+    -fx-font-size: 14;
+}
 
 .my_setting_ok_btn {
     -fx-border-color: #1372f4;
@@ -139,4 +142,15 @@
 
 .my_setting_ok_btn > .label {
     -fx-text-fill: white;
+}
+
+.my_setting_test {
+    -fx-text-fill: rgb(80, 94, 196);
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+}
+
+.my_setting_test:hover {
+    -fx-text-fill: rgb(80, 94, 196);
+    -fx-underline: true ;
 }

@@ -9,6 +9,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 @Accessors(chain = true)
 @Setter
@@ -38,6 +41,27 @@ public class ConfigVo implements Serializable {
 
     public <T>T getValue(String key) {
         return (T)ReflectUtil.getFieldValue(this,key);
+    }
+
+    private Map<String,String> cacheMap = new HashMap<>();
+
+    public void saveBak(){
+        Field[] fields = ReflectUtil.getFields(ConfigVo.class);
+        for (Field field : fields) {
+            if (!field.getName().equals("cacheMap")) {
+                Object value = ReflectUtil.getFieldValue(this, field);
+                if (value instanceof String s){
+                    this.cacheMap.put(field.getName(),s);
+                }
+            }
+        }
+    }
+
+
+    public void restore(){
+        for (Map.Entry<String, String> entry : this.cacheMap.entrySet()) {
+            ReflectUtil.setFieldValue(this,entry.getKey(),entry.getValue());
+        }
     }
 
 }

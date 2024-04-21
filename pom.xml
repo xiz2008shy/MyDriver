@@ -291,6 +291,7 @@
                     <mainClass>my_driver/com.tom.JavafxMain</mainClass>
                     <options>
                         <option>--enable-preview</option>
+                        <option>-Djavax.xml.accessExternalDTD=all</option>
 <!--                        <option>&#45;&#45;add-reads org.slf4j=org.apache.logging.log4j.slf4j.impl</option>-->
                     </options>
                 </configuration>

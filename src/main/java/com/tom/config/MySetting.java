@@ -4,10 +4,15 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.tom.MT;
 import com.tom.config.vo.ConfigVo;
 import com.tom.controller.MySettingController;
+import com.tom.entity.FileRecord;
 import com.tom.general.RecWindows;
+import com.tom.mapper.FileRecordMapper;
+import com.zaxxer.hikari.HikariDataSource;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -16,13 +21,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -67,9 +76,9 @@ public class MySetting {
         // 当前运行时目录
         String curDir = System.getProperty("user.dir");
         if ("1".equals(debug)) {
-            runConfFile = STR."\{curDir }\{File.separator}target\{File.separator}conf\{File.separator}setting.json";
+            runConfFile = STR."\{curDir }\{File.separator}.conf\{File.separator}setting.json";
             runLogDir = STR."\{curDir }\{File.separator}target\{File.separator}log";
-            localDataPath = STR."\{curDir }\{File.separator}target\{File.separator}data\{File.separator}fileOd.db";
+            localDataPath = STR."\{curDir }\{File.separator}data\{File.separator}fileOd.db";
         }else {
             runConfFile = STR."\{curDir }\{File.separator}conf\{File.separator}setting.json";
             runLogDir = STR."\{curDir }\{File.separator}log";
@@ -137,23 +146,96 @@ public class MySetting {
     }
 
 
-    public static EventHandler<MouseEvent> saveConfig(MySettingController mySettingController) {
+    public static EventHandler<MouseEvent> okBtnClick(MySettingController mySettingController) {
         return e -> {
             e.consume();
             mySettingController.getWindows().close();
-            if (e.getButton().equals(MouseButton.PRIMARY) && mySettingController.isConfigChange()) {
-                mySettingController.refreshConfig();
-                Path path = Paths.get(runConfFile);
-                try {
-                    String configStr = OM.writeValueAsString(config);
-                    createFileWithConfig(path,configStr);
-                } catch (Exception ex) {
-                    log.error("MySetting.saveConfig occurred an error,cause: ",ex);
-                }
-            }
+            saveConfigToFile(mySettingController, e);
         };
     }
 
+
+    public static EventHandler<MouseEvent> applyBtnClick(MySettingController mySettingController) {
+        return e -> {
+            e.consume();
+            mySettingController.loseFocused(null);
+            saveConfigToFile(mySettingController, e);
+        };
+    }
+
+
+    private static void saveConfigToFile(MySettingController mySettingController, MouseEvent e) {
+        boolean configChange = mySettingController.isConfigChange();
+        mySettingController.getConfigChange().set(0);
+        if (e.getButton().equals(MouseButton.PRIMARY) && configChange) {
+            mySettingController.refreshConfig();
+            Path path = Paths.get(runConfFile);
+            try {
+                String configStr = OM.writeValueAsString(config);
+                createFileWithConfig(path,configStr);
+            } catch (Exception ex) {
+                log.error("MySetting.saveConfig occurred an error,cause: ",ex);
+            }
+        }
+    }
+
+
+    public static EventHandler<MouseEvent> testConnection(MySettingController mySettingController) {
+        return e -> {
+            e.consume();
+            mySettingController.disableTestConnection();
+            mySettingController.clearTestImg();
+            mySettingController.loseFocused(null);
+            Thread.startVirtualThread(() -> {
+                doTestConnection(mySettingController);
+            });
+        };
+    }
+
+    private static void doTestConnection(MySettingController mySettingController) {
+        MySetting.getConfig().saveBak();
+        mySettingController.refreshConfig();
+        var mybatisConfigFilePath = "/config/mybatis-config.xml";
+        var inputStream = MySetting.class.getResourceAsStream(mybatisConfigFilePath);
+        try(inputStream) {
+            var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,"remoteMySQL");
+            SqlSession session = curSqlSessionFactory.openSession();
+            String res;
+            try (session) {
+                FileRecordMapper mapper = session.getMapper(FileRecordMapper.class);
+                res = mapper.test();
+            }
+
+            if (res.equals("1")){
+                if(MySetting.remoteSessionFactory == null){
+                    MySetting.remoteSessionFactory = curSqlSessionFactory;
+                }else {
+                    closeDataSource(curSqlSessionFactory);
+                }
+                mySettingController.setTestImgRight();
+                log.info("testConnection success");
+            }
+
+        }catch (Exception ex){
+            log.error("testConnection error,cause: ",ex);
+            log.info("testConnection error,cause: {}",ex.getMessage());
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        MySetting.getConfig().restore();
+        Platform.runLater(mySettingController::restoreTestConnection);
+    }
+
+    private static void closeDataSource(SqlSessionFactory curSqlSessionFactory) {
+        Environment environment = curSqlSessionFactory.getConfiguration().getEnvironment();
+        Object dataSource = environment.getDataSource();
+        if (dataSource instanceof HikariDataSource hs) {
+            hs.close();
+        }
+    }
 
 
     private static final Application.Parameters mockParam = new Application.Parameters() {
