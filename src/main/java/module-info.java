@@ -1,5 +1,5 @@
 module my_driver {
-    opens com.tom to java.desktop;
+    opens com.tom;
     requires javafx.controls;
     requires javafx.swing;
     requires java.desktop;
@@ -14,6 +14,12 @@ module my_driver {
     requires org.apache.logging.log4j.core;
     requires org.mybatis;
     requires com.zaxxer.hikari;
+  /*  requires dream.orm.drive;
+    requires dream.orm.system;
+    requires dream.orm.jdbc;
+    requires dream.orm.template;*/
+    requires dream.orm.util;
+    requires dream.orm.system;
     exports com.tom;
     exports com.tom.controller;
     exports com.tom.model;
@@ -22,6 +28,7 @@ module my_driver {
     opens com.tom.model;
     opens com.tom.mapper;
     exports com.tom.entity;
+    opens com.tom.entity;
     exports com.tom.config;
     opens com.tom.config.vo;
 }
