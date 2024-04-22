@@ -1,15 +1,13 @@
 package com.tom.config;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.tom.MT;
 import com.tom.config.vo.ConfigVo;
 import com.tom.controller.MySettingController;
-import com.tom.entity.FileRecord;
 import com.tom.general.RecWindows;
 import com.tom.mapper.FileRecordMapper;
+import com.tom.mybatis.MySqlSessionFactoryBuilder;
 import com.zaxxer.hikari.HikariDataSource;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -24,17 +22,16 @@ import lombok.Getter;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +57,8 @@ public class MySetting {
 
     private static SqlSessionFactory localSessionFactory;
     private static SqlSessionFactory remoteSessionFactory;
+
+    private static RemoteHikariDataSource2 dataSource2;
 
     private static final ObjectMapper OM = new ObjectMapper();
 
@@ -187,18 +186,39 @@ public class MySetting {
             mySettingController.clearTestImg();
             mySettingController.loseFocused(null);
             Thread.startVirtualThread(() -> {
-                doTestConnection(mySettingController);
+                asyncTestConnection(mySettingController);
             });
         };
     }
 
-    private static void doTestConnection(MySettingController mySettingController) {
+    private static void asyncTestConnection(MySettingController mySettingController) {
         MySetting.getConfig().saveBak();
         mySettingController.refreshConfig();
+        doConnectionTest1(mySettingController);
+
+        Platform.runLater(mySettingController::restoreTestConnection);
+    }
+
+
+    private static void doConnectionTest2(MySettingController mySettingController) {
+        RemoteHikariDataSource2 dataSource = new RemoteHikariDataSource2();
+        boolean testRes = dataSource.testConnection();
+        if (testRes){
+            mySettingController.setTestImgRight();
+            if (MySetting.dataSource2 == null){
+                MySetting.dataSource2 = dataSource;
+            }
+            log.info("testConnection success");
+        }else {
+            MySetting.getConfig().restore();
+        }
+    }
+
+    private static void doConnectionTest1(MySettingController mySettingController) {
         var mybatisConfigFilePath = "/config/mybatis-config.xml";
         var inputStream = MySetting.class.getResourceAsStream(mybatisConfigFilePath);
         try(inputStream) {
-            var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,"remoteMySQL");
+            var curSqlSessionFactory = new MySqlSessionFactoryBuilder().build(inputStream,"remoteMySQL");
             SqlSession session = curSqlSessionFactory.openSession();
             String res;
             try (session) {
@@ -214,19 +234,13 @@ public class MySetting {
                 }
                 mySettingController.setTestImgRight();
                 log.info("testConnection success");
+            }else {
+                MySetting.getConfig().restore();
             }
-
         }catch (Exception ex){
             log.error("testConnection error,cause: ",ex);
             log.info("testConnection error,cause: {}",ex.getMessage());
         }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        MySetting.getConfig().restore();
-        Platform.runLater(mySettingController::restoreTestConnection);
     }
 
     private static void closeDataSource(SqlSessionFactory curSqlSessionFactory) {

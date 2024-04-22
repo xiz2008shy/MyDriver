@@ -14,6 +14,7 @@
 jdeps --ignore-missing-deps --generate-module-info . hutool-core-5.8.27.jar
 jdeps --ignore-missing-deps --generate-module-info . slf4j-api-1.7.36.jar
 jdeps --ignore-missing-deps --generate-module-info . mybatis-3.5.16.jar
+jdeps --ignore-missing-deps --generate-module-info . mysql-connector-j-8.3.0.jar
 ```
 实际情况可能会更复杂，比如你直接依赖的非模块包依赖了其他第三方的非模块包，这种情况以上操作就需要将相关的这些包都执行到
 
@@ -22,6 +23,7 @@ jdeps --ignore-missing-deps --generate-module-info . mybatis-3.5.16.jar
 javac --patch-module cn.hutool.core=hutool-core-5.8.27.jar cn.hutool.core/module-info.java
 javac --patch-module org.slf4j=slf4j-api-1.7.36.jar org.slf4j/module-info.java
 javac --patch-module org.mybatis=mybatis-3.5.16.jar org.mybatis/module-info.java
+javac --patch-module mysql.connector.j=mysql-connector-j-8.3.0.jar mysql.connector.j/module-info.java
 ```
 如果这个第三方库本身还引用了其他第三方库，需要通过-p指定，举例如下(这个例子来源参考资料，myDriver暂时没有遇到)
 ```
@@ -34,6 +36,7 @@ javac -p .\slf4j-api-1.7.36.jar --patch-module com.rabbitmq.client=amqp-client-5
 jar uf hutool-core-5.8.27.jar -C cn.hutool.core module-info.class
 jar uf slf4j-api-1.7.36.jar -C org.slf4j module-info.class
 jar uf mybatis-3.5.16.jar -C org.mybatis module-info.class
+jar uf mysql-connector-j-8.3.0.jar -C mysql.connector.j module-info.class
 ```
 这个操作过后就可以查看原本的jar包中多了module-info文件了
 
@@ -246,4 +249,13 @@ org.mybatis\module-info.java:13: 错误: 程序包为空或不存在: org.apache
 
 实际上，上面问题的一系列思考，在工作中也会遇到，但通常如果某个实体类的第一作者不是自己的情况下，稳妥起见我是会选择自己声明一个成员用来传递参数，避免后续的麻烦...随便写点小结吧
 
+![20240421](http://8.142.121.115:8080/crm_pack/v20240423.png)
+
+mybatis问题展示得到解决了，其实排查下来存在两个问题
+* 第一个问题非常隐蔽是由于mysql的驱动jar包没有混module-info，而这个问题之所以很隐蔽一方面是由于jlink打包时完全没有提示，不报错。
+我尝试不用mybatis，直接jdbc操作后发现，会有ClassNotFoundException，报驱动不存在，在尝试混打module-info后，并且require这个驱动模块后就正常了
+
+在此也补充下module-info中的关键词uses,说是用SPI接口是就写uses，对应的SPI实现模块中用provides关键词
+
+* 第二个问题是mybatis的Resource类中getResourceAsStream在我测试中就经常有返回的inputStream是null的情况，具体有待后续验证。总之connection test在打包后正常了。
 
