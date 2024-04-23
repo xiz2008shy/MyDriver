@@ -27,7 +27,7 @@
         </environment>
     </environments>
     <mappers>
-        <mapper url="file:D:\java\MyDriver\FileRecordMapper.xml"/>
-<!--        <package name="com.tom.mapper"/>-->
+<!--        <mapper url="file:D:\java\MyDriver\FileRecordMapper.xml"/>-->
+        <package name="com.tom.mapper"/>
     </mappers>
 </configuration>

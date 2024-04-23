@@ -1,8 +1,7 @@
 package com.tom.mybatis;
 
-import org.apache.ibatis.builder.BaseBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.BuilderException;
-import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.DataSourceFactory;
@@ -30,7 +29,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
 
-public class MyXMLConfigBuilder extends BaseBuilder {
+@Slf4j
+public class MyXMLConfigBuilder extends MyBaseBuilder {
 
     private boolean parsed;
     private final XPathParser parser;
@@ -46,10 +46,10 @@ public class MyXMLConfigBuilder extends BaseBuilder {
     }
 
     public MyXMLConfigBuilder(Reader reader, String environment, Properties props) {
-        this(Configuration.class, reader, environment, props);
+        this(MyConfiguration.class, reader, environment, props);
     }
 
-    public MyXMLConfigBuilder(Class<? extends Configuration> configClass, Reader reader, String environment,
+    public MyXMLConfigBuilder(Class<? extends MyConfiguration> configClass, Reader reader, String environment,
                             Properties props) {
         this(configClass, new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
     }
@@ -63,15 +63,15 @@ public class MyXMLConfigBuilder extends BaseBuilder {
     }
 
     public MyXMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
-        this(Configuration.class, inputStream, environment, props);
+        this(MyConfiguration.class, inputStream, environment, props);
     }
 
-    public MyXMLConfigBuilder(Class<? extends Configuration> configClass, InputStream inputStream, String environment,
+    public MyXMLConfigBuilder(Class<? extends MyConfiguration> configClass, InputStream inputStream, String environment,
                             Properties props) {
         this(configClass, new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
-    private MyXMLConfigBuilder(Class<? extends Configuration> configClass, XPathParser parser, String environment,
+    private MyXMLConfigBuilder(Class<? extends MyConfiguration> configClass, XPathParser parser, String environment,
                              Properties props) {
         super(newConfig(configClass));
         ErrorContext.instance().resource("SQL Mapper Configuration");
@@ -373,6 +373,7 @@ public class MyXMLConfigBuilder extends BaseBuilder {
         for (XNode child : context.getChildren()) {
             if ("package".equals(child.getName())) {
                 String mapperPackage = child.getStringAttribute("name");
+                log.info("MyXMLConfigBuilder.mappersElement: "  + mapperPackage);
                 configuration.addMappers(mapperPackage);
             } else {
                 String resource = child.getStringAttribute("resource");
@@ -413,7 +414,7 @@ public class MyXMLConfigBuilder extends BaseBuilder {
         return environment.equals(id);
     }
 
-    private static Configuration newConfig(Class<? extends Configuration> configClass) {
+    private static MyConfiguration newConfig(Class<? extends MyConfiguration> configClass) {
         try {
             return configClass.getDeclaredConstructor().newInstance();
         } catch (Exception ex) {

@@ -28,10 +28,12 @@ import org.slf4j.LoggerFactory;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,6 +187,7 @@ public class MySetting {
             mySettingController.disableTestConnection();
             mySettingController.clearTestImg();
             mySettingController.loseFocused(null);
+            doConnectionTest3("1");
             Thread.startVirtualThread(() -> {
                 asyncTestConnection(mySettingController);
             });
@@ -194,7 +197,7 @@ public class MySetting {
     private static void asyncTestConnection(MySettingController mySettingController) {
         MySetting.getConfig().saveBak();
         mySettingController.refreshConfig();
-        doConnectionTest1(mySettingController);
+        doConnectionTest3("2");
 
         Platform.runLater(mySettingController::restoreTestConnection);
     }
@@ -212,6 +215,23 @@ public class MySetting {
         }else {
             MySetting.getConfig().restore();
         }
+    }
+
+    private static void doConnectionTest3(String key) {
+        //String path = MySetting.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        /*Enumeration<URL> dirs = null;
+        try {
+            dirs = Thread.currentThread().getContextClassLoader().getResources("my_driver/com/tom/entity");
+        } catch (IOException e) {
+            log.error("doConnectionTest3-occurred an error",e);
+        }
+        while(dirs.hasMoreElements()) {
+            log.info("doConnectionTest3-{}-{}",key,dirs.nextElement());
+        }*/
+        URL resource = MySetting.class.getResource("/com/tom/entity");
+        log.info("doConnectionTest3-{}",resource.getAuthority());
+
+
     }
 
     private static void doConnectionTest1(MySettingController mySettingController) {

@@ -259,3 +259,20 @@ mybatis问题展示得到解决了，其实排查下来存在两个问题
 
 * 第二个问题是mybatis的Resource类中getResourceAsStream在我测试中就经常有返回的inputStream是null的情况，具体有待后续验证。总之connection test在打包后正常了。
 
+
+mybatis配置中mapper指定package或者resource，在jlink打包后存都在问题，已经定位了问题出在VFS
+```xml
+<mappers>
+    <package name="com.tom.mapper"/>
+</mappers>
+```
+```java
+protected static List<URL> getResources(String path) throws IOException {
+    return Collections.list(Thread.currentThread().getContextClassLoader().getResources(path));
+}
+```
+这段代码中Thread.currentThread().getContextClassLoader().getResources(path)的部分在jlink打包后返回的是null。
+
+目前jlink打包后如何遍历包路径变成了一个不知道怎么处理的问题，这些问题对于jar包或者位未打包时都很容易解决，而那些方法都不适用jlink打包后，当然有一种是通过spring进行，
+这种方式我还未测试，不过当前项目里我是不准备在引入spring的，所以迂回一下还是有一些其他方式可以处理，我发现指定resource其实还是好处理的，只要改改XMLConfigBuilder中找资源的方式
+,从classLoader的getResource方法调整导this.getClass().getResource("..")这样，获取资源还是ok的，只是免不了自己手动加一下具体的mapper...
