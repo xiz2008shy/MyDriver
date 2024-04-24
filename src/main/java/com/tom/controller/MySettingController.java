@@ -12,14 +12,18 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -157,5 +161,36 @@ public class MySettingController extends AnchorPane implements Initializable {
     public void restoreTestConnection(){
         this.testConnection.setDisable(false);
         this.testConnection.setCursor(Cursor.HAND);
+    }
+
+
+
+    public void showDialog(String msg){
+        Stage dialogStage = new Stage();
+
+        DialogPane dialog=new DialogPane();
+        Scene scene = new Scene(dialog);
+        dialogStage.setScene(scene);
+        //设置各区域显示内容
+        dialog.setHeaderText("connection ");
+        dialog.setContentText(msg);
+        Text text = new Text("ERROR!");
+        text.setStyle("-fx-font: bold italic 50px 'sans-serif'");
+        dialog.setGraphic(text);
+        dialog.getButtonTypes().addAll(ButtonType.CLOSE);
+
+        Button ok = (Button)dialog.lookupButton(ButtonType.CLOSE);
+        ok.setOnAction(_ -> dialogStage.close());
+
+        dialog.setPrefSize(330,200);
+        dialog.setPadding(new Insets(20,20,20,20));
+
+        dialogStage.initOwner(windows.getStage());
+        dialogStage.initStyle(StageStyle.UTILITY);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        //dialogStage.setAlwaysOnTop(true);
+        dialogStage.setResizable(true);
+        dialogStage.show();
+
     }
 }

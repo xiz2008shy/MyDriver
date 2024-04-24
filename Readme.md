@@ -276,3 +276,6 @@ protected static List<URL> getResources(String path) throws IOException {
 目前jlink打包后如何遍历包路径变成了一个不知道怎么处理的问题，这些问题对于jar包或者位未打包时都很容易解决，而那些方法都不适用jlink打包后，当然有一种是通过spring进行，
 这种方式我还未测试，不过当前项目里我是不准备在引入spring的，所以迂回一下还是有一些其他方式可以处理，我发现指定resource其实还是好处理的，只要改改XMLConfigBuilder中找资源的方式
 ,从classLoader的getResource方法调整导this.getClass().getResource("..")这样，获取资源还是ok的，只是免不了自己手动加一下具体的mapper...
+
+### 20240424
+变更为非模块化应用，采用jpackage 对jar方式打包，很多问题直接没了。完善了部分链接逻辑，链接异常的提示信息补充完成！

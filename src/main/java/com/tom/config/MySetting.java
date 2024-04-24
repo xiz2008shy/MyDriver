@@ -7,7 +7,7 @@ import com.tom.config.vo.ConfigVo;
 import com.tom.controller.MySettingController;
 import com.tom.general.RecWindows;
 import com.tom.mapper.FileRecordMapper;
-import com.tom.mybatis.MySqlSessionFactoryBuilder;
+import com.tom.utils.JdbcUtil;
 import com.zaxxer.hikari.HikariDataSource;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -22,18 +22,16 @@ import lombok.Getter;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +57,6 @@ public class MySetting {
 
     private static SqlSessionFactory localSessionFactory;
     private static SqlSessionFactory remoteSessionFactory;
-
-    private static RemoteHikariDataSource2 dataSource2;
 
     private static final ObjectMapper OM = new ObjectMapper();
 
@@ -187,7 +183,7 @@ public class MySetting {
             mySettingController.disableTestConnection();
             mySettingController.clearTestImg();
             mySettingController.loseFocused(null);
-            doConnectionTest3("1");
+
             Thread.startVirtualThread(() -> {
                 asyncTestConnection(mySettingController);
             });
@@ -197,48 +193,37 @@ public class MySetting {
     private static void asyncTestConnection(MySettingController mySettingController) {
         MySetting.getConfig().saveBak();
         mySettingController.refreshConfig();
-        doConnectionTest3("2");
-
+        doJdbcConnection(mySettingController);
         Platform.runLater(mySettingController::restoreTestConnection);
     }
 
 
-    private static void doConnectionTest2(MySettingController mySettingController) {
-        RemoteHikariDataSource2 dataSource = new RemoteHikariDataSource2();
-        boolean testRes = dataSource.testConnection();
-        if (testRes){
-            mySettingController.setTestImgRight();
-            if (MySetting.dataSource2 == null){
-                MySetting.dataSource2 = dataSource;
-            }
-            log.info("testConnection success");
-        }else {
-            MySetting.getConfig().restore();
-        }
-    }
-
-    private static void doConnectionTest3(String key) {
-        //String path = MySetting.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        /*Enumeration<URL> dirs = null;
+    private static void doJdbcConnection(MySettingController mySettingController) {
+        int res;
         try {
-            dirs = Thread.currentThread().getContextClassLoader().getResources("my_driver/com/tom/entity");
-        } catch (IOException e) {
-            log.error("doConnectionTest3-occurred an error",e);
+            res = JdbcUtil.jdbcTest();
+            if (res == 1){
+                mySettingController.setTestImgRight();
+                log.info("jdbc test Connection success!");
+            }else {
+                MySetting.getConfig().restore();
+            }
+        } catch (Exception e) {
+            MySetting.getConfig().restore();
+            Platform.runLater(() -> mySettingController.showDialog(e.getMessage() ));
         }
-        while(dirs.hasMoreElements()) {
-            log.info("doConnectionTest3-{}-{}",key,dirs.nextElement());
-        }*/
-        URL resource = MySetting.class.getResource("/com/tom/entity");
-        log.info("doConnectionTest3-{}",resource.getAuthority());
-
-
     }
 
-    private static void doConnectionTest1(MySettingController mySettingController) {
+
+
+
+
+
+    private static void createStableConnection(MySettingController mySettingController) {
         var mybatisConfigFilePath = "/config/mybatis-config.xml";
         var inputStream = MySetting.class.getResourceAsStream(mybatisConfigFilePath);
         try(inputStream) {
-            var curSqlSessionFactory = new MySqlSessionFactoryBuilder().build(inputStream,"remoteMySQL");
+            var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,"remoteMySQL");
             SqlSession session = curSqlSessionFactory.openSession();
             String res;
             try (session) {
