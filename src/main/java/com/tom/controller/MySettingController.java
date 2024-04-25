@@ -56,6 +56,8 @@ public class MySettingController extends AnchorPane implements Initializable {
 
     @Getter
     private final IntegerProperty configChange = new SimpleIntegerProperty(0);
+    @Getter
+    private final RecWindows fromWindow;
 
     /**
      * 当前窗口
@@ -63,7 +65,12 @@ public class MySettingController extends AnchorPane implements Initializable {
     @Setter @Getter
     private RecWindows windows;
 
-    public MySettingController() {
+    public MySettingController(RecWindows fromWindows) {
+        this.fromWindow = fromWindows;
+        Stage utility = new Stage();
+        utility.initStyle(StageStyle.UTILITY);
+        utility.setOpacity(0);
+        Stage settingStage = new Stage();
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(this.getClass().getResource("/fxml/MySetting.fxml"));
         loader.setRoot(this);
@@ -73,6 +80,15 @@ public class MySettingController extends AnchorPane implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        RecWindows settingWindows = new RecWindows(this, 600.0,
+                600.0, 12.0, settingStage,"setting",1);
+        settingWindows.setFromWindows(fromWindows);
+        settingWindows.initStage();
+        this.setWindows(settingWindows);
+        settingStage.initModality(Modality.APPLICATION_MODAL);
+        settingStage.initOwner(utility);
+        utility.show();
+        settingStage.show();
     }
 
 
@@ -122,15 +138,24 @@ public class MySettingController extends AnchorPane implements Initializable {
     }
 
 
+    /**
+     * 更新setting的实体对象
+     */
     public void refreshConfig(){
         ConfigVo configVo = MySetting.getConfig();
-        configVo.setBasePath(StrUtil.trim(basePath.getText()));
+        if (!StrUtil.equals(configVo.getBasePath(),basePath.getText())){
+            configVo.setBasePath(StrUtil.trim(basePath.getText()));
+            this.getFromWindow().closeInActiveTab();
+        }
         configVo.setRemoteDBUrl(StrUtil.trim(remoteDBUrl.getText()));
         configVo.setRemoteDBUsername(StrUtil.trim(remoteDBUsername.getText()));
         configVo.setRemoteDBPwd(StrUtil.trim(remoteDBPwd.getText()));
     }
 
 
+    /**
+     * 更新设置面板的属性
+     */
     public void refreshSettingPaneFromConfig(){
         ConfigVo configVo = MySetting.getConfig();
         basePath.setText(configVo.getBasePath());
@@ -146,6 +171,14 @@ public class MySettingController extends AnchorPane implements Initializable {
 
     public void setTestImgRight(){
         this.testResImg.setImage(ImageUtils.getImageFromResources("/img/rt.png",32,32));
+    }
+
+    public void setTestImgLoading(){
+        this.testResImg.setImage(ImageUtils.getImageFromResources("/img/loading.png",32,32));
+    }
+
+    public void setTestImgError(){
+        this.testResImg.setImage(ImageUtils.getImageFromResources("/img/error.png",32,32));
     }
 
     public void clearTestImg(){

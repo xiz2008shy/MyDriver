@@ -28,6 +28,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -54,6 +55,7 @@ public class RecWindows extends AnchorPane {
      * 多标签下的多真实节点
      * 在RecWindows创建时，通过TabManager将节点添加进集合，随后在 setActiveNode 方法中被添加到showBox的子元素中
      */
+    @Getter
     private final List<Node> tabNodes = new ArrayList<>();
     private final List<ModelData> modelDatum = new ArrayList<>();
 
@@ -138,7 +140,7 @@ public class RecWindows extends AnchorPane {
             showBox.getChildren().add(node);
         }
         this.getChildren().add(secPane);
-        AnchorPaneUtil.setNode(secPane,0.5,0.5,0.0,0.5);
+        AnchorPaneUtil.setNode(secPane,0.5,0.5,0.5,0.5);
     }
 
 
@@ -281,6 +283,39 @@ public class RecWindows extends AnchorPane {
 
     public void createNewTab(Node node,ModelData modelData, boolean isActive){
         this.topBar.getTabManager().createTab(node,modelData,isActive,false);
+    }
+
+    /**
+     * 关闭未激活的标签
+     */
+    public void closeInActiveTab(){
+        int activeIndex = this.getTopBar().getActiveIndex();
+        List<Node> nodes = this.getTabNodes();
+        ObservableList<Node> tabChildren = this.getTopBar().getTabManager().getChildren();
+        if (activeIndex == 0){
+            int times = nodes.size() - 1;
+            for (int i = 0; i < times; i++) {
+                nodes.removeLast();
+                tabChildren.removeLast();
+            }
+        }else if (activeIndex == nodes.size() - 1){
+            int times = nodes.size() - 1;
+            for (int i = 1; i < times; i++) {
+                nodes.removeFirst();
+                tabChildren.removeFirst();
+            }
+        }else {
+            int rTimes = nodes.size() - activeIndex + 1;
+            for (int i = 0; i < rTimes; i++) {
+                nodes.removeLast();
+                tabChildren.removeLast();
+            }
+            int lTimes = nodes.size() - 1;
+            for (int i = 0; i < lTimes; i++) {
+                nodes.removeLast();
+                tabChildren.removeLast();
+            }
+        }
     }
 
 

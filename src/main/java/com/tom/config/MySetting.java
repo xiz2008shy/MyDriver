@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.tom.config.vo.ConfigVo;
 import com.tom.controller.MySettingController;
 import com.tom.general.RecWindows;
-import com.tom.mapper.FileRecordMapper;
 import com.tom.utils.JdbcUtil;
-import com.zaxxer.hikari.HikariDataSource;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -19,10 +17,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.SqlSession;
+import lombok.Setter;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +52,7 @@ public class MySetting {
     private static String localDataPath;
 
     private static SqlSessionFactory localSessionFactory;
+    @Getter @Setter
     private static SqlSessionFactory remoteSessionFactory;
 
     private static final ObjectMapper OM = new ObjectMapper();
@@ -124,20 +121,8 @@ public class MySetting {
             e.consume();
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (clickButton.equals(e.getPickResult().getIntersectedNode()) ||
                     clickButton.getChildren().getFirst().equals(e.getPickResult().getIntersectedNode()))) {
-                Stage utility = new Stage();
-                utility.initStyle(StageStyle.UTILITY);
-                utility.setOpacity(0);
-                Stage settingStage = new Stage();
-                MySettingController mySettingController = new MySettingController();
-                RecWindows settingWindows = new RecWindows(mySettingController, 600.0,
-                        600.0, 12.0, settingStage,"setting",1);
-                settingWindows.setFromWindows(fromWindows);
-                settingWindows.initStage();
-                mySettingController.setWindows(settingWindows);
-                settingStage.initModality(Modality.APPLICATION_MODAL);
-                settingStage.initOwner(utility);
-                utility.show();
-                settingStage.show();
+                // 弹出设置窗口
+                new MySettingController(fromWindows);
             }
         };
     }
@@ -183,7 +168,7 @@ public class MySetting {
             mySettingController.disableTestConnection();
             mySettingController.clearTestImg();
             mySettingController.loseFocused(null);
-
+            mySettingController.setTestImgLoading();
             Thread.startVirtualThread(() -> {
                 asyncTestConnection(mySettingController);
             });
@@ -207,52 +192,17 @@ public class MySetting {
                 log.info("jdbc test Connection success!");
             }else {
                 MySetting.getConfig().restore();
+                Platform.runLater(() -> {
+                    mySettingController.setTestImgError();
+                    mySettingController.showDialog("connection failed!");
+                });
             }
         } catch (Exception e) {
             MySetting.getConfig().restore();
-            Platform.runLater(() -> mySettingController.showDialog(e.getMessage() ));
-        }
-    }
-
-
-
-
-
-
-    private static void createStableConnection(MySettingController mySettingController) {
-        var mybatisConfigFilePath = "/config/mybatis-config.xml";
-        var inputStream = MySetting.class.getResourceAsStream(mybatisConfigFilePath);
-        try(inputStream) {
-            var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,"remoteMySQL");
-            SqlSession session = curSqlSessionFactory.openSession();
-            String res;
-            try (session) {
-                FileRecordMapper mapper = session.getMapper(FileRecordMapper.class);
-                res = mapper.test();
-            }
-
-            if (res.equals("1")){
-                if(MySetting.remoteSessionFactory == null){
-                    MySetting.remoteSessionFactory = curSqlSessionFactory;
-                }else {
-                    closeDataSource(curSqlSessionFactory);
-                }
-                mySettingController.setTestImgRight();
-                log.info("testConnection success");
-            }else {
-                MySetting.getConfig().restore();
-            }
-        }catch (Exception ex){
-            log.error("testConnection error,cause: ",ex);
-            log.info("testConnection error,cause: {}",ex.getMessage());
-        }
-    }
-
-    private static void closeDataSource(SqlSessionFactory curSqlSessionFactory) {
-        Environment environment = curSqlSessionFactory.getConfiguration().getEnvironment();
-        Object dataSource = environment.getDataSource();
-        if (dataSource instanceof HikariDataSource hs) {
-            hs.close();
+            Platform.runLater(() -> {
+                mySettingController.setTestImgError();
+                mySettingController.showDialog(e.getMessage() );
+            });
         }
     }
 
