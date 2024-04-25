@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -16,6 +17,7 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class ImageUtils {
 
     private static final Map<String, SoftReference<Image>> imageViewCache = new HashMap<>(256);
@@ -71,10 +73,17 @@ public class ImageUtils {
         SoftReference<Image> sr = imageViewCache.get(file.getName());
         Image image = sr != null ? sr.get() : null;
         if (image == null) {
-            ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file, 48, 48);
-            BufferedImage bufferedImage = toBufferedImage(iconImage,true);
-            image = SwingFXUtils.toFXImage(bufferedImage,null);
-            imageViewCache.put(file.getName(),new SoftReference<>(image));
+            try{
+                Icon icon = fileSystemView.getSystemIcon(file, 48, 48);
+                if (icon instanceof ImageIcon iconImage){
+                    BufferedImage bufferedImage = toBufferedImage(iconImage,true);
+                    image = SwingFXUtils.toFXImage(bufferedImage,null);
+                    imageViewCache.put(file.getName(),new SoftReference<>(image));
+                }
+            }catch (Exception e){
+                log.info("the file icon is not exists!");
+                return getImageFromResources("/img/defaultIcon.png",48,48);
+            }
         }
         return image;
     }

@@ -57,6 +57,8 @@ public class RecWindows extends AnchorPane {
      */
     @Getter
     private final List<Node> tabNodes = new ArrayList<>();
+
+    @Getter
     private final List<ModelData> modelDatum = new ArrayList<>();
 
     /**
@@ -286,36 +288,46 @@ public class RecWindows extends AnchorPane {
     }
 
     /**
-     * 关闭未激活的标签
+     * 关闭未激活的标签，当前激活标签不动
      */
     public void closeInActiveTab(){
         int activeIndex = this.getTopBar().getActiveIndex();
         List<Node> nodes = this.getTabNodes();
+        List<ModelData> models = this.getModelDatum();
         ObservableList<Node> tabChildren = this.getTopBar().getTabManager().getChildren();
         if (activeIndex == 0){
             int times = nodes.size() - 1;
             for (int i = 0; i < times; i++) {
-                nodes.removeLast();
-                tabChildren.removeLast();
+                closeLastTabWithoutActiveOtherTab(nodes, tabChildren, models);
             }
         }else if (activeIndex == nodes.size() - 1){
             int times = nodes.size() - 1;
-            for (int i = 1; i < times; i++) {
-                nodes.removeFirst();
-                tabChildren.removeFirst();
+            for (int i = 0; i < times; i++) {
+                closeFirstTabWithoutActiveOtherTab(nodes, tabChildren, models);
             }
         }else {
-            int rTimes = nodes.size() - activeIndex + 1;
+            int rTimes = nodes.size() - (activeIndex + 1);
             for (int i = 0; i < rTimes; i++) {
-                nodes.removeLast();
-                tabChildren.removeLast();
+                closeLastTabWithoutActiveOtherTab(nodes, tabChildren, models);
             }
             int lTimes = nodes.size() - 1;
             for (int i = 0; i < lTimes; i++) {
-                nodes.removeLast();
-                tabChildren.removeLast();
+                closeFirstTabWithoutActiveOtherTab(nodes, tabChildren, models);
             }
         }
+        this.getTopBar().setActiveIndex(0);
+    }
+
+    private static void closeFirstTabWithoutActiveOtherTab(List<Node> nodes, ObservableList<Node> tabChildren, List<ModelData> models) {
+        nodes.removeFirst();
+        tabChildren.removeFirst();
+        models.removeFirst();
+    }
+
+    private static void closeLastTabWithoutActiveOtherTab(List<Node> nodes, ObservableList<Node> tabChildren, List<ModelData> models) {
+        nodes.removeLast();
+        tabChildren.removeLast();
+        models.removeLast();
     }
 
 

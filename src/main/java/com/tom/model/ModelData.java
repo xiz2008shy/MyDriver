@@ -3,6 +3,7 @@ package com.tom.model;
 import com.tom.controller.AddressPaneController;
 import com.tom.controller.FileContentPaneController;
 import com.tom.controller.MyDriverPaneController;
+import com.tom.utils.FileNameUtil;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -41,7 +42,7 @@ public class ModelData {
      * 当前文件夹
      */
     private ObjectProperty<File> curDirProperty = new SimpleObjectProperty<>();
-    private StringProperty curPathProperty = new SimpleStringProperty();
+
     private StringProperty tipsProperty = new SimpleStringProperty();
 
     /**
@@ -55,27 +56,13 @@ public class ModelData {
 
     public ModelData(File file) {
         setFile(file);
-        curPathProperty.bindBidirectional(curDirProperty, new StringConverter<>() {
-            @Override
-            public String toString(File file) {
-                return file.getName();
-            }
-
-            @Override
-            public File fromString(String path) {
-                return new File(path);
-            }
-        });
-        curDirProperty.addListener((_,_,n) -> tipsProperty.set(STR."在 \{n.getName()} 中搜索"));
+        curDirProperty.addListener((_,_,n) -> tipsProperty.set(STR."在 \{FileNameUtil.getFileName(n)} 中搜索"));
     }
 
     public void setFile(File curDir) {
         this.curDirProperty.set(curDir);
     }
 
-    public void setPath(String path) {
-        this.curPathProperty.set(path);
-    }
 
     public File getCurDir() {
         return curDirProperty.get();

@@ -2,6 +2,7 @@ package com.tom.general;
 
 import com.tom.model.ModelData;
 import com.tom.utils.AnchorPaneUtil;
+import com.tom.utils.FileNameUtil;
 import com.tom.utils.ImageUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -89,10 +90,10 @@ public class TabManager extends HBox {
         ap.setPrefSize(260,35);
         ImageView imageView = ImageUtils.getImageView("/img/fileDir32.png", 19, 19);
         Label label = new Label();
-        String initTitle = modelData.getCurDirProperty().get().getName();
+        String initTitle = FileNameUtil.getFileName(modelData.getCurDirProperty().get());
         label.setText(initTitle);
-        modelData.getCurDirProperty().addListener((_, old, newValue) -> {
-            label.setText(newValue.getName());
+        modelData.getCurDirProperty().addListener((_, _, newValue) -> {
+            label.setText(FileNameUtil.getFileName(newValue));
         });
 
         HBox textBox = new HBox(label);

@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class FileViewController extends AnchorPane implements Initializable {
 
     @FXML
@@ -49,6 +51,7 @@ public class FileViewController extends AnchorPane implements Initializable {
         try {
             loader.load();
         } catch (IOException e) {
+            log.info("file view-{} occurred an error:",file,e);
             throw new RuntimeException(e);
         }
     }

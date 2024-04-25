@@ -27,6 +27,7 @@ import javafx.stage.StageStyle;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -146,10 +147,17 @@ public class MySettingController extends AnchorPane implements Initializable {
         if (!StrUtil.equals(configVo.getBasePath(),basePath.getText())){
             configVo.setBasePath(StrUtil.trim(basePath.getText()));
             this.getFromWindow().closeInActiveTab();
+            this.getFromWindow().getActiveModelData().getCurDirProperty().set(new File(basePath.getText()));
         }
         configVo.setRemoteDBUrl(StrUtil.trim(remoteDBUrl.getText()));
         configVo.setRemoteDBUsername(StrUtil.trim(remoteDBUsername.getText()));
         configVo.setRemoteDBPwd(StrUtil.trim(remoteDBPwd.getText()));
+    }
+
+
+    public boolean validBasePath(){
+        String path = basePath.getText();
+        return StrUtil.isNotBlank(path) && new File(path).exists();
     }
 
 
@@ -198,18 +206,17 @@ public class MySettingController extends AnchorPane implements Initializable {
 
 
 
-    public void showDialog(String msg){
+    public void showDialog(String msg,String title){
         Stage dialogStage = new Stage();
 
         DialogPane dialog=new DialogPane();
         Scene scene = new Scene(dialog);
         dialogStage.setScene(scene);
         //设置各区域显示内容
-        dialog.setHeaderText("connection ");
+        dialog.setHeaderText(title);
         dialog.setContentText(msg);
-        Text text = new Text("ERROR!");
-        text.setStyle("-fx-font: bold italic 50px 'sans-serif'");
-        dialog.setGraphic(text);
+        ImageView imageView = ImageUtils.getImageViewFromResources("/img/warning.png", 64, 64);
+        dialog.setGraphic(imageView);
         dialog.getButtonTypes().addAll(ButtonType.CLOSE);
 
         Button ok = (Button)dialog.lookupButton(ButtonType.CLOSE);

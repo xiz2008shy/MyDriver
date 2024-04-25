@@ -1,8 +1,10 @@
 package com.tom.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
 import com.tom.handler.fxml.AddressJumpHandler;
 import com.tom.model.ModelData;
+import com.tom.utils.FileNameUtil;
 import com.tom.utils.ImageUtils;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -97,7 +99,8 @@ public class AddressPaneController implements Initializable {
     }
 
     private boolean addAddrLabel(HBox hBox, File file) {
-        Label dirLabel = new Label(file.getName());
+        String labelName = FileNameUtil.getFileName(file);
+        Label dirLabel = new Label(labelName);
         Font font = new Font(13);
         dirLabel.setFont(font);
         dirLabel.setPadding(new Insets(5));
@@ -110,4 +113,6 @@ public class AddressPaneController implements Initializable {
         dirLabel.addEventHandler(MouseEvent.MOUSE_CLICKED,new AddressJumpHandler(file,modelData));
         return true;
     }
+
+
 }

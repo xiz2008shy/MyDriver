@@ -148,15 +148,20 @@ public class MySetting {
 
     private static void saveConfigToFile(MySettingController mySettingController, MouseEvent e) {
         boolean configChange = mySettingController.isConfigChange();
-        mySettingController.getConfigChange().set(0);
         if (e.getButton().equals(MouseButton.PRIMARY) && configChange) {
-            mySettingController.refreshConfig();
-            Path path = Paths.get(runConfFile);
-            try {
-                String configStr = OM.writeValueAsString(config);
-                createFileWithConfig(path,configStr);
-            } catch (Exception ex) {
-                log.error("MySetting.saveConfig occurred an error,cause: ",ex);
+            boolean isBasePathValid = mySettingController.validBasePath();
+            if (isBasePathValid) {
+                mySettingController.getConfigChange().set(0);
+                mySettingController.refreshConfig();
+                Path path = Paths.get(runConfFile);
+                try {
+                    String configStr = OM.writeValueAsString(config);
+                    createFileWithConfig(path,configStr);
+                } catch (Exception ex) {
+                    log.error("MySetting.saveConfig occurred an error,cause: ",ex);
+                }
+            }else {
+                mySettingController.showDialog("同步路径不存在，请重新填写","The path is not exists！");
             }
         }
     }
@@ -194,14 +199,14 @@ public class MySetting {
                 MySetting.getConfig().restore();
                 Platform.runLater(() -> {
                     mySettingController.setTestImgError();
-                    mySettingController.showDialog("connection failed!");
+                    mySettingController.showDialog("链接失败，请稍后再试！","connection failed!");
                 });
             }
         } catch (Exception e) {
             MySetting.getConfig().restore();
             Platform.runLater(() -> {
                 mySettingController.setTestImgError();
-                mySettingController.showDialog(e.getMessage() );
+                mySettingController.showDialog(e.getMessage() ,"Connection Failed!");
             });
         }
     }
