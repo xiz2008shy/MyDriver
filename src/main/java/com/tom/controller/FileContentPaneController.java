@@ -48,9 +48,13 @@ public class FileContentPaneController implements Initializable {
         File[] files = n.listFiles();
         assert files != null;
         modelData.getCacheMap().clear();
-        for (File file : files) {
-            addFileNode(file);
+        // 如果n是某些系统隐藏文件时，可能导致files为null
+        if (files != null){
+            for (File file : files) {
+                addFileNode(file);
+            }
         }
+
     }
 
     private void addFileNode (File file) {
