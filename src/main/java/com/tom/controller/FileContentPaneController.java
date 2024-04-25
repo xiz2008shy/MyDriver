@@ -38,11 +38,13 @@ public class FileContentPaneController implements Initializable {
      */
     public void bindListener(){
         changeContentWhenChangeDir(modelData.getCurDirProperty().get());
-        modelData.getCurDirProperty().addListener((e,o,n) -> {
-            changeContentWhenChangeDir(n);
-        });
+        modelData.getCurDirProperty().addListener((_,_,n) -> changeContentWhenChangeDir(n));
     }
 
+    /**
+     * 监听方法，当路径变更时，变更当前展示内容
+     * @param n
+     */
     private void changeContentWhenChangeDir(File n) {
         flowPaneContent.getChildren().clear();
         File[] files = n.listFiles();
