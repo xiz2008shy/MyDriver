@@ -100,7 +100,7 @@ public class TopBar extends AnchorPane{
         if ((topBarIconFlag & CU_B_S) > 0){
             this.statusBar = new StatusBar(recWindows);
             this.getChildren().add(statusBar);
-            AnchorPaneUtil.setNode(statusBar,3.0,160.0,5.0, null);
+            AnchorPaneUtil.setNode(statusBar,5.0,160.0,5.0, null);
         }
 
         AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);

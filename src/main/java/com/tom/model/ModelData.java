@@ -43,6 +43,9 @@ public class ModelData {
      */
     private ObjectProperty<File> curDirProperty = new SimpleObjectProperty<>();
 
+    /**
+     * 搜索栏提示
+     */
     private StringProperty tipsProperty = new SimpleStringProperty();
 
     /**
@@ -56,6 +59,7 @@ public class ModelData {
 
     public ModelData(File file) {
         setFile(file);
+        tipsProperty.set(STR."在 \{FileNameUtil.getFileName(file)} 中搜索");
         curDirProperty.addListener((_,_,n) -> tipsProperty.set(STR."在 \{FileNameUtil.getFileName(n)} 中搜索"));
     }
 
