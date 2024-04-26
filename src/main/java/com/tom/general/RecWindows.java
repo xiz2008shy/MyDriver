@@ -9,15 +9,13 @@ import com.tom.utils.ImageUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
@@ -28,7 +26,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -315,6 +312,8 @@ public class RecWindows extends AnchorPane {
                 closeFirstTabWithoutActiveOtherTab(nodes, tabChildren, models);
             }
         }
+        Node node = tabChildren.getFirst();
+        HBox.setMargin(node,new Insets(0,0,0,0));
         this.getTopBar().setActiveIndex(0);
     }
 

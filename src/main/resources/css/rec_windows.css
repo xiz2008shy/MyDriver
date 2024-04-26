@@ -154,3 +154,8 @@
     -fx-text-fill: rgb(80, 94, 196);
     -fx-underline: true ;
 }
+
+.my_status_bar:hover {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 5px;
+}

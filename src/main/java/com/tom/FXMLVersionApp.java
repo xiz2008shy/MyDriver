@@ -24,7 +24,7 @@ public class FXMLVersionApp extends Application {
 
         // topBarIconFlag 15 = 8 | 4 | 2 | 1
         RecWindows recWindowsPane = new RecWindows(myDriverPane, 1200,
-                700, 12.0, stage,myDriverPane.getModelData(),15);
+                700, 12.0, stage,myDriverPane.getModelData(),31);
         recWindowsPane.setWhenActive(RightClickMenu::addMenu);
         recWindowsPane.initStage();
         stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));

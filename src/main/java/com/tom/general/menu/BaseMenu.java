@@ -2,6 +2,7 @@ package com.tom.general.menu;
 
 import com.tom.general.RecWindows;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -13,30 +14,37 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.function.Consumer;
 
-public class BaseMenu extends StackPane{
+public class BaseMenu<T extends ShowMenu<R>,R extends Event> extends StackPane{
 
     private final ImageView bg;
 
+    @Getter
     private final VBox menuContent;
 
-    private final double myWidth;
-    private final int intWidth;
-
     private double preHeight;
-    private double myHeight;
+
+    private int intWidth;
     private int intHeight;
 
     private Rectangle rectangle;
 
+    @Getter
     private final HBox realPane = new HBox();
 
-    private double myTransX = 0;
-    private double myTransY = 0;
 
     private Consumer<BaseMenu> closeMenuHandler;
+
+    @Getter
+    private final RecWindows menuBindWindow;
+    @Setter
+    private Class<T> showMenuClazz;
+
+    private ShowMenu<R> showMenu;
 
 
     /**
@@ -58,16 +66,15 @@ public class BaseMenu extends StackPane{
      */
     public BaseMenu(double width,double preHeight, RecWindows windows) {
         super();
-        this.myWidth = width;
-        this.myHeight = preHeight;
+        this.menuBindWindow = windows;
         this.preHeight = preHeight;
-        this.intWidth = (int)width;
         this.intHeight = (int)preHeight;
-        this.rectangle = new Rectangle(width,myHeight);
+        this.intWidth = (int)width;
+        this.rectangle = new Rectangle(intWidth,intHeight);
         rectangle.setArcWidth(20);
         rectangle.setArcHeight(20);
 
-        myResize(width,myHeight);
+        myResize(intWidth,intHeight);
         realPane.getChildren().add(this);
         DropShadow dropShadow = new DropShadow();
         // 设置阴影的模糊半径
@@ -85,17 +92,16 @@ public class BaseMenu extends StackPane{
         this.bg = new ImageView();
         bg.setEffect(new GaussianBlur(30));
         this.menuContent = new VBox();
-        menuContent.setPrefSize(width,myHeight);
+        menuContent.setPrefSize(width,preHeight);
         menuContent.setStyle("-fx-background-color: rgba(251, 251, 252,0.75);");
         this.getChildren().add(bg);
         this.getChildren().add(menuContent);
         windows.getSecPane().getChildren().add(this.realPane);
         this.realPane.setVisible(false);
-        //DeliverUtils.setBaseMenu(this);
     }
 
     private void myResize(double width,double height) {
-        this.myHeight = height;
+        this.intWidth = (int)width;
         this.intHeight = (int)height;
         this.rectangle.setWidth(width);
         this.rectangle.setHeight(height);
@@ -111,7 +117,7 @@ public class BaseMenu extends StackPane{
     public void setMenuBg(Pane pane,double x,double y){
         WritableImage writableImage = new WritableImage(intWidth, intHeight);
         SnapshotParameters snapshotParameters = new SnapshotParameters();
-        snapshotParameters.setViewport(new Rectangle2D(x,y,myWidth,myHeight));
+        snapshotParameters.setViewport(new Rectangle2D(x,y,intWidth,intHeight));
         pane.snapshot(snapshotParameters,writableImage);
         bg.setImage(writableImage);
     }
@@ -120,70 +126,19 @@ public class BaseMenu extends StackPane{
         ObservableList<Node> children = menuContent.getChildren();
         children.add(myMenuContext);
         VBox.setVgrow(myMenuContext, Priority.ALWAYS);
-        this.myResize(myWidth, this.menuContent.getChildren().size() * preHeight);
+        this.myResize(intWidth, this.menuContent.getChildren().size() * preHeight);
         myMenuContext.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             e.consume();
             myMenuContext.getMouseActiveHandler().handle(e);
             this.closeMenu();
         });
-
     }
 
 
-    public void showMenu( MouseEvent event,RecWindows pane){
-        double originX ;
-        double originY ;
-        double maxWWhI = pane.getWidth() - myWidth;
-        double halfW = (int)pane.getWidth() >> 1;
-        double maxHWhI = pane.getHeight() - myHeight;
-        double halfH = (int)pane.getHeight() >> 1;
-        int menuHalfWidth = intWidth >> 1;
-        int menuHalfHeight = intHeight >> 1;
-        /**
-         * 这里根据当前鼠标点击位置坐标和原菜单面版的 宽度/高度比较 确定选取菜单面板四角中的一角坐标作为计算原点
-         */
-        if (event.getSceneX() < maxWWhI){
-            if (event.getSceneY() < maxHWhI) {
-                originX = halfW - menuHalfWidth;
-                originY = halfH - menuHalfHeight;
-            }else {
-                originX = halfW - menuHalfWidth;
-                originY = halfH + menuHalfHeight;
-            }
-        }else {
-            if (event.getSceneY() < maxHWhI) {
-                originX = halfW + menuHalfWidth;
-                originY = halfH - menuHalfHeight;
-            }else {
-                originX = halfW + menuHalfWidth;
-                originY = halfH + menuHalfHeight;
-            }
-        }
 
 
-        myTransX =  event.getSceneX() - originX;
-        myTransY =  event.getSceneY() - originY;
+    public void setShowMenu( MouseEvent event,RecWindows pane){
 
-        this.realPane.setTranslateX(myTransX);
-        this.realPane.setTranslateY(myTransY);
-        this.setMenuBg(pane.getShowBox(),event.getSceneX(),event.getSceneY());
-        for (Node child : this.menuContent.getChildren()) {
-            MyMenuContext menuContext = (MyMenuContext) child;
-            menuContext.getStyleClass().remove("my_disabled");
-            if (menuContext.getVisiblePredicate().test(event)){
-                menuContext.setVisible(true);
-                if (menuContext.getDisabledPredicate().test(event)) {
-                    menuContext.getStyleClass().add("my_disabled");
-                    menuContext.setDisable(true);
-                }else {
-                    menuContext.setDisable(false);
-                }
-            }else {
-                menuContext.setVisible(false);
-            }
-        }
-
-        this.realPane.setVisible(true);
     }
 
     public void closeMenu(){
@@ -202,11 +157,4 @@ public class BaseMenu extends StackPane{
         return this.realPane.isVisible();
     }
 
-    public void setCloseMenuHandler(Consumer<BaseMenu> closeMenuHandler) {
-        this.closeMenuHandler = closeMenuHandler;
-    }
-
-    public VBox getMenuContent() {
-        return menuContent;
-    }
 }

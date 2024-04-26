@@ -23,6 +23,7 @@ public class TopBar extends AnchorPane{
     private static final int MX_B_I = 2;
     private static final int MI_B_I = 4;
     private static final int CU_B_I = 8;
+    private static final int CU_B_S = 16;
 
     @Getter
     private TabManager tabManager;
@@ -70,7 +71,7 @@ public class TopBar extends AnchorPane{
         if (modelData != null) {
             tabManager.createTab(node,modelData,true,true);
         }
-        initTopBar(recWindows);
+        initTopBar(recWindows,topBarIconFlag);
     }
 
 
@@ -82,16 +83,24 @@ public class TopBar extends AnchorPane{
     public TopBar(RecWindows recWindows , String title,int topBarIconFlag) {
         this.tabManager = new TabManager(title);
         this.topBarIconFlag = topBarIconFlag;
-        initTopBar(recWindows);
+        initTopBar(recWindows,topBarIconFlag);
     }
 
 
-    private void initTopBar(RecWindows recWindows) {
+    private void initTopBar(RecWindows recWindows,int topBarIconFlag) {
         this.setPrefHeight(25);
         this.getStyleClass().add("top_bar_normal");
         HBox rightIcons = createRightPart(recWindows);
-        AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
+
         this.getChildren().addAll(tabManager,rightIcons);
+        // 判断是否展示状态栏
+        if ((topBarIconFlag & CU_B_S) > 0){
+            StatusBar statusBar = new StatusBar(recWindows);
+            this.getChildren().add(statusBar);
+            AnchorPaneUtil.setNode(statusBar,3.0,160.0,5.0, null);
+        }
+
+        AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
         AnchorPaneUtil.setNode(tabManager,7.0,160.0,0.0, 0.0);
     }
 
@@ -104,9 +113,9 @@ public class TopBar extends AnchorPane{
         EventHandler<MouseEvent> blueMoveOnHandler = getBlueOrRedMoveOnHandler(true,null,null);
 
         if ((topBarIconFlag & CU_B_I) != 0){
-            HBox h1 = createSquareIconBox("/img/gear.png", 32,20, 9,blueMoveOnHandler);
-            h1.addEventHandler(MouseEvent.MOUSE_RELEASED, MySetting.openSettingPane(h1,recWindows));
-            children.add(h1);
+            HBox gear = createSquareIconBox("/img/gear.png", 32,20, 9,blueMoveOnHandler);
+            gear.addEventHandler(MouseEvent.MOUSE_RELEASED, MySetting.openSettingPane(gear,recWindows));
+            children.add(gear);
         }
 
         if ((topBarIconFlag & MI_B_I) != 0){
@@ -134,7 +143,7 @@ public class TopBar extends AnchorPane{
             EventHandler<MouseEvent> closeHandler = recWindows.closeHandler(closeBox);
             closeBox.addEventHandler(MouseEvent.MOUSE_RELEASED,closeHandler);
             closeBox.addEventHandler(MouseEvent.MOUSE_DRAGGED,closeHandler);
-            children.addAll(closeBox);
+            children.add(closeBox);
         }
 
         return rightIcons;
