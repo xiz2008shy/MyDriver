@@ -1,6 +1,7 @@
 package com.tom;
 
 import com.tom.component.menu.RightClickMenu;
+import com.tom.component.menu.StatusBarMenu;
 import com.tom.config.MySetting;
 import com.tom.controller.MyDriverPaneController;
 import com.tom.general.RecWindows;
@@ -23,10 +24,11 @@ public class FXMLVersionApp extends Application {
         MyDriverPaneController myDriverPane = new MyDriverPaneController(baseFile);
 
         // topBarIconFlag 15 = 8 | 4 | 2 | 1
-        RecWindows recWindowsPane = new RecWindows(myDriverPane, 1200,
+        RecWindows mainWindow = new RecWindows(myDriverPane, 1200,
                 700, 12.0, stage,myDriverPane.getModelData(),31);
-        recWindowsPane.setWhenActive(RightClickMenu::addMenu);
-        recWindowsPane.initStage();
+        mainWindow.setWhenActive(RightClickMenu::addMenu);
+        StatusBarMenu.addMenuTrigger(mainWindow.getTopBar().getStatusBar());
+        mainWindow.initStage();
         stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));
         stage.show();
 

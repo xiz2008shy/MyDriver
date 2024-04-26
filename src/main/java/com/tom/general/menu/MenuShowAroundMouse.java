@@ -4,7 +4,9 @@ import com.tom.general.RecWindows;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class MenuShowAroundMouse implements ShowMenu<MouseEvent>{
 
     private double myTransX = 0;
@@ -14,24 +16,24 @@ public class MenuShowAroundMouse implements ShowMenu<MouseEvent>{
     private int intHeight;
     private int intWidth;
 
-    public MenuShowAroundMouse(double menuWidth, double menuHeight) {
-        this.menuWidth = menuWidth;
-        this.menuHeight = menuHeight;
-
-        this.intWidth = (int) menuWidth;
-        this.intHeight = (int) menuHeight;
-    }
-
-    @Override
-    public ShowMenu<MouseEvent> createShowMenu(double menuWidth, double menuHeight) {
-        return new MenuShowAroundMouse(menuWidth,menuHeight);
-    }
 
     @Override
     public void showMenu(MouseEvent event,BaseMenu baseMenu){
         showMenuAroundMouse(event,baseMenu);
     }
 
+    @Override
+    public void closeMenu(MouseEvent event, BaseMenu baseMenu) {
+        HBox realPane = baseMenu.getRealPane();
+        realPane.setTranslateX(-myTransX);
+        realPane.setTranslateY(-myTransY);
+        this.myTransX = 0 ;
+        this.myTransY = 0 ;
+        realPane.setVisible(false);
+        if (baseMenu.getCloseMenuHandler() != null){
+            baseMenu.getCloseMenuHandler().accept(baseMenu);
+        }
+    }
 
 
     private void showMenuAroundMouse(MouseEvent event, BaseMenu baseMenu){
@@ -65,7 +67,6 @@ public class MenuShowAroundMouse implements ShowMenu<MouseEvent>{
             }
         }
 
-
         myTransX =  event.getSceneX() - originX;
         myTransY =  event.getSceneY() - originY;
 
@@ -90,6 +91,19 @@ public class MenuShowAroundMouse implements ShowMenu<MouseEvent>{
         }
 
         realPane.setVisible(true);
+    }
+
+
+    @Override
+    public void setMenuWidth(double menuWidth) {
+        this.menuWidth = menuWidth;
+        this.intWidth = (int) menuWidth;
+    }
+
+    @Override
+    public void setMenuHeight(double menuHeight) {
+        this.menuHeight = menuHeight;
+        this.intHeight = (int) menuHeight;
     }
 
 }

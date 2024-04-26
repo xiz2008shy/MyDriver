@@ -15,36 +15,47 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.function.Consumer;
 
-public class BaseMenu<T extends ShowMenu<R>,R extends Event> extends StackPane{
+@Slf4j
+public class BaseMenu extends StackPane{
 
     private final ImageView bg;
 
     @Getter
     private final VBox menuContent;
 
-    private double preHeight;
+    /**
+     * 单个菜单的高度
+     */
+    private final double preHeight;
 
+    /**
+     * 菜单整体宽度
+     */
     private int intWidth;
+    /**
+     * 菜单整体高度
+     */
     private int intHeight;
 
-    private Rectangle rectangle;
+    private final Rectangle rectangle;
 
     @Getter
     private final HBox realPane = new HBox();
 
-
+    @Getter
     private Consumer<BaseMenu> closeMenuHandler;
 
     @Getter
     private final RecWindows menuBindWindow;
-    @Setter
-    private Class<T> showMenuClazz;
 
-    private ShowMenu<R> showMenu;
+    private ShowMenu showMenu;
 
 
     /**
@@ -64,12 +75,15 @@ public class BaseMenu<T extends ShowMenu<R>,R extends Event> extends StackPane{
      * @param preHeight
      * @param windows
      */
-    public BaseMenu(double width,double preHeight, RecWindows windows) {
+    public <T extends ShowMenu<?>>BaseMenu(double width, double preHeight, RecWindows windows, Class<T> clazz) {
         super();
+        this.setShowMenuClazz(clazz);
         this.menuBindWindow = windows;
         this.preHeight = preHeight;
         this.intHeight = (int)preHeight;
         this.intWidth = (int)width;
+        this.showMenu.setMenuWidth(intWidth);
+        this.showMenu.setMenuHeight(intHeight);
         this.rectangle = new Rectangle(intWidth,intHeight);
         rectangle.setArcWidth(20);
         rectangle.setArcHeight(20);
@@ -97,7 +111,7 @@ public class BaseMenu<T extends ShowMenu<R>,R extends Event> extends StackPane{
         this.getChildren().add(bg);
         this.getChildren().add(menuContent);
         windows.getSecPane().getChildren().add(this.realPane);
-        this.realPane.setVisible(false);
+        this.realPane.setVisible(true);
     }
 
     private void myResize(double width,double height) {
@@ -105,6 +119,8 @@ public class BaseMenu<T extends ShowMenu<R>,R extends Event> extends StackPane{
         this.intHeight = (int)height;
         this.rectangle.setWidth(width);
         this.rectangle.setHeight(height);
+        this.showMenu.setMenuWidth(width);
+        this.showMenu.setMenuHeight(height);
         this.realPane.setMaxWidth(width);
         this.realPane.setMaxHeight(height);
         this.setPrefSize(width,height);
@@ -130,25 +146,18 @@ public class BaseMenu<T extends ShowMenu<R>,R extends Event> extends StackPane{
         myMenuContext.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             e.consume();
             myMenuContext.getMouseActiveHandler().handle(e);
-            this.closeMenu();
+            this.closeMenu(null);
         });
     }
 
 
-
-
-    public void setShowMenu( MouseEvent event,RecWindows pane){
-
-    }
-
-    public void closeMenu(){
-        this.realPane.setTranslateX(-myTransX);
-        this.realPane.setTranslateY(-myTransY);
-        this.myTransX = 0 ;
-        this.myTransY = 0 ;
-        this.realPane.setVisible(false);
-        if (closeMenuHandler != null){
-            closeMenuHandler.accept(this);
+    public <T extends ShowMenu<?>>void setShowMenuClazz(Class<T> clazz){
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        try {
+            MethodHandle constructor = lookup.findConstructor(clazz, MethodType.methodType(void.class));
+            this.showMenu =  (T)constructor.invoke();
+        } catch (Throwable e) {
+            log.error("BaseMenu.setShowMenuClazz occurred an error,cause:",e);
         }
     }
 
@@ -157,4 +166,11 @@ public class BaseMenu<T extends ShowMenu<R>,R extends Event> extends StackPane{
         return this.realPane.isVisible();
     }
 
+    public void showMenu(Event e) {
+        this.showMenu.showMenu(e,this);
+    }
+
+    public void closeMenu(Event e){
+        this.showMenu.closeMenu(e,this);
+    }
 }

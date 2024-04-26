@@ -4,6 +4,7 @@ package com.tom.component.menu;
 import com.tom.controller.MyDriverPaneController;
 import com.tom.general.RecWindows;
 import com.tom.general.menu.BaseMenu;
+import com.tom.general.menu.MenuShowAroundMouse;
 import com.tom.general.menu.MyMenuContext;
 import com.tom.handler.fxml.DesktopIconClickHandler;
 import com.tom.model.ModelData;
@@ -41,7 +42,7 @@ public class RightClickMenu {
      * @return 返回右键菜单对象
      */
     public static BaseMenu createBaseMenu(RecWindows windows) {
-        BaseMenu baseMenu = new BaseMenu(160, 40, windows);
+        BaseMenu baseMenu = new BaseMenu(160, 40, windows, MenuShowAroundMouse.class);
 
         MyMenuContext open = new MyMenuContext(new Label("打开"), baseMenu);
         open.whenActiveByMouse( _ -> {
@@ -56,39 +57,36 @@ public class RightClickMenu {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
             return curPath == null;
         });
-        MyMenuContext menu0 = new MyMenuContext(new Label("新标签页中打开"), baseMenu);
-        menu0.whenActiveByMouse( _ -> {
+        MyMenuContext openInNewPage = new MyMenuContext(new Label("新标签页中打开"), baseMenu);
+        openInNewPage.whenActiveByMouse( _ -> {
             File file = windows.getActiveModelData().getRealSelectedFile();
             MyDriverPaneController myDriverPane2 = new MyDriverPaneController(file);
             windows.createNewTab(myDriverPane2,myDriverPane2.getModelData(),true);
         });
-        menu0.setDisabledPredicate(_ -> {
+        openInNewPage.setDisabledPredicate(_ -> {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
             log.info("menu0.setDisabledPredicate curPath={}",curPath);
             return curPath == null || !curPath.isDirectory();
         });
-        MyMenuContext menu1 = new MyMenuContext(new Label("复制"), baseMenu);
-        menu1.whenActiveByMouse( e -> {
+        MyMenuContext copy = new MyMenuContext(new Label("复制"), baseMenu);
+        copy.whenActiveByMouse( e -> {
             log.info("复制 active!");
         });
-        menu1.setDisabledPredicate(_ -> {
+        copy.setDisabledPredicate(_ -> {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
             return curPath == null;
         });
-        MyMenuContext menu2 = new MyMenuContext(new Label("粘贴"), baseMenu);
-        menu2.whenActiveByMouse( e -> {
+        MyMenuContext paste = new MyMenuContext(new Label("粘贴"), baseMenu);
+        paste.whenActiveByMouse( e -> {
             log.info("粘贴 active!");
         });
 
-        menu2.setDisabledPredicate(_ -> {
+        paste.setDisabledPredicate(_ -> {
             Clipboard systemClipboard = Clipboard.getSystemClipboard();
             List<File> files = systemClipboard.getFiles();
             return files == null || files.isEmpty();
         });
 
-        /*baseMenu.setCloseMenuHandler(m -> {
-            windows.getActiveModelData().setSelectedFile(null);
-        });*/
         return baseMenu;
     }
 
@@ -100,7 +98,7 @@ public class RightClickMenu {
             bm = RightClickMenu.createBaseMenu(windows);
             windows.setBaseMenu(bm);
         }
-        bm.closeMenu();
+        bm.closeMenu(null);
         ObservableMap<Object, Object> myMap = windows.getProperties();
         if (myMap.get("isAddMenuHandler") == null){
             BaseMenu finalBm = bm;
@@ -108,7 +106,7 @@ public class RightClickMenu {
                 log.info("menu mouse clicked!");
                 e.consume();
                 if(finalBm.isShow()){
-                    finalBm.closeMenu();
+                    finalBm.closeMenu(e);
                 }
                 Node intersectedNode = e.getPickResult().getIntersectedNode();
                 String id = intersectedNode.getId();
@@ -134,7 +132,7 @@ public class RightClickMenu {
                     }
                 }
                 if (e.getButton().equals(MouseButton.SECONDARY)){
-                    finalBm.showMenu(e,windows);
+                    finalBm.showMenu(e);
                 }
             });
             myMap.put("isAddMenuHandler",true);

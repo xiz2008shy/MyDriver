@@ -63,8 +63,11 @@ public class RecWindows extends AnchorPane {
      *  注册面板激活（主要是指node加入recWindows 内部时触发，比如多标签页的情况下，实际会切换不同的node）事件
      */
     @Setter
-    private Consumer<RecWindows> whenActive = null;
+    private Consumer<RecWindows> whenActive;
 
+    /**
+     * 需要跨标签共享的菜单放这里（比如多标签下的右键菜单）
+     */
     @Getter
     @Setter
     private BaseMenu baseMenu;

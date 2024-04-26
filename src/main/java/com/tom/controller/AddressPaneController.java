@@ -28,6 +28,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * 地址栏(连同顶部，一共高度82)
+ */
 @Slf4j
 public class AddressPaneController implements Initializable {
 

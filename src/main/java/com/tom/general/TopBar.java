@@ -19,6 +19,7 @@ import lombok.Setter;
 
 public class TopBar extends AnchorPane{
 
+    // CL-关闭 MX-最大化 MI-最小化 CU-自定义1 CU-自定义2
     private static final int CL_B_I = 1;
     private static final int MX_B_I = 2;
     private static final int MI_B_I = 4;
@@ -26,14 +27,16 @@ public class TopBar extends AnchorPane{
     private static final int CU_B_S = 16;
 
     @Getter
-    private TabManager tabManager;
+    private final TabManager tabManager;
+    @Getter
+    private StatusBar statusBar;
 
     @Getter
     private HBox closeBox;
 
     @Getter
     private HBox maximizeBox;
-
+    @Getter
     private HBox minimizeBox;
 
     @Setter
@@ -95,13 +98,13 @@ public class TopBar extends AnchorPane{
         this.getChildren().addAll(tabManager,rightIcons);
         // 判断是否展示状态栏
         if ((topBarIconFlag & CU_B_S) > 0){
-            StatusBar statusBar = new StatusBar(recWindows);
+            this.statusBar = new StatusBar(recWindows);
             this.getChildren().add(statusBar);
             AnchorPaneUtil.setNode(statusBar,3.0,160.0,5.0, null);
         }
 
         AnchorPaneUtil.setNode(rightIcons,0.0,0.0,0.0, null);
-        AnchorPaneUtil.setNode(tabManager,7.0,160.0,0.0, 0.0);
+        AnchorPaneUtil.setNode(tabManager,7.0,230.0,0.0, 0.0);
     }
 
 
