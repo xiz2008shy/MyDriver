@@ -28,12 +28,8 @@ public class StatusBar extends HBox {
         this.getChildren().add(stackPane);
         this.getStyleClass().add("my_status_bar");
         offlineStatus();
-        addTrigger();
     }
 
-    public void addTrigger() {
-        StatusBarMenu.addMenuTrigger(this);
-    }
 
     private void onlineStatus() {
         this.pointView = ImageUtils.getImageView("/img/greenPoint.png",32,10);

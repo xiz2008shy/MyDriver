@@ -108,6 +108,9 @@ public class RightClickMenu {
                 if(finalBm.isShow()){
                     finalBm.closeMenu(e);
                 }
+                if(windows.getStatusMenu().isShow()){
+                    windows.getStatusMenu().closeMenu(e);
+                }
                 Node intersectedNode = e.getPickResult().getIntersectedNode();
                 String id = intersectedNode.getId();
                 File file = null;

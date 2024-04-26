@@ -41,6 +41,8 @@ public class DragHandler implements EventHandler<MouseEvent> {
     public void clickHandle(MouseEvent event) {
         event.consume();
         if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2){
+            this.windows.getBaseMenu().closeMenu(null);
+            this.windows.getStatusMenu().closeMenu(null);
             RecWindows.maximizedOrRestore(windows);
         }
     }

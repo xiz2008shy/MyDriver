@@ -25,10 +25,6 @@ public class MenuShowAroundMouse implements ShowMenu<MouseEvent>{
     @Override
     public void closeMenu(MouseEvent event, BaseMenu baseMenu) {
         HBox realPane = baseMenu.getRealPane();
-        realPane.setTranslateX(-myTransX);
-        realPane.setTranslateY(-myTransY);
-        this.myTransX = 0 ;
-        this.myTransY = 0 ;
         realPane.setVisible(false);
         if (baseMenu.getCloseMenuHandler() != null){
             baseMenu.getCloseMenuHandler().accept(baseMenu);
@@ -46,9 +42,8 @@ public class MenuShowAroundMouse implements ShowMenu<MouseEvent>{
         double halfH = (int)window.getHeight() >> 1;
         int menuHalfWidth = intWidth >> 1;
         int menuHalfHeight = intHeight >> 1;
-        /**
-         * 这里根据当前鼠标点击位置坐标和原菜单面版的 宽度/高度比较 确定选取菜单面板四角中的一角坐标作为计算原点
-         */
+
+        // 这里根据当前鼠标点击位置坐标和原菜单面版的 宽度/高度比较 确定选取菜单面板四角中的一角坐标作为计算原点
         if (event.getSceneX() < maxWWhI){
             if (event.getSceneY() < maxHWhI) {
                 originX = halfW - menuHalfWidth;

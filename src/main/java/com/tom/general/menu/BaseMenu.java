@@ -111,7 +111,7 @@ public class BaseMenu extends StackPane{
         this.getChildren().add(bg);
         this.getChildren().add(menuContent);
         windows.getSecPane().getChildren().add(this.realPane);
-        this.realPane.setVisible(true);
+        this.realPane.setVisible(false);
     }
 
     private void myResize(double width,double height) {

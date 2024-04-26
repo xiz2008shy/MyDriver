@@ -68,9 +68,10 @@ public class RecWindows extends AnchorPane {
     /**
      * 需要跨标签共享的菜单放这里（比如多标签下的右键菜单）
      */
-    @Getter
-    @Setter
+    @Getter @Setter
     private BaseMenu baseMenu;
+    @Getter @Setter
+    private BaseMenu statusMenu;
 
     @Getter
     private Node activeNode;
@@ -191,6 +192,8 @@ public class RecWindows extends AnchorPane {
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode())
                 || pane.getChildren().get(0).equals(e.getPickResult().getIntersectedNode()))
             ) {
+                this.getBaseMenu().closeMenu(null);
+                this.getStatusMenu().closeMenu(null);
                 RecWindows.maximizedOrRestore(this);
             }
         };
@@ -223,6 +226,8 @@ public class RecWindows extends AnchorPane {
             e.consume();
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (pane.equals(e.getPickResult().getIntersectedNode()) ||
                     pane.getChildren().getFirst().equals(e.getPickResult().getIntersectedNode()))) {
+                this.getBaseMenu().closeMenu(null);
+                this.getStatusMenu().closeMenu(null);
                 stage.setIconified(true);
             }
         };

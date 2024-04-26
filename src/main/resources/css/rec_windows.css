@@ -159,3 +159,8 @@
     -fx-background-color: #f5f5f5;
     -fx-background-radius: 5px;
 }
+
+.my_status_bar_active {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 5px;
+}

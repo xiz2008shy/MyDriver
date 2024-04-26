@@ -121,6 +121,8 @@ public class MySetting {
             e.consume();
             if (e.getEventType().equals(MouseEvent.MOUSE_RELEASED) && (clickButton.equals(e.getPickResult().getIntersectedNode()) ||
                     clickButton.getChildren().getFirst().equals(e.getPickResult().getIntersectedNode()))) {
+                fromWindows.getBaseMenu().closeMenu(null);
+                fromWindows.getStatusMenu().closeMenu(null);
                 // 弹出设置窗口
                 new MySettingController(fromWindows);
             }
