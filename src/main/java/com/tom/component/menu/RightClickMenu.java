@@ -44,7 +44,7 @@ public class RightClickMenu {
     public static BaseMenu createBaseMenu(RecWindows windows) {
         BaseMenu baseMenu = new BaseMenu(160, 40, windows, MenuShowAroundMouse.class);
 
-        MyMenuContext open = new MyMenuContext(new Label("打开"), baseMenu);
+        MyMenuContext open = new MyMenuContext(baseMenu,new Label("打开"));
         open.whenActiveByMouse( _ -> {
             File file = windows.getActiveModelData().getRealSelectedFile();
             if (file.isDirectory()){
@@ -57,7 +57,7 @@ public class RightClickMenu {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
             return curPath == null;
         });
-        MyMenuContext openInNewPage = new MyMenuContext(new Label("新标签页中打开"), baseMenu);
+        MyMenuContext openInNewPage = new MyMenuContext(baseMenu,new Label("新标签页中打开"));
         openInNewPage.whenActiveByMouse( _ -> {
             File file = windows.getActiveModelData().getRealSelectedFile();
             MyDriverPaneController myDriverPane2 = new MyDriverPaneController(file);
@@ -68,7 +68,7 @@ public class RightClickMenu {
             log.info("menu0.setDisabledPredicate curPath={}",curPath);
             return curPath == null || !curPath.isDirectory();
         });
-        MyMenuContext copy = new MyMenuContext(new Label("复制"), baseMenu);
+        MyMenuContext copy = new MyMenuContext(baseMenu,new Label("复制"));
         copy.whenActiveByMouse( e -> {
             log.info("复制 active!");
         });
@@ -76,7 +76,7 @@ public class RightClickMenu {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
             return curPath == null;
         });
-        MyMenuContext paste = new MyMenuContext(new Label("粘贴"), baseMenu);
+        MyMenuContext paste = new MyMenuContext(baseMenu,new Label("粘贴"));
         paste.whenActiveByMouse( e -> {
             log.info("粘贴 active!");
         });

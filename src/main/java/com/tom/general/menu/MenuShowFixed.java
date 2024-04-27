@@ -27,7 +27,7 @@ public class MenuShowFixed implements ShowMenu<MouseEvent>{
             realPane.setTranslateX(halfWindowWidth - 145);
             realPane.setTranslateY(-halfWindowHeight + 80);
         }
-        baseMenu.setMenuBg(windows.getShowBox(),event.getSceneX(),event.getSceneY());
+        //baseMenu.setMenuBg(windows.getShowBox(),event.getSceneX(),event.getSceneY());
         realPane.setVisible(true);
     }
 

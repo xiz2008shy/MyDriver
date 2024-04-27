@@ -155,7 +155,7 @@ public class BaseMenu extends StackPane{
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         try {
             MethodHandle constructor = lookup.findConstructor(clazz, MethodType.methodType(void.class));
-            this.showMenu =  (T)constructor.invoke();
+            this.showMenu = (T)constructor.invoke();
         } catch (Throwable e) {
             log.error("BaseMenu.setShowMenuClazz occurred an error,cause:",e);
         }
@@ -167,7 +167,25 @@ public class BaseMenu extends StackPane{
     }
 
     public void showMenu(Event e) {
-        this.showMenu.showMenu(e,this);
+        if (e instanceof MouseEvent event){
+            this.setMenuBg(menuBindWindow.getShowBox(),event.getSceneX(),event.getSceneY());
+            for (Node child : this.getMenuContent().getChildren()) {
+                MyMenuContext menuContext = (MyMenuContext) child;
+                menuContext.getStyleClass().remove("my_disabled");
+                if (menuContext.getVisiblePredicate().test(event)){
+                    menuContext.setVisible(true);
+                    if (menuContext.getDisabledPredicate().test(event)) {
+                        menuContext.getStyleClass().add("my_disabled");
+                        menuContext.setDisable(true);
+                    }else {
+                        menuContext.setDisable(false);
+                    }
+                }else {
+                    menuContext.setVisible(false);
+                }
+            }
+            this.showMenu.showMenu(event,this);
+        }
     }
 
     public void closeMenu(Event e){

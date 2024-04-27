@@ -68,7 +68,7 @@ public class MenuShowAroundMouse implements ShowMenu<MouseEvent>{
         HBox realPane = baseMenu.getRealPane();
         realPane.setTranslateX(myTransX);
         realPane.setTranslateY(myTransY);
-        baseMenu.setMenuBg(window.getShowBox(),event.getSceneX(),event.getSceneY());
+/*        baseMenu.setMenuBg(window.getShowBox(),event.getSceneX(),event.getSceneY());
         for (Node child : baseMenu.getMenuContent().getChildren()) {
             MyMenuContext menuContext = (MyMenuContext) child;
             menuContext.getStyleClass().remove("my_disabled");
@@ -83,7 +83,7 @@ public class MenuShowAroundMouse implements ShowMenu<MouseEvent>{
             }else {
                 menuContext.setVisible(false);
             }
-        }
+        }*/
 
         realPane.setVisible(true);
     }

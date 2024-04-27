@@ -1,5 +1,6 @@
 package com.tom.general.menu;
 
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,12 +20,12 @@ public class MyMenuContext extends HBox {
     @Getter
     private EventHandler<MouseEvent> mouseActiveHandler;
     @Setter
-    private Predicate<MouseEvent> disabledPredicate;
+    private Predicate<Event> disabledPredicate;
     @Setter
-    private Predicate<MouseEvent> visiblePredicate;
+    private Predicate<Event> visiblePredicate;
 
-    public MyMenuContext(Node node,BaseMenu baseMenu) {
-        super(node);
+    public MyMenuContext(BaseMenu baseMenu,Node... nodes) {
+        super(nodes);
         this.baseMenu = baseMenu;
         this.setAlignment(Pos.CENTER_LEFT);
         this.setPadding(new Insets(0,0,0, 20));
@@ -43,19 +44,19 @@ public class MyMenuContext extends HBox {
         this.mouseActiveHandler = handler;
     }
 
-    public Predicate<MouseEvent> getDisabledPredicate() {
+    public Predicate<Event> getDisabledPredicate() {
         return disabledPredicate == null ? this::nonDisabled : disabledPredicate;
     }
 
-    private boolean nonDisabled(MouseEvent e){
+    private boolean nonDisabled(Event e){
         return false;
     }
 
-    private boolean visible(MouseEvent e){
+    private boolean visible(Event e){
         return true;
     }
 
-    public Predicate<MouseEvent> getVisiblePredicate() {
+    public Predicate<Event> getVisiblePredicate() {
         return visiblePredicate == null ? this::visible : visiblePredicate;
     }
 

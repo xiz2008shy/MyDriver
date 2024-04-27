@@ -14,10 +14,14 @@ public class StatusBar extends HBox {
 
     private ImageView statusImage;
 
-    private ImageView pointView;
+    private final ImageView pointView = new ImageView();
 
     @Getter
     private final RecWindows windows;
+    /**
+     * 工作状态 1保持同步，0断开连接（不影响作业列表中的作业），2立即同步
+     */
+    private int status;
 
     public StatusBar(RecWindows windows) {
         this.windows = windows;
@@ -27,12 +31,26 @@ public class StatusBar extends HBox {
         this.setHeight(10);
         this.getChildren().add(stackPane);
         this.getStyleClass().add("my_status_bar");
-        offlineStatus();
+        initStatus();
     }
 
 
-    private void onlineStatus() {
-        this.pointView = ImageUtils.getImageView("/img/greenPoint.png",32,10);
+    public void switchOnline (){
+        switchStatus("/img/greenPoint.png",1);
+    }
+
+    public void switchOffline (){
+        switchStatus("/img/redPoint.png",0);
+    }
+
+    private void switchStatus(String imgPath,int status) {
+        this.pointView.setImage(ImageUtils.getImageFromResources(imgPath,32,32));
+        this.status = status;
+    }
+
+    private void initStatus() {
+        this.pointView.setImage(ImageUtils.getImageFromResources("/img/redPoint.png",32,32));
+        ImageUtils.resize(pointView,10,10);
         this.pointView.setTranslateX(-13);
         this.pointView.setTranslateY(-7);
 
@@ -40,12 +58,7 @@ public class StatusBar extends HBox {
         this.stackPane.getChildren().addAll(pointView,statusImage);
     }
 
-    private void offlineStatus() {
-        this.pointView = ImageUtils.getImageView("/img/redPoint.png",32,10);
-        this.pointView.setTranslateX(-13);
-        this.pointView.setTranslateY(-7);
-
-        this.statusImage = ImageUtils.getImageView("/img/syncSwitch.png",32,24);
-        this.stackPane.getChildren().addAll(pointView,statusImage);
+    public boolean isOnline(){
+        return this.status == 1;
     }
 }
