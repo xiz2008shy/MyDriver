@@ -42,11 +42,15 @@ public class MySettingController extends AnchorPane implements Initializable {
     @FXML
     private TextField remoteDBUsername;
     @FXML
+    private ComboBox provider;
+    @FXML
     private TextField bucketName;
     @FXML
     private TextField accessKeyId;
     @FXML
     private TextField accessKeySecret;
+    @FXML
+    private TextField ossEndpoint;
     @FXML
     private PasswordField remoteDBPwd;
     @FXML
@@ -111,6 +115,8 @@ public class MySettingController extends AnchorPane implements Initializable {
         this.testConnection.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.testConnection(this));
         this.okBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.okBtnClick(this));
         this.applyBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.applyBtnClick(this));
+
+        this.provider.getItems().add("阿里云");
 
         this.configChange.addListener((_,_,n) ->{
             if ((int)n > 0){

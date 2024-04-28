@@ -62,16 +62,32 @@
             </HBox>
 
             <HBox VBox.margin="$hSpc" alignment="CENTER_LEFT" prefHeight="35">
+                <Label text="oss服务商" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
+                <HBox padding="$tfPD" styleClass="my_setting_tf_border"  alignment="CENTER_LEFT">
+                    <ComboBox fx:id="provider" focusTraversable="false" style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </HBox>
+
+            <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
+                <Label text="oss-endpoint" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
+                <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                    <TextField fx:id="ossEndpoint" focusTraversable="false"
+                               style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </HBox>
+
+            <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
                 <Label text="bucketName" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
                 <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
-                    <PasswordField fx:id="bucketName" focusTraversable="false"
+                    <TextField fx:id="bucketName" focusTraversable="false"
                                    style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
                 </HBox>
             </HBox>
+
             <HBox VBox.margin="$vSpc" alignment="CENTER_LEFT" prefHeight="35">
                 <Label text="accessKeyId" HBox.margin="$hSpc" prefWidth="120" alignment="CENTER_RIGHT"/>
                 <HBox padding="$tfPD" styleClass="my_setting_tf_border" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
-                    <PasswordField fx:id="accessKeyId" focusTraversable="false"
+                    <TextField fx:id="accessKeyId" focusTraversable="false"
                                    style="-fx-background-color: transparent" HBox.hgrow="ALWAYS"/>
                 </HBox>
             </HBox>
@@ -85,7 +101,7 @@
         </VBox>
     </ScrollPane>
 
-    <HBox AnchorPane.bottomAnchor="-10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+    <HBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
           alignment="CENTER_RIGHT" prefHeight="70" styleClass="my_setting_btn_bar">
         <HBox fx:id="okBtn" styleClass="my_setting_btn,my_setting_ok_btn"
               prefWidth="70" maxHeight="40" alignment="CENTER" HBox.margin="$hSpc">
