@@ -130,6 +130,12 @@
      -fx-border-width: 1.5px;
  }
 
+.my_setting_btn_bar {
+    -fx-border-color: #dedede transparent transparent transparent;
+    -fx-border-width: 1px;
+
+}
+
 .my_setting_btn > .label {
     -fx-font-size: 14;
 }
@@ -163,4 +169,9 @@
 .my_status_bar_active {
     -fx-background-color: #f5f5f5;
     -fx-background-radius: 5px;
+}
+
+.my_scroll_pane {
+    -fx-background-insets: 0;
+    -fx-background-color: white;
 }

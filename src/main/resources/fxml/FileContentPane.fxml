@@ -6,7 +6,7 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.tom.controller.FileContentPaneController"
             fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER"
-            style="-fx-padding: 0;-fx-background-insets: 0;-fx-background-color: white;">
+            styleClass="my_scroll_pane">
 
     <FlowPane fx:id="flowPaneContent" style="-fx-background-color: white"/>
 

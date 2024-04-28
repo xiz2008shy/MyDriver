@@ -42,6 +42,12 @@ public class MySettingController extends AnchorPane implements Initializable {
     @FXML
     private TextField remoteDBUsername;
     @FXML
+    private TextField bucketName;
+    @FXML
+    private TextField accessKeyId;
+    @FXML
+    private TextField accessKeySecret;
+    @FXML
     private PasswordField remoteDBPwd;
     @FXML
     private HBox okBtn;
@@ -100,6 +106,7 @@ public class MySettingController extends AnchorPane implements Initializable {
         addFocusedCss(remoteDBUrl);
         addFocusedCss(remoteDBUsername);
         addFocusedCss(remoteDBPwd);
+        addFocusedCss(bucketName);
         this.addEventHandler(MouseEvent.MOUSE_PRESSED,this::loseFocused);
         this.testConnection.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.testConnection(this));
         this.okBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.okBtnClick(this));
