@@ -1,6 +1,7 @@
 package com.tom.config.vo;
 
 import cn.hutool.core.util.ReflectUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,11 +39,34 @@ public class ConfigVo implements Serializable {
      */
     private String remoteDBPwd;
 
+    /**
+     * oss服务商
+     */
+    private String ossProvider;
+    /**
+     * bucket名称
+     */
+    private String bucketName;
+    /**
+     * 服务端区域地址
+     */
+    private String ossEndpoint;
+    /**
+     * 访问id
+     */
+    private String accessKeyId;
+    /**
+     * 访问密钥
+     */
+    private String accessKeySecret;
+
+
 
     public <T>T getValue(String key) {
         return (T)ReflectUtil.getFieldValue(this,key);
     }
 
+    @JsonIgnore
     private Map<String,String> cacheMap = new HashMap<>();
 
     public void saveBak(){

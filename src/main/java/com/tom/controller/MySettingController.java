@@ -5,8 +5,9 @@ import com.tom.config.MySetting;
 import com.tom.config.vo.ConfigVo;
 import com.tom.general.RecWindows;
 import com.tom.handler.fxml.ConfigChangeCounter;
+import com.tom.model.PropData;
 import com.tom.utils.ImageUtils;
-import javafx.application.Platform;
+import com.tom.utils.PropUtils;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
@@ -14,13 +15,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -30,6 +31,7 @@ import lombok.Setter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MySettingController extends AnchorPane implements Initializable {
@@ -42,17 +44,18 @@ public class MySettingController extends AnchorPane implements Initializable {
     @FXML
     private TextField remoteDBUsername;
     @FXML
-    private ComboBox provider;
+    private PasswordField remoteDBPwd;
+    @FXML
+    private ComboBox<Map.Entry<Object, String>> ossProvider;
+    @FXML
+    private ComboBox<Map.Entry<Object, String>> ossEndpoint;
     @FXML
     private TextField bucketName;
     @FXML
     private TextField accessKeyId;
     @FXML
     private TextField accessKeySecret;
-    @FXML
-    private TextField ossEndpoint;
-    @FXML
-    private PasswordField remoteDBPwd;
+
     @FXML
     private HBox okBtn;
     @FXML
@@ -63,7 +66,7 @@ public class MySettingController extends AnchorPane implements Initializable {
     private Label testConnection;
 
     @Getter @Setter
-    private TextField focusedOn;
+    private Node focusedOn;
 
     @Getter
     private final IntegerProperty configChange = new SimpleIntegerProperty(0);
@@ -76,8 +79,14 @@ public class MySettingController extends AnchorPane implements Initializable {
     @Setter @Getter
     private RecWindows windows;
 
+    private PropData ossProp;
+
+    private PropData aliyunOssRegion;
+
     public MySettingController(RecWindows fromWindows) {
         this.fromWindow = fromWindows;
+        this.ossProp = PropUtils.ossProvider();
+        this.aliyunOssRegion = PropUtils.aliyunOssRegion();
         Stage utility = new Stage();
         utility.initStyle(StageStyle.UTILITY);
         utility.setOpacity(0);
@@ -111,12 +120,21 @@ public class MySettingController extends AnchorPane implements Initializable {
         addFocusedCss(remoteDBUsername);
         addFocusedCss(remoteDBPwd);
         addFocusedCss(bucketName);
+        addFocusedCss(accessKeyId);
+        addFocusedCss(accessKeySecret);
+        addFocusedCss(ossProvider);
+        addFocusedCss(ossEndpoint);
+
         this.addEventHandler(MouseEvent.MOUSE_PRESSED,this::loseFocused);
         this.testConnection.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.testConnection(this));
         this.okBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.okBtnClick(this));
         this.applyBtn.addEventHandler(MouseEvent.MOUSE_RELEASED,MySetting.applyBtnClick(this));
 
-        this.provider.getItems().add("阿里云");
+        this.ossProvider.setItems(ossProp.list());
+        this.ossProvider.setConverter(PropUtils.getPropConverter());
+
+        this.ossEndpoint.setItems(aliyunOssRegion.list());
+        this.ossEndpoint.setConverter(PropUtils.getPropConverter());
 
         this.configChange.addListener((_,_,n) ->{
             if ((int)n > 0){
@@ -128,19 +146,24 @@ public class MySettingController extends AnchorPane implements Initializable {
     }
 
     private int textFieldIndex = 0;
-    private void addFocusedCss(TextField textField) {
-        textField.focusedProperty().addListener((_, _, isNowFocused) -> {
+    private void addFocusedCss(Node node) {
+        node.focusedProperty().addListener((_, _, isNowFocused) -> {
             if (isNowFocused) {
-                if (this.getFocusedOn() != null && !this.getFocusedOn().equals(textField)){
+                if (this.getFocusedOn() != null && !this.getFocusedOn().equals(node)){
                     this.getFocusedOn().getParent().getStyleClass().remove("my_setting_tf_border_bottom");
                 }
-                textField.getParent().getStyleClass().add("my_setting_tf_border_bottom");
-                this.setFocusedOn(textField);
+                node.getParent().getStyleClass().add("my_setting_tf_border_bottom");
+                this.setFocusedOn(node);
             }
         });
 
-        ConfigChangeCounter configChangeCounter = new ConfigChangeCounter(textField, textFieldIndex++, configChange);
-        textField.textProperty().addListener(configChangeCounter);
+        ConfigChangeCounter configChangeCounter = new ConfigChangeCounter(node, textFieldIndex++, configChange);
+        if (node instanceof TextField textField) {
+            textField.textProperty().addListener(configChangeCounter);
+        }else if (node instanceof ComboBox comboBox) {
+            comboBox.getSelectionModel().selectedItemProperty().addListener(configChangeCounter);
+        }
+
     }
 
 
@@ -165,6 +188,11 @@ public class MySettingController extends AnchorPane implements Initializable {
         configVo.setRemoteDBUrl(StrUtil.trim(remoteDBUrl.getText()));
         configVo.setRemoteDBUsername(StrUtil.trim(remoteDBUsername.getText()));
         configVo.setRemoteDBPwd(StrUtil.trim(remoteDBPwd.getText()));
+        configVo.setAccessKeyId(StrUtil.trim(accessKeyId.getText()));
+        configVo.setAccessKeySecret(StrUtil.trim(accessKeySecret.getText()));
+        configVo.setBucketName(StrUtil.trim(bucketName.getText()));
+        configVo.setOssProvider((String) ossProvider.getValue().getKey());
+        configVo.setOssEndpoint((String) ossEndpoint.getValue().getKey());
     }
 
 
@@ -183,6 +211,11 @@ public class MySettingController extends AnchorPane implements Initializable {
         remoteDBUrl.setText(configVo.getRemoteDBUrl());
         remoteDBUsername.setText(configVo.getRemoteDBUsername());
         remoteDBPwd.setText(configVo.getRemoteDBPwd());
+        bucketName.setText(configVo.getBucketName());
+        accessKeyId.setText(configVo.getAccessKeyId());
+        accessKeySecret.setText(configVo.getAccessKeySecret());
+        ossProvider.getSelectionModel().select(ossProp.getProperty(configVo.getOssProvider()));
+        ossEndpoint.getSelectionModel().select(aliyunOssRegion.getProperty(configVo.getOssEndpoint()));
     }
 
 
