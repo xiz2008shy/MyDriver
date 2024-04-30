@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.tom.config.vo.ConfigVo;
 import com.tom.controller.MySettingController;
 import com.tom.general.RecWindows;
-import com.tom.utils.JdbcUtil;
+import com.tom.utils.JDBCUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,6 +62,10 @@ public class MySetting {
         OM.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
+    /**
+     * 初始化配置实体，从配置文件读取，没有配置文件就创建配置文件（第一次）
+     * @param parameters
+     */
     public static void initSetting(Application.Parameters parameters)  {
         Map<String, String> namedArgs = parameters.getNamed();
         String debug = namedArgs.get("debug");
@@ -112,7 +118,12 @@ public class MySetting {
     }
 
 
-
+    /**
+     * 打开配置面板的触发函数
+     * @param clickButton
+     * @param fromWindows
+     * @return
+     */
     public static EventHandler<MouseEvent> openSettingPane(Pane clickButton,RecWindows fromWindows) {
         return e -> {
             e.consume();
@@ -127,6 +138,11 @@ public class MySetting {
     }
 
 
+    /**
+     * ok按钮的触发函数
+     * @param mySettingController
+     * @return
+     */
     public static EventHandler<MouseEvent> okBtnClick(MySettingController mySettingController) {
         return e -> {
             e.consume();
@@ -136,6 +152,11 @@ public class MySetting {
     }
 
 
+    /**
+     * 应用按钮的触发函数
+     * @param mySettingController
+     * @return
+     */
     public static EventHandler<MouseEvent> applyBtnClick(MySettingController mySettingController) {
         return e -> {
             e.consume();
@@ -145,6 +166,11 @@ public class MySetting {
     }
 
 
+    /**
+     * 保存配置到配置文件
+     * @param mySettingController
+     * @param e
+     */
     private static void saveConfigToFile(MySettingController mySettingController, MouseEvent e) {
         boolean configChange = mySettingController.isConfigChange();
         if (e.getButton().equals(MouseButton.PRIMARY) && configChange) {
@@ -166,6 +192,11 @@ public class MySetting {
     }
 
 
+    /**
+     * 测试链接的执行函数
+     * @param mySettingController
+     * @return
+     */
     public static EventHandler<MouseEvent> testConnection(MySettingController mySettingController) {
         return e -> {
             e.consume();
@@ -190,7 +221,7 @@ public class MySetting {
     private static void doJdbcConnection(MySettingController mySettingController) {
         int res;
         try {
-            res = JdbcUtil.jdbcTest();
+            res = JDBCUtil.jdbcTest();
             if (res == 1){
                 mySettingController.setTestImgRight();
                 log.info("jdbc test Connection success!");
@@ -208,6 +239,17 @@ public class MySetting {
                 mySettingController.showDialog(e.getMessage() ,"Connection Failed!");
             });
         }
+    }
+
+
+    public static <T>T getRemoteMapper(Class<T> clazz){
+        if (remoteSessionFactory != null){
+            SqlSession sqlSession = remoteSessionFactory.openSession();
+            T mapper = sqlSession.getMapper(clazz);
+            return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
+                    new SqlSessionInvokeHandler<>(sqlSession,mapper));
+        }
+        throw new RuntimeException("MySetting.getMapper occurred an error,remoteSessionFactory didn't initialize properly!");
     }
 
 
