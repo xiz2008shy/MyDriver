@@ -23,7 +23,7 @@ public class MT {
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,properties);
         try (SqlSession session = sqlSessionFactory.openSession()) {
             FileRecordMapper mapper = session.getMapper(FileRecordMapper.class);
-            List<FileRecord> fileRecords = mapper.selectList();
+            List<FileRecord> fileRecords = mapper.selectListByRelativeLocation("");
             System.out.println(fileRecords);
         }
 
@@ -34,7 +34,7 @@ public class MT {
 
         try (SqlSession session = sqlSessionFactory2.openSession()) {
             FileRecordMapper mapper = session.getMapper(FileRecordMapper.class);
-            List<FileRecord> fileRecords = mapper.selectList();
+            List<FileRecord> fileRecords = mapper.selectListByRelativeLocation("");
             System.out.println(fileRecords);
         }
     }

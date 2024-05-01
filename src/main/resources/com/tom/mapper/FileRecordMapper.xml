@@ -3,7 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tom.mapper.FileRecordMapper">
-    <select id="selectList" resultType="com.tom.entity.FileRecord">
-        select * from file_record_table limit 1
+    <select id="selectListByRelativeLocation" resultType="com.tom.entity.FileRecord">
+        select * from file_record_table
+        <where>
+            <if test="relativePath != null and relativePath !=''">
+                relative_location = #{relativePath}
+            </if>
+        </where>
     </select>
 </mapper>

@@ -13,7 +13,7 @@ public class Sample
         MySetting.initSetting(MySetting.mockParam());
         JDBCUtil.createStableConnection();
         FileRecordMapper recordMapper = MySetting.getRemoteMapper(FileRecordMapper.class);
-        List<FileRecord> fileRecords = recordMapper.selectList();
+        List<FileRecord> fileRecords = recordMapper.selectListByRelativeLocation("xx");
         System.out.println(fileRecords);
     }
 }
