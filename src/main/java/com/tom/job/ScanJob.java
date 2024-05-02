@@ -1,6 +1,7 @@
 package com.tom.job;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Pair;
 import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
 import com.tom.entity.FileRecord;
@@ -43,8 +44,13 @@ public class ScanJob {
             FileRecordMapper fileRecordMapper = MySetting.getRemoteMapper(FileRecordMapper.class);
             List<FileRecord> curPathRecords = fileRecordMapper.selectListByRelativeLocation(relativePath);
             FileChecker fileChecker = new FileChecker(curPathRecords, files);
-            handleLocalLoseFile(fileChecker.checkLocalLose());
-            handleRemoteLoseFile(fileChecker.checkRemoteLose());
+            // TODO 下面四种场景待处理
+            List<FileRecord> localLoseList = fileChecker.getLocalLoseList();
+            List<File> remoteLoseList = fileChecker.getRemoteLoseList();
+            List<Pair<File, String>> pushList = fileChecker.getPushList();
+            List<Pair<FileRecord, String>> pullList = fileChecker.getPullList();
+
+
             subDir.addAll(fileChecker.getSubDirs());
         }
         return subDir;

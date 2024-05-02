@@ -1,11 +1,15 @@
 package com.tom.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+@Slf4j
 public class MD5Util {
 
     public static String getFileMD5(String filePath) throws IOException, NoSuchAlgorithmException, IOException {
@@ -29,16 +33,33 @@ public class MD5Util {
     }
 
 
-    public static String getPartialFileMD5(String filePath, long start, long length) {
-        try (RandomAccessFile file = new RandomAccessFile(filePath, "r")) {
-            file.seek(start);
-            byte[] buffer = new byte[(int) length];
-            file.readFully(buffer);
+    public static String partialFileMD5(File file) {
+        long length = file.length();
+        long s = length / 3;
+        int sLimit = 512 * 1024;
+        if (s > sLimit){
+            s = sLimit;
+        }
+        int p = sLimit / 10 * 6;
+        return partialFileMD5(file,p,s);
+    }
+
+    public static String partialFileMD5(File file, int preSumLength, long skipLength) {
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+            long size = file.length();
+            long start = 0;
             MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(buffer);
+            byte[] buffer = new byte[preSumLength];
+            while ( (start + preSumLength) < size) {
+                raf.seek(start);
+                raf.readFully(buffer);
+                md.update(buffer);
+                start += skipLength;
+            }
+
             return toHexString(md.digest());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("MD5Util.partialFileMD5 occurred an error,cause:",e);
             return null;
         }
     }
@@ -56,8 +77,8 @@ public class MD5Util {
     }
 
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-        //dd48541fbf39342afe4026cf8d7d88ec
-        String fileMD5 = getFileMD5("C:\\Users\\TOMQI\\Desktop\\v20240413.png");
+        //123 - 8f953fdc81fef2380f56de87bdda4b63  456 - ead02d5bc2b10688f11f0baf066339cd
+        String fileMD5 = partialFileMD5(new File("C:\\Users\\TOMQI\\Desktop\\123.png"));
         System.out.println(fileMD5);
     }
 }
