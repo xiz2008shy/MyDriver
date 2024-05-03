@@ -6,6 +6,7 @@ import com.tom.config.vo.ConfigVo;
 import com.tom.general.RecWindows;
 import com.tom.handler.fxml.ConfigChangeCounter;
 import com.tom.model.PropData;
+import com.tom.utils.FileNameUtil;
 import com.tom.utils.ImageUtils;
 import com.tom.utils.PropUtils;
 import javafx.beans.property.IntegerProperty;
@@ -198,8 +199,20 @@ public class MySettingController extends AnchorPane implements Initializable {
 
     public boolean validBasePath(){
         String path = basePath.getText();
-        return StrUtil.isNotBlank(path) && new File(path).exists();
+        if (StrUtil.isNotBlank(path)){
+            if (!FileNameUtil.containChinese(path)){
+                return new File(path).exists();
+            }else {
+                path = path.replaceAll("\\\\","\\\\");
+                File originFile = new File(path);
+                return originFile.exists();
+            }
+        }
+        return false;
     }
+
+
+
 
 
     /**

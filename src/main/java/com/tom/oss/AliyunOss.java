@@ -52,7 +52,7 @@ public class AliyunOss implements OssOperation{
     }
 
     @Override
-    public <T> T downloadFile(String path, FileOutputStream outputStream) {
+    public void downloadFile(String path, FileOutputStream outputStream) {
         ConfigVo config = MySetting.getConfig();
         // 填写Bucket名称，例如examplebucket。
         String bucketName = config.getBucketName();
@@ -72,6 +72,5 @@ public class AliyunOss implements OssOperation{
         } catch (Throwable ce) {
             log.error("ClientException,Error Message:{}" , ce.getMessage());
         }
-        return null;
     }
 }

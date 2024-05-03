@@ -2,33 +2,36 @@ package com.tom.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 public class MD5Util {
 
-    public static String getFileMD5(String filePath) throws IOException, NoSuchAlgorithmException, IOException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        FileInputStream fis = new FileInputStream(filePath);
-        byte[] buffer = new byte[1024];
-        int len;
-        int times = 0;
-        while ((len = fis.read(buffer)) != -1) {
-            md.update(buffer, 0, len);
-            times++;
-        }
-        System.out.println(STR."times = \{times}");
-        fis.close();
-        byte[] digest = md.digest();
+    public static String getFileMD5(File file){
         StringBuilder sb = new StringBuilder();
-        for (byte b : digest) {
-            sb.append(String.format("%02x", b));
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            FileInputStream fis = new FileInputStream(file);
+            byte[] buffer = new byte[1024];
+            int len;
+            int times = 0;
+            while ((len = fis.read(buffer)) != -1) {
+                md.update(buffer, 0, len);
+                times++;
+            }
+            System.out.println(STR."times = \{times}");
+            fis.close();
+            byte[] digest = md.digest();
+
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+        } catch (NoSuchAlgorithmException | IOException e) {
+            throw new RuntimeException(e);
         }
+
         return sb.toString();
     }
 

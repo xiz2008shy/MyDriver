@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tom.mapper.FileRecordMapper">
-    <select id="selectListByRelativeLocation" resultType="com.tom.entity.FileRecord">
+    <select id="selectListByRelativeLocation" resultType="FileRecord">
         select * from file_record_table
         <where>
             <if test="relativePath != null and relativePath !=''">
@@ -11,4 +11,33 @@
             </if>
         </where>
     </select>
+
+    <insert id="insert" parameterType="FileRecord">
+        insert into file_record_table (file_name,
+            <if test="relativeLocation != null and relativeLocation != ''">relative_location,</if>
+                last_modified,
+            <if test="md5 != null and md5 != ''">md5,</if>
+            <if test="remotePath != null and remotePath != ''">remote_path,</if>
+                record_type,size)
+            values (
+                    #{fileName},
+            <if test="relativeLocation != null and relativeLocation != ''">#{relativeLocation},</if>
+                    #{lastModified},
+            <if test="md5 != null and md5 != ''">#{md5},</if>
+            <if test="remotePath != null and remotePath != ''">#{remotePath},</if>
+                    #{recordType},#{size}
+            )
+    </insert>
+
+    <update id="updateById" parameterType="FileRecord">
+        update file_record_table
+        <set>
+            file_name = #{fileName},
+            relative_location = #{relativeLocation},
+            md5 = #{md5},
+            last_modified = #{lastModified},
+            `size` = #{size}
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

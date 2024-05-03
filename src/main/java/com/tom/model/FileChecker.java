@@ -47,16 +47,20 @@ public class FileChecker {
      */
     @Getter
     private final List<File> remoteLoseList;
+
+    public record LRM(File localFile,FileRecord fileRecord,String md5){
+    }
+
     /**
      * 待推送更新文件
      */
     @Getter
-    private final List<Pair<File,String>> pushList;
+    private final List<LRM> pushList;
     /**
      * 待拉取更新的本地文件
      */
     @Getter
-    private final List<Pair<FileRecord,String>> pullList;
+    private final List<LRM> pullList;
 
     private final String basePath = MySetting.getConfig().getBasePath();
 
@@ -84,6 +88,7 @@ public class FileChecker {
         this.remoteLoseList = new ArrayList<>(maxSize);
         this.pushList = new ArrayList<>(maxSize);
         this.pullList = new ArrayList<>(maxSize);
+        check();
     }
 
 
@@ -162,24 +167,21 @@ public class FileChecker {
         }else {
             long localModified = file.lastModified();
             long remoteModified = record.getLastModified().getTime();
+            String localMd5 = MD5Util.getFileMD5(file);
             if ( localModified == remoteModified){
                 if(file.length() != record.getSize()){
-                    String localMd5 = MD5Util.partialFileMD5(file);
-                    this.pushList.add(Pair.of(file,localMd5));
+                    this.pushList.add(new LRM(file,record,localMd5));
                 }else {
-                    String localMd5 = MD5Util.partialFileMD5(file);
                     if (!localMd5.equals(record.getMd5())){
-                        this.pushList.add(Pair.of(file,localMd5));
+                        this.pushList.add(new LRM(file,record,localMd5));
                     }
                 }
             }else if(localModified > remoteModified){
-                String localMd5 = MD5Util.partialFileMD5(file);
                 if (!localMd5.equals(record.getMd5())){
-                    this.pushList.add(Pair.of(file,localMd5));
+                    this.pushList.add(new LRM(file,record,localMd5));
                 }
             }else {
-                String localMd5 = MD5Util.partialFileMD5(file);
-                this.pullList.add(Pair.of(record,localMd5));
+                this.pullList.add(new LRM(file,record,localMd5));
             }
         }
     }

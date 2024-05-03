@@ -244,7 +244,7 @@ public class MySetting {
 
     public static <T>T getRemoteMapper(Class<T> clazz){
         if (remoteSessionFactory != null){
-            SqlSession sqlSession = remoteSessionFactory.openSession();
+            SqlSession sqlSession = remoteSessionFactory.openSession(true);
             T mapper = sqlSession.getMapper(clazz);
             return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
                     new SqlSessionInvokeHandler<>(sqlSession,mapper));

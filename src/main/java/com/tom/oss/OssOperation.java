@@ -7,5 +7,5 @@ public interface OssOperation {
 
     <T>T uploadFile(String filePath, File toUpload);
 
-    <T> T downloadFile(String path, FileOutputStream outputStream);
+    void downloadFile(String path, FileOutputStream outputStream);
 }
