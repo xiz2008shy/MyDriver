@@ -27,7 +27,7 @@ public class ScanJob {
         String basePath = MySetting.getConfig().getBasePath();
         List<File> files = List.of(new File(basePath));
         do {
-            files = scanDir(files, basePath);
+            files = scanDirCompareWithRemote(files, basePath);
         } while (!CollUtil.isEmpty(files));
     }
 
@@ -36,7 +36,7 @@ public class ScanJob {
      * @param dirs 平级的目录
      * @param basePath 基础绝对路径
      */
-    public List<File> scanDir(List<File> dirs,String basePath){
+    public List<File> scanDirCompareWithRemote(List<File> dirs,String basePath){
         List<File> subDir = new ArrayList<>();
         for (File dir : dirs) {
             File[] files = dir.listFiles();

@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.StringConverter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

@@ -14,7 +14,7 @@ public class MD5Util {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             FileInputStream fis = new FileInputStream(file);
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024 * 8];
             int len;
             int times = 0;
             while ((len = fis.read(buffer)) != -1) {
