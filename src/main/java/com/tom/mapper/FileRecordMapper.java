@@ -13,4 +13,6 @@ public interface FileRecordMapper {
 
     int updateById(FileRecord fileRecord);
 
+    List<FileRecord> selectListByMd5AndSize(@Param("md5") String md5, @Param("size") long size);
+
 }

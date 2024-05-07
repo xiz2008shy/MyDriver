@@ -8,9 +8,12 @@ CREATE TABLE `file_record_table`
     remote_path       varchar(255)    default ''                    not null comment 'oss文件路径',
     record_type       int             default 0                     not null comment '0-文件，1-目录',
     size              bigint unsigned default 0                     not null comment '文件大小',
+    deleted         tinyint unsigned NOT NULL DEFAULT '0' COMMENT '是否删除，默认为0，1表示暂时删除',
+    operate_time    datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '操作时间',
     PRIMARY KEY (`id`),
     KEY `file_record_table_file_name_IDX` (`file_name`) USING BTREE,
-    KEY `file_record_table_relative_location_IDX` (`relative_location`) USING BTREE
+    KEY `file_record_table_relative_location_IDX` (`relative_location`) USING BTREE,
+    KEY `file_record_table_md5_IDX` (`md5`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4;

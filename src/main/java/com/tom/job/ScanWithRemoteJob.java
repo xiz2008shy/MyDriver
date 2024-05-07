@@ -3,7 +3,6 @@ package com.tom.job;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.Pair;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
@@ -19,11 +18,13 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.hutool.core.text.StrPool.DOT;
+
 @Slf4j
-public class ScanJob {
+public class ScanWithRemoteJob {
     AliyunOss aliyunOss = new AliyunOss();
 
-    public void scanBasePath(){
+    public void scanBasePathCompareWithRemote(){
         String basePath = MySetting.getConfig().getBasePath();
         List<File> files = List.of(new File(basePath));
         do {
@@ -45,16 +46,19 @@ public class ScanJob {
             List<FileRecord> curPathRecords = fileRecordMapper.selectListByRelativeLocation(relativePath);
             FileChecker fileChecker = new FileChecker(curPathRecords, files);
 
+            // 处理远端有记录，但本地文件不存在的记录
             List<FileRecord> localLoseList = fileChecker.getLocalLoseList();
             handleLocalLoseFile(localLoseList,dir.getAbsolutePath());
+
+            // 处理远端不存在记录，但本地存的文件
             List<File> remoteLoseList = fileChecker.getRemoteLoseList();
             handleRemoteLoseFile(remoteLoseList,relativePath);
 
-            // TODO 下面四种场景待处理
+            // 处理本地文件在远端记录后有更新的文件
             List<FileChecker.LRM> pushList = fileChecker.getPushList();
             handlePushList(pushList);
             List<FileChecker.LRM> pullList = fileChecker.getPullList();
-
+            // 远端更新超过本地文件内的场合
 
             subDir.addAll(fileChecker.getSubDirs());
         }
@@ -137,9 +141,9 @@ public class ScanJob {
             }
             FileRecordMapper fileRecordMapper = MySetting.getRemoteMapper(FileRecordMapper.class);
             fileRecordMapper.updateById(fileRecord);
-
         }
     }
+
 
     private void insertRecordAndUploadFile(String relativePath, File file, String remotePath) {
         FileRecord fileRecord = new FileRecord();
@@ -151,9 +155,30 @@ public class ScanJob {
             fileRecord.setRecordType(1);
             fileRecord.setMd5(StrUtil.EMPTY);
         }else {
-            fileRecord.setRemotePath(remotePath + UUID.fastUUID().toString(true));
-            aliyunOss.uploadFile(fileRecord.getRemotePath(), file);
+            FileRecordMapper remoteMapper = MySetting.getRemoteMapper(FileRecordMapper.class);
             String md5 = MD5Util.getFileMD5(file);
+            List<FileRecord> similarFile = remoteMapper.selectListByMd5AndSize(md5, file.length());
+            if (CollUtil.isEmpty(similarFile)){
+                fileRecord.setRemotePath(remotePath + UUID.fastUUID().toString(true));
+                aliyunOss.uploadFile(fileRecord.getRemotePath(), file);
+            }else {
+                String name = file.getName();
+                String fileExtendType = name.substring(name.lastIndexOf(DOT));
+                boolean findSameFile = false;
+                for (FileRecord record : similarFile) {
+                    String recordExtendType = record.getFileName().substring(record.getFileName().lastIndexOf(DOT));
+                    if (recordExtendType.equals(fileExtendType)){
+                        fileRecord.setRemotePath(record.getRemotePath());
+                        findSameFile = true;
+                        break;
+                    }
+                }
+                if (!findSameFile){
+                    fileRecord.setRemotePath(remotePath + UUID.fastUUID().toString(true));
+                    aliyunOss.uploadFile(fileRecord.getRemotePath(), file);
+                }
+            }
+
             fileRecord.setSize(file.length());
             fileRecord.setRecordType(0);
             fileRecord.setMd5(md5);

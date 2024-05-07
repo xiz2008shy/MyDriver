@@ -48,6 +48,7 @@ public class MySetting {
     /**
      * 运行时本地数据路径
      */
+    @Getter
     private static String localDataPath;
 
     private static SqlSessionFactory localSessionFactory;
@@ -85,6 +86,11 @@ public class MySetting {
         // 设置日志路径
         System.setProperty("LogHomeRoot", runLogDir);
         log = LoggerFactory.getLogger(MySetting.class);
+        try {
+            checkParent(Paths.get(localDataPath));
+        }catch (Exception e){
+            log.error("MySetting init error,cause:",e);
+        }
         Path path = Paths.get(runConfFile);
         try {
             if (Files.exists(path) && Files.isRegularFile(path)) {
@@ -245,6 +251,16 @@ public class MySetting {
     public static <T>T getRemoteMapper(Class<T> clazz){
         if (remoteSessionFactory != null){
             SqlSession sqlSession = remoteSessionFactory.openSession(true);
+            T mapper = sqlSession.getMapper(clazz);
+            return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
+                    new SqlSessionInvokeHandler<>(sqlSession,mapper));
+        }
+        throw new RuntimeException("MySetting.getMapper occurred an error,remoteSessionFactory didn't initialize properly!");
+    }
+
+    public static <T>T getLocalMapper(Class<T> clazz){
+        if (localSessionFactory != null){
+            SqlSession sqlSession = localSessionFactory.openSession(true);
             T mapper = sqlSession.getMapper(clazz);
             return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
                     new SqlSessionInvokeHandler<>(sqlSession,mapper));

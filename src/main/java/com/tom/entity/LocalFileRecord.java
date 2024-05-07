@@ -1,8 +1,14 @@
 package com.tom.entity;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class LocalFileRecord {
+@Data
+@Accessors(chain = true)
+public class LocalFileRecord implements Serializable {
 
     private long id;
 
@@ -30,4 +36,6 @@ public class LocalFileRecord {
      * 文件类型 0 文件 1目录
      */
     private int recordType;
+
+    private long size;
 }

@@ -40,4 +40,12 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="selectListByMd5AndSize" resultType="FileRecord">
+        select * from file_record_table
+        <where>
+            md5 = #{md5}
+            and `size` = #{size}
+        </where>
+    </select>
 </mapper>

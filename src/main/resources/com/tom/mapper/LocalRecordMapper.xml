@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tom.mapper.LocalRecordMapper">
+
+    <insert id="createTable">
+        create table file_record_table
+        (
+            id                INTEGER primary key autoincrement,
+            file_name         VARCHAR(255) not null,
+            relative_location VARCHAR(500) not null,
+            last_modified     TEXT default '1993-04-16 00:00:00',
+            md5               varchar(100) default '' not null,
+            record_type       int default 0 not null,
+            size              bigint unsigned default 0
+        );
+    </insert>
+
+    <select id="selectListByRelativeLocation" resultType="LocalFileRecord">
+        select * from file_record_table
+        <where>
+            <if test="relativePath != null and relativePath !=''">
+                relative_location = #{relativePath}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="LocalFileRecord">
+        insert into file_record_table (file_name,
+        <if test="relativeLocation != null and relativeLocation != ''">relative_location,</if>
+        last_modified,
+        <if test="md5 != null and md5 != ''">md5,</if>
+        record_type,size)
+        values (
+        #{fileName},
+        <if test="relativeLocation != null and relativeLocation != ''">#{relativeLocation},</if>
+        #{lastModified},
+        <if test="md5 != null and md5 != ''">#{md5},</if>
+        #{recordType},#{size}
+        )
+    </insert>
+</mapper>

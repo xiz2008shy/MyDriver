@@ -103,56 +103,37 @@ public class FileChecker {
             for (String fileName : fileNameSet) {
                 File file = localFilesMap.get(fileName);
                 FileRecord record = remoteRecordsMap.get(fileName);
-                if (file == null){
-                    addLocalLoseListAndTryAddSubDirList(remoteRecordsMap.get(fileName));
-                }else if(record == null){
-                    remoteLoseList.add(localFilesMap.get(fileName));
-                    tryAddSubDirToList(file);
-                }else {
-                    checkWeatherPullOrPush(file,record);
-                }
+                handleAndCheck(file, record);
             }
         }else if (useLocalMap){
             for (String fileName : fileNameSet) {
                 File file = localFilesMap.get(fileName);
                 FileRecord record =  remoteRecords.stream().filter(f -> f.getFileName().equals(fileName)).findFirst().orElse(null);
-                if (file == null){
-                    remoteRecords.stream().filter(f -> f.getFileName().equals(fileName)).findFirst()
-                            .ifPresentOrElse(this::addLocalLoseListAndTryAddSubDirList,this::logError);
-                }else if(record == null){
-                    remoteLoseList.add(localFilesMap.get(fileName));
-                    tryAddSubDirToList(file);
-                }else {
-                    checkWeatherPullOrPush(file,record);
-                }
+                handleAndCheck(file, record);
             }
         }else if (useRemoteMap){
             for (String fileName : fileNameSet) {
                 File file = Arrays.stream(localFiles).filter(f -> f.getName().equals(fileName)).findFirst().orElse(null);
                 FileRecord record = remoteRecordsMap.get(fileName);
-                if (file == null){
-                    addLocalLoseListAndTryAddSubDirList(remoteRecordsMap.get(fileName));
-                }else if (record == null){
-                    Arrays.stream(localFiles).filter(f -> f.getName().equals(fileName)).findFirst().ifPresentOrElse(remoteLoseList::add,this::logError);
-                    tryAddSubDirToList(file);
-                }else {
-                    checkWeatherPullOrPush(file,record);
-                }
+                handleAndCheck(file, record);
             }
         }else {
             for (String fileName : fileNameSet) {
                 File file = Arrays.stream(localFiles).filter(f -> f.getName().equals(fileName)).findFirst().orElse(null);
                 FileRecord record =  remoteRecords.stream().filter(f -> f.getFileName().equals(fileName)).findFirst().orElse(null);
-                if (file == null){
-                    remoteRecords.stream().filter(f -> f.getFileName().equals(fileName)).findFirst()
-                            .ifPresentOrElse(this::addLocalLoseListAndTryAddSubDirList,this::logError);
-                }else if (record == null){
-                    Arrays.stream(localFiles).filter(f -> f.getName().equals(fileName)).findFirst().ifPresentOrElse(remoteLoseList::add,this::logError);
-                    tryAddSubDirToList(file);
-                }else {
-                    checkWeatherPullOrPush(file,record);
-                }
+                handleAndCheck(file, record);
             }
+        }
+    }
+
+    private void handleAndCheck(File file, FileRecord record) {
+        if (file == null){
+            addLocalLoseListAndTryAddSubDirList(record);
+        }else if(record == null){
+            remoteLoseList.add(file);
+            tryAddSubDirToList(file);
+        }else {
+            checkWeatherPullOrPush(file, record);
         }
     }
 
@@ -205,8 +186,5 @@ public class FileChecker {
             subDirs.add(file);
         }
     }
-    
-    private void logError(){
-        log.error("there is some error around here!");
-    }
+
 }
