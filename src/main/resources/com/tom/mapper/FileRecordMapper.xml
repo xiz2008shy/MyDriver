@@ -58,5 +58,9 @@
             then 1
         </foreach>
             else 0 end
+        where file_name in
+        <foreach collection="fileRecords" item="it" separator="," open="(" close=")">
+            #{it.fileName}
+        </foreach>
     </update>
 </mapper>
