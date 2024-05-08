@@ -50,7 +50,7 @@ public class MySetting {
      */
     @Getter
     private static String localDataPath;
-
+    @Getter @Setter
     private static SqlSessionFactory localSessionFactory;
     @Getter @Setter
     private static SqlSessionFactory remoteSessionFactory;

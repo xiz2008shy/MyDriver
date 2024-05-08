@@ -40,4 +40,20 @@
         #{recordType},#{size}
         )
     </insert>
+
+    <insert id="saveBatch" parameterType="LocalFileRecord">
+        insert into file_record_table (file_name,
+         relative_location,last_modified,md5,record_type,size)
+        values
+        <foreach collection="fileRecords" item="item" separator=",">
+            (#{item.fileName},#{item.relativeLocation},#{item.lastModified},#{item.md5},#{item.recordType},#{item.size})
+        </foreach>
+    </insert>
+
+    <delete id="removeBatch" parameterType="LocalFileRecord">
+        delete from file_record_table where id in
+        <foreach collection="fileRecords" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </delete>
 </mapper>

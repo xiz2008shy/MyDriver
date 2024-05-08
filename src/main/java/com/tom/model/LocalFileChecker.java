@@ -112,9 +112,10 @@ public class LocalFileChecker {
     private void handleAndCheck(File file, LocalFileRecord record) {
         if (file == null){
             removeList.add(record);
-            tryAddSubDirToList(record);
         }else if(record == null){
             addList.add(file);
+            tryAddSubDirToList(file);
+        }else {
             tryAddSubDirToList(file);
         }
     }
@@ -123,7 +124,7 @@ public class LocalFileChecker {
     private void tryAddSubDirToList(LocalFileRecord fileRecord) {
         if (fileRecord.getRecordType() == 1) {
             File mkDir = new File(basePath + fileRecord.getRelativeLocation() + fileRecord.getFileName());
-            if (mkDir.mkdir()){
+            if (mkDir.isDirectory()){
                 subDirs.add(mkDir);
             }
         }

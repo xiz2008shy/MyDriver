@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Properties;
 
 @Slf4j
 public class JDBCUtil {
@@ -50,8 +51,20 @@ public class JDBCUtil {
                 var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, "remoteMySQL");
                 MySetting.setRemoteSessionFactory(curSqlSessionFactory);
             } catch (Exception ex) {
-                log.error("createStableConnection error,cause: ", ex);
-                log.info("createStableConnection error,cause: {}", ex.getMessage());
+                log.error("createStableConnection RemoteSessionFactory error,cause: ", ex);
+            }
+        }
+
+
+        if (MySetting.getLocalSessionFactory() == null) {
+            var inputStream = MySetting.class.getResourceAsStream(mybatisConfigFilePath);
+            Properties properties = new Properties();
+            properties.put("url",STR."jdbc:sqlite:\{MySetting.getLocalDataPath()}");
+            try (inputStream) {
+                var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, "localSqlLite",properties);
+                MySetting.setLocalSessionFactory(curSqlSessionFactory);
+            } catch (Exception ex) {
+                log.error("createStableConnection LocalSessionFactory error,cause: ", ex);
             }
         }
     }

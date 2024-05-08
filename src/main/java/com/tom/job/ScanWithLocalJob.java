@@ -1,10 +1,10 @@
 package com.tom.job;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
 import com.tom.entity.LocalFileRecord;
+import com.tom.mapper.FileRecordMapper;
 import com.tom.mapper.LocalRecordMapper;
 import com.tom.model.LocalFileChecker;
 import com.tom.utils.MD5Util;
@@ -25,17 +25,17 @@ public class ScanWithLocalJob {
             files = scanDirCompareWithLocal(files, basePath);
         } while (!CollUtil.isEmpty(files));
 
-        if (CollUtil.isEmpty(addList)){
-
-
+        if (CollUtil.isNotEmpty(addList)){
+            LocalRecordMapper localMapper = MySetting.getLocalMapper(LocalRecordMapper.class);
+            localMapper.saveBatch(addList);
         }
 
-        if (CollUtil.isEmpty(removeList)){
-
-
+        if (CollUtil.isNotEmpty(removeList)){
+            LocalRecordMapper localMapper = MySetting.getLocalMapper(LocalRecordMapper.class);
+            localMapper.removeBatch(removeList);
+            FileRecordMapper remoteMapper = MySetting.getRemoteMapper(FileRecordMapper.class);
+            remoteMapper.tempRemoveBatch(removeList);
         }
-
-
     }
 
     /**
@@ -57,12 +57,15 @@ public class ScanWithLocalJob {
                 LocalFileRecord localFileRecord = new LocalFileRecord();
                 localFileRecord.setFileName(file.getName());
                 localFileRecord.setRecordType(file.isDirectory() ? 1:0);
-                localFileRecord.setSize(file.length());
-                localFileRecord.setLastModified(DateUtil.date(file.lastModified()));
+                localFileRecord.setLastModified(file.lastModified());
                 localFileRecord.setRelativeLocation(relativePath);
                 if (!file.isDirectory()) {
                     String fileMD5 = MD5Util.getFileMD5(file);
                     localFileRecord.setMd5(fileMD5);
+                    localFileRecord.setSize(file.length());
+                }else {
+                    localFileRecord.setSize(0);
+                    localFileRecord.setMd5(StrUtil.EMPTY);
                 }
 
                 addList.add(localFileRecord);

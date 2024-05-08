@@ -9,6 +9,7 @@
             <if test="relativePath != null and relativePath !=''">
                 relative_location = #{relativePath}
             </if>
+            and deleted = 0
         </where>
     </select>
 
@@ -48,4 +49,14 @@
             and `size` = #{size}
         </where>
     </select>
+
+    <update id="tempRemoveBatch" parameterType="LocalFileRecord">
+        update file_record_table set
+            deleted = case
+        <foreach collection="fileRecords" item="item">
+            when file_name=#{item.fileName} and relative_location=#{item.relativeLocation}
+            then 1
+        </foreach>
+            else 0 end
+    </update>
 </mapper>

@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @Accessors(chain = true)
@@ -30,7 +29,7 @@ public class LocalFileRecord implements Serializable {
     /**
      * 最后修改时间
      */
-    private Date lastModified;
+    private long lastModified;
 
     /**
      * 文件类型 0 文件 1目录

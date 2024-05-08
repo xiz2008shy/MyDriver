@@ -1,7 +1,5 @@
 package com.tom.model;
 
-import cn.hutool.core.lang.Pair;
-import cn.hutool.core.lang.Tuple;
 import com.tom.config.MySetting;
 import com.tom.entity.FileRecord;
 import com.tom.utils.MD5Util;
