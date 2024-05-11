@@ -25,6 +25,14 @@
             </if>
         </where>
     </select>
+    <select id="selectListByRelativeLocationUpon" resultType="LocalFileRecord">
+        select * from file_record_table
+        <where>
+            <if test="relativePath != null and relativePath !=''">
+                relative_location like concat(#{relativePath},'%')
+            </if>
+        </where>
+    </select>
 
     <insert id="insert" parameterType="LocalFileRecord">
         insert into file_record_table (file_name,
@@ -55,5 +63,8 @@
         <foreach collection="fileRecords" item="item" separator="," open="(" close=")">
             #{item.id}
         </foreach>
+    </delete>
+
+    <delete id="removeBatchLeftLike" parameterType="LocalFileRecord">
     </delete>
 </mapper>

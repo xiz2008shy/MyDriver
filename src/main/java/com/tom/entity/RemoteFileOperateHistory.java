@@ -1,13 +1,9 @@
 package com.tom.entity;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
+import java.util.Date;
 
-@Data
-@Accessors(chain = true)
-public class LocalFileRecord implements Serializable {
+public class RemoteFileOperateHistory implements Serializable {
 
     private long id;
 
@@ -22,19 +18,32 @@ public class LocalFileRecord implements Serializable {
     private String relativeLocation;
 
     /**
+     * 本地的最后修改时间
+     */
+    private Date lastModified;
+
+    /**
      * 文件的md5码值
      */
     private String md5;
 
     /**
-     * 最后修改时间
+     * oss上的保存路径
      */
-    private String lastModified;
-
+    private String remotePath;
+    /**
+     * 文件大小（目录为0）
+     */
+    private long size;
     /**
      * 文件类型 0 文件 1目录
      */
     private int recordType;
 
-    private long size;
+    /**
+     * 操作时间
+     */
+    private Date operateTime;
+
+    private String operate;
 }

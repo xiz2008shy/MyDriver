@@ -4,9 +4,9 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
 import com.tom.entity.LocalFileRecord;
-import com.tom.mapper.FileRecordMapper;
-import com.tom.mapper.LocalRecordMapper;
 import com.tom.model.LocalFileChecker;
+import com.tom.repo.LocalRecordService;
+import com.tom.repo.RemoteFileRecordService;
 import com.tom.utils.MD5Util;
 
 import java.io.File;
@@ -15,6 +15,8 @@ import java.util.List;
 
 public class ScanWithLocalJob {
 
+    private final LocalRecordService localRecordService = LocalRecordService.getService();
+    private final RemoteFileRecordService remoteFileRecordService = RemoteFileRecordService.getService();
     private final List<LocalFileRecord> removeList = new ArrayList<>();
     private final List<LocalFileRecord> addList = new ArrayList<>();
 
@@ -26,15 +28,21 @@ public class ScanWithLocalJob {
         } while (!CollUtil.isEmpty(files));
 
         if (CollUtil.isNotEmpty(addList)){
-            LocalRecordMapper localMapper = MySetting.getLocalMapper(LocalRecordMapper.class);
-            localMapper.saveBatch(addList);
+            localRecordService.saveBatch(addList);
         }
 
         if (CollUtil.isNotEmpty(removeList)){
-            LocalRecordMapper localMapper = MySetting.getLocalMapper(LocalRecordMapper.class);
-            localMapper.removeBatch(removeList);
-            FileRecordMapper remoteMapper = MySetting.getRemoteMapper(FileRecordMapper.class);
-            remoteMapper.tempRemoveBatch(removeList);
+            List<LocalFileRecord> dirRecords = new ArrayList<>();
+            for (LocalFileRecord record : removeList) {
+                if (record.getRecordType()==1){
+                    List<LocalFileRecord> dirR = localRecordService.selectListByRelativeLocationUpon(
+                            record.getRelativeLocation() + record.getFileName() + "/");
+                    dirRecords.addAll(dirR);
+                }
+            }
+            removeList.addAll(dirRecords);
+            localRecordService.removeBatch(removeList);
+            remoteFileRecordService.tempRemoveBatch(removeList);
         }
     }
 
@@ -49,15 +57,14 @@ public class ScanWithLocalJob {
         for (File dir : dirs) {
             File[] files = dir.listFiles();
             String relativePath = getRelativePath(dir, basePath);
-            var localMapper = MySetting.getLocalMapper(LocalRecordMapper.class);
-            List<LocalFileRecord> curPathRecords = localMapper.selectListByRelativeLocation(relativePath);
+            List<LocalFileRecord> curPathRecords = localRecordService.selectListByRelativeLocation(relativePath);
             LocalFileChecker fileChecker = new LocalFileChecker(curPathRecords, files);
             removeList.addAll(fileChecker.getRemoveList());
             for (File file : fileChecker.getAddList()) {
                 LocalFileRecord localFileRecord = new LocalFileRecord();
                 localFileRecord.setFileName(file.getName());
                 localFileRecord.setRecordType(file.isDirectory() ? 1:0);
-                localFileRecord.setLastModified(file.lastModified());
+                localFileRecord.setLastModified(String.valueOf(file.lastModified()));
                 localFileRecord.setRelativeLocation(relativePath);
                 if (!file.isDirectory()) {
                     String fileMD5 = MD5Util.getFileMD5(file);

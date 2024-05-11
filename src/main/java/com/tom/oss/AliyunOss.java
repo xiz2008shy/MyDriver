@@ -41,7 +41,7 @@ public class AliyunOss implements OssOperation{
         String bucketName = config.getBucketName();
         try {
             return ossClient.putObject(new PutObjectRequest(bucketName, filePath, toUpload)
-                    .withProgressListener(new ProcessBar.UploadProgressListener()));
+                    .withProgressListener(new ProcessBar.UploadProgressListener(toUpload)));
         } catch (OSSException oe) {
             log.error("OSSException occurred,Error Message:{},Code:{},Request ID:{},Host ID:{}",
                     oe.getErrorMessage(),oe.getErrorCode(),oe.getRequestId(), oe.getHostId());
@@ -59,7 +59,7 @@ public class AliyunOss implements OssOperation{
         try (outputStream){
             // ossObject包含文件所在的存储空间名称、文件名称、文件元数据以及一个输入流。
             try (OSSObject ossObject = ossClient.getObject(new GetObjectRequest(bucketName, path).
-                    withProgressListener(new ProcessBar.DownloadProgressListener()));
+                    withProgressListener(new ProcessBar.DownloadProgressListener(path)));
                  InputStream inputStream = ossObject.getObjectContent();
                  ReadableByteChannel readableByteChannel = Channels.newChannel(inputStream);
                  FileChannel fileChannel = outputStream.getChannel()

@@ -3,6 +3,8 @@ package com.tom.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -79,9 +81,23 @@ public class MD5Util {
         return hexString.toString();
     }
 
-    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-        //123 - 8f953fdc81fef2380f56de87bdda4b63  456 - ead02d5bc2b10688f11f0baf066339cd
-        String fileMD5 = partialFileMD5(new File("C:\\Users\\TOMQI\\Desktop\\123.png"));
-        System.out.println(fileMD5);
+
+
+    public static String getMacByIP() throws Exception {
+        return getMacByIP(InetAddress.getLocalHost().getHostAddress());
+    }
+
+    public static String getMacByIP(String IP) throws Exception {
+        InetAddress ia = InetAddress.getByName(IP);
+        byte[] mac = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < mac.length; i++) {
+            if (i != 0) {
+                sb.append("-");
+            }
+            String hexString = Integer.toHexString(mac[i] & 0xFF);
+            sb.append(hexString.length() == 1 ? "0" + hexString : hexString);
+        }
+        return sb.toString().toUpperCase();
     }
 }

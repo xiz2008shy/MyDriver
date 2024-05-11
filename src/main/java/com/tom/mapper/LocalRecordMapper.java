@@ -11,6 +11,8 @@ public interface LocalRecordMapper {
 
     List<LocalFileRecord> selectListByRelativeLocation(@Param("relativePath") String relativePath);
 
+    List<LocalFileRecord> selectListByRelativeLocationUpon(@Param("relativePath") String relativePath);
+
     void insert(LocalFileRecord fileRecord);
 
     void saveBatch(@Param("fileRecords") List<LocalFileRecord> fileRecords);

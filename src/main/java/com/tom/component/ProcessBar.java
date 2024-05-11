@@ -4,19 +4,26 @@ import com.aliyun.oss.event.ProgressEvent;
 import com.aliyun.oss.event.ProgressEventType;
 import com.aliyun.oss.event.ProgressListener;
 
+import java.io.File;
+
 public class ProcessBar {
 
     public static class UploadProgressListener implements ProgressListener {
         private long bytesWritten = 0;
         private long totalBytes = -1;
         private boolean succeed = false;
+        private File file;
+        public UploadProgressListener(File file) {
+            this.file = file;
+        }
+
         @Override
         public void progressChanged(ProgressEvent progressEvent) {
             long bytes = progressEvent.getBytes();
             ProgressEventType eventType = progressEvent.getEventType();
             switch (eventType) {
                 case TRANSFER_STARTED_EVENT:
-                    System.out.println("Start to upload......");
+                    System.out.println("Start to upload......" + file.getAbsolutePath());
                     break;
                 case REQUEST_CONTENT_LENGTH_EVENT:
                     this.totalBytes = bytes;
@@ -50,6 +57,10 @@ public class ProcessBar {
         private long bytesRead = 0;
         private long totalBytes = -1;
         private boolean succeed = false;
+        private String remotePath;
+        public DownloadProgressListener(String remotePath) {
+            this.remotePath = remotePath;
+        }
 
         @Override
         public void progressChanged(ProgressEvent progressEvent) {
@@ -58,7 +69,7 @@ public class ProcessBar {
             ProgressEventType eventType = progressEvent.getEventType();
             switch (eventType) {
                 case TRANSFER_STARTED_EVENT:
-                    System.out.println("Start to download......");
+                    System.out.println("Start to download......" + remotePath);
                     break;
                 case RESPONSE_CONTENT_LENGTH_EVENT:
                     this.totalBytes = bytes;

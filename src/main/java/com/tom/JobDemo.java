@@ -10,8 +10,9 @@ public class JobDemo {
     public static void main(String[] args) {
         MySetting.initSetting(MySetting.mockParam());
         JDBCUtil.createStableConnection();
-        //remoteSync();
+
         localSync();
+        remoteSync();
     }
 
     private static void remoteSync() {
