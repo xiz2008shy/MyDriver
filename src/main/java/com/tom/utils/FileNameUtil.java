@@ -36,4 +36,17 @@ public class FileNameUtil {
         Matcher m = p.matcher(path);
         return m.find();
     }
+
+
+    /**
+     * 获取相对于基础路径的相对路径
+     * @param dir
+     * @param basePath
+     * @return
+     */
+    public static String getRelativePath(File dir, String basePath) {
+        return STR."\{dir.getAbsolutePath().replace(basePath, StrUtil.EMPTY).replaceAll("\\\\", "/")}/";
+    }
+
+
 }

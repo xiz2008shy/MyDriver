@@ -1,6 +1,7 @@
 package com.tom.controller;
 
 import cn.hutool.core.lang.UUID;
+import com.tom.entity.FileRecord;
 import com.tom.handler.fxml.DesktopIconClickHandler;
 import com.tom.model.ModelData;
 import com.tom.utils.ImageUtils;
@@ -40,7 +41,7 @@ public class FileViewController extends AnchorPane implements Initializable {
 
     private ModelData modelData;
 
-    public FileViewController(File file, ModelData modelData) {
+    public FileViewController(File file, FileRecord fileRecord, ModelData modelData) {
         this.file = file;
         this.modelData = modelData;
         this.addEventHandler(MouseEvent.MOUSE_CLICKED,new DesktopIconClickHandler(file,modelData));

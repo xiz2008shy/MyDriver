@@ -10,6 +10,7 @@ import com.tom.entity.FileRecord;
 import com.tom.model.FileChecker;
 import com.tom.oss.AliyunOss;
 import com.tom.repo.RemoteFileRecordService;
+import com.tom.utils.FileNameUtil;
 import com.tom.utils.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +44,7 @@ public class ScanWithRemoteJob {
         List<File> subDir = new ArrayList<>();
         for (File dir : dirs) {
             File[] files = dir.listFiles();
-            String relativePath = getRelativePath(dir, basePath);
+            String relativePath = FileNameUtil.getRelativePath(dir, basePath);
 
             List<FileRecord> curPathRecords = remoteFileRecordService.selectListByRelativeLocation(relativePath);
             FileChecker fileChecker = new FileChecker(curPathRecords, files);
@@ -67,15 +68,7 @@ public class ScanWithRemoteJob {
         return subDir;
     }
 
-    /**
-     * 获取相对于基础路径的相对路径
-     * @param dir
-     * @param basePath
-     * @return
-     */
-    private static String getRelativePath(File dir, String basePath) {
-        return STR."\{dir.getAbsolutePath().replace(basePath, StrUtil.EMPTY).replaceAll("\\\\", "/")}/";
-    }
+
 
 
     /**

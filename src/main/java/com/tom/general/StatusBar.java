@@ -1,13 +1,16 @@
 package com.tom.general;
 
-import com.tom.component.menu.StatusBarMenu;
+import com.tom.config.MySetting;
 import com.tom.utils.ImageUtils;
+import com.tom.utils.JDBCUtil;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class StatusBar extends HBox {
 
     private final StackPane stackPane = new StackPane();
@@ -36,11 +39,25 @@ public class StatusBar extends HBox {
 
 
     public void switchOnline (){
-        switchStatus("/img/greenPoint.png",1);
+        try {
+            int res = JDBCUtil.jdbcTest();
+            if (res == 1){
+                JDBCUtil.createStableConnection();
+                switchStatus("/img/greenPoint.png",1);
+            }else {
+                TipBlock.showDialog("连接失败，请稍后再试！","Connection Failed!",windows.getStage());
+            }
+        }catch (Exception e){
+            log.error("StatusBar switchOnline occurred an error,cause: ",e);
+            TipBlock.showDialog(e.getMessage() ,"Connection Failed!",windows.getStage());
+        }
     }
 
     public void switchOffline (){
-        switchStatus("/img/redPoint.png",0);
+        if (MySetting.isConnection()){
+            JDBCUtil.closeConnection();
+            switchStatus("/img/redPoint.png",0);
+        }
     }
 
     private void switchStatus(String imgPath,int status) {

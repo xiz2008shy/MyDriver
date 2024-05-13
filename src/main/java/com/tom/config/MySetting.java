@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.tom.config.vo.ConfigVo;
 import com.tom.controller.MySettingController;
 import com.tom.general.RecWindows;
+import com.tom.general.TipBlock;
 import com.tom.utils.JDBCUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,7 +16,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -192,7 +191,7 @@ public class MySetting {
                     log.error("MySetting.saveConfig occurred an error,cause: ",ex);
                 }
             }else {
-                mySettingController.showDialog("同步路径不存在，请重新填写","The path is not exists！");
+                TipBlock.showDialog("同步路径不存在，请重新填写","The path is not exists！",mySettingController.getWindows().getStage());
             }
         }
     }
@@ -235,37 +234,21 @@ public class MySetting {
                 MySetting.getConfig().restore();
                 Platform.runLater(() -> {
                     mySettingController.setTestImgError();
-                    mySettingController.showDialog("链接失败，请稍后再试！","connection failed!");
+                    TipBlock.showDialog("链接失败，请稍后再试！","connection failed!",mySettingController.getWindows().getStage());
                 });
             }
         } catch (Exception e) {
             MySetting.getConfig().restore();
             Platform.runLater(() -> {
                 mySettingController.setTestImgError();
-                mySettingController.showDialog(e.getMessage() ,"Connection Failed!");
+                TipBlock.showDialog(e.getMessage() ,"Connection Failed!",mySettingController.getWindows().getStage());
             });
         }
     }
 
 
-    public static <T>T getRemoteMapper(Class<T> clazz){
-        if (remoteSessionFactory != null){
-            SqlSession sqlSession = remoteSessionFactory.openSession(true);
-            T mapper = sqlSession.getMapper(clazz);
-            return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                    new SqlSessionInvokeHandler<>(sqlSession,mapper));
-        }
-        throw new RuntimeException("MySetting.getMapper occurred an error,remoteSessionFactory didn't initialize properly!");
-    }
-
-    public static <T>T getLocalMapper(Class<T> clazz){
-        if (localSessionFactory != null){
-            SqlSession sqlSession = localSessionFactory.openSession(true);
-            T mapper = sqlSession.getMapper(clazz);
-            return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                    new SqlSessionInvokeHandler<>(sqlSession,mapper));
-        }
-        throw new RuntimeException("MySetting.getMapper occurred an error,remoteSessionFactory didn't initialize properly!");
+    public static boolean isConnection(){
+        return remoteSessionFactory != null;
     }
 
 

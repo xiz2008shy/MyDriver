@@ -1,13 +1,16 @@
 package com.tom.utils;
 
 import com.tom.config.MySetting;
+import com.tom.config.SqlSessionInvokeHandler;
 import com.tom.config.vo.ConfigVo;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -69,11 +72,44 @@ public class JDBCUtil {
         }
     }
 
-    private static void closeDataSource(SqlSessionFactory curSqlSessionFactory) {
+    public static void closeConnection(){
+        if (MySetting.getLocalSessionFactory() != null) {
+            MySetting.setLocalSessionFactory(null);
+        }
+        if (MySetting.getRemoteSessionFactory() != null) {
+            closeDataSource(MySetting.getRemoteSessionFactory());
+            MySetting.setRemoteSessionFactory(null);
+        }
+    }
+
+    public static void closeDataSource(SqlSessionFactory curSqlSessionFactory) {
         Environment environment = curSqlSessionFactory.getConfiguration().getEnvironment();
         Object dataSource = environment.getDataSource();
         if (dataSource instanceof HikariDataSource hs) {
             hs.close();
         }
+    }
+
+
+    public static <T>T getRemoteMapper(Class<T> clazz){
+        SqlSessionFactory remoteSessionFactory = MySetting.getRemoteSessionFactory();
+        if (remoteSessionFactory != null){
+            SqlSession sqlSession = remoteSessionFactory.openSession(true);
+            T mapper = sqlSession.getMapper(clazz);
+            return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
+                    new SqlSessionInvokeHandler<>(sqlSession,mapper));
+        }
+        throw new RuntimeException("MySetting.getMapper occurred an error,remoteSessionFactory didn't initialize properly!");
+    }
+
+    public static <T>T getLocalMapper(Class<T> clazz){
+        SqlSessionFactory localSessionFactory = MySetting.getLocalSessionFactory();
+        if (localSessionFactory != null){
+            SqlSession sqlSession = localSessionFactory.openSession(true);
+            T mapper = sqlSession.getMapper(clazz);
+            return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
+                    new SqlSessionInvokeHandler<>(sqlSession,mapper));
+        }
+        throw new RuntimeException("MySetting.getMapper occurred an error,remoteSessionFactory didn't initialize properly!");
     }
 }

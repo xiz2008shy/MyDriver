@@ -7,6 +7,7 @@ import com.tom.entity.LocalFileRecord;
 import com.tom.model.LocalFileChecker;
 import com.tom.repo.LocalRecordService;
 import com.tom.repo.RemoteFileRecordService;
+import com.tom.utils.FileNameUtil;
 import com.tom.utils.MD5Util;
 
 import java.io.File;
@@ -56,7 +57,7 @@ public class ScanWithLocalJob {
 
         for (File dir : dirs) {
             File[] files = dir.listFiles();
-            String relativePath = getRelativePath(dir, basePath);
+            String relativePath = FileNameUtil.getRelativePath(dir, basePath);
             List<LocalFileRecord> curPathRecords = localRecordService.selectListByRelativeLocation(relativePath);
             LocalFileChecker fileChecker = new LocalFileChecker(curPathRecords, files);
             removeList.addAll(fileChecker.getRemoveList());
@@ -82,15 +83,4 @@ public class ScanWithLocalJob {
         }
         return subDir;
     }
-
-    /**
-     * 获取相对于基础路径的相对路径
-     * @param dir
-     * @param basePath
-     * @return
-     */
-    private static String getRelativePath(File dir, String basePath) {
-        return STR."\{dir.getAbsolutePath().replace(basePath, StrUtil.EMPTY).replaceAll("\\\\", "/")}/";
-    }
-
 }
