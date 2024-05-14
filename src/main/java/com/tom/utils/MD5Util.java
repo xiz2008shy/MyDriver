@@ -23,7 +23,6 @@ public class MD5Util {
                 md.update(buffer, 0, len);
                 times++;
             }
-            System.out.println(STR."times = \{times}");
             fis.close();
             byte[] digest = md.digest();
 

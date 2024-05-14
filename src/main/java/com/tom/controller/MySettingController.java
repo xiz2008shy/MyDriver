@@ -213,9 +213,6 @@ public class MySettingController extends AnchorPane implements Initializable {
     }
 
 
-
-
-
     /**
      * 更新设置面板的属性
      */

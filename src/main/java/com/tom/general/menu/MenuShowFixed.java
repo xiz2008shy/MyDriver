@@ -24,8 +24,8 @@ public class MenuShowFixed implements ShowMenu<MouseEvent>{
         if (needCal) {
             int halfWindowWidth = (int)windows.getWidth() >> 1;
             int halfWindowHeight = (int)windows.getHeight() >> 1;
-            realPane.setTranslateX(halfWindowWidth - 145);
-            realPane.setTranslateY(-halfWindowHeight + 80);
+            realPane.setTranslateX(halfWindowWidth - 135);
+            realPane.setTranslateY(-halfWindowHeight + 98);
         }
         //baseMenu.setMenuBg(windows.getShowBox(),event.getSceneX(),event.getSceneY());
         realPane.setVisible(true);

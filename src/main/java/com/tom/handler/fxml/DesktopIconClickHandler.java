@@ -39,7 +39,7 @@ public class DesktopIconClickHandler implements EventHandler<MouseEvent> {
         modelData.setRealSelectedFile(file);
         if (event.getClickCount() == 2 && event.getButton().equals(MouseButton.PRIMARY)) {
             if (file.isDirectory()){
-                this.modelData.setFile(file);
+                this.modelData.freshPage(file);
             }else {
                 executeFile(file);
             }

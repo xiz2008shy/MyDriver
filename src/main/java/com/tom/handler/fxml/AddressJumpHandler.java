@@ -22,7 +22,7 @@ public class AddressJumpHandler implements EventHandler<MouseEvent> {
     public void handle(MouseEvent event) {
         if (event.getButton().equals(MouseButton.PRIMARY)) {
             if (!modelData.getCurDirProperty().get().equals(file.getAbsolutePath())) {
-                this.modelData.setFile(file);
+                this.modelData.freshPage(file);
             }
         }
     }

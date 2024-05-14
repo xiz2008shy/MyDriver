@@ -48,7 +48,7 @@ public class RightClickMenu {
         open.whenActiveByMouse( _ -> {
             File file = windows.getActiveModelData().getRealSelectedFile();
             if (file.isDirectory()){
-                windows.getActiveModelData().setFile(file);
+                windows.getActiveModelData().freshPage(file);
             }else {
                 DesktopIconClickHandler.executeFile(file);
             }

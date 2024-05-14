@@ -57,15 +57,18 @@ public class ModelData {
     private Map<String,File> cacheMap = new HashMap<>();
 
     public ModelData(File file) {
-        setFile(file);
+        freshPage(file);
         tipsProperty.set(STR."在 \{FileNameUtil.getFileName(file)} 中搜索");
         curDirProperty.addListener((_,_,n) -> tipsProperty.set(STR."在 \{FileNameUtil.getFileName(n)} 中搜索"));
     }
 
-    public void setFile(File curDir) {
+    /**
+     * 调用后会刷新地址栏和文件浏览页
+     * @param curDir
+     */
+    public void freshPage(File curDir) {
         this.curDirProperty.set(curDir);
     }
-
 
     public File getCurDir() {
         return curDirProperty.get();

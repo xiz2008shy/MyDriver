@@ -3,10 +3,13 @@ package com.tom.general;
 import com.tom.config.MySetting;
 import com.tom.utils.ImageUtils;
 import com.tom.utils.JDBCUtil;
+import javafx.animation.RotateTransition;
+import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,9 +25,11 @@ public class StatusBar extends HBox {
     @Getter
     private final RecWindows windows;
     /**
-     * 工作状态 1保持同步，0断开连接（不影响作业列表中的作业），2立即同步
+     * 工作状态 1保持同步，0断开连接（不影响作业列表中的作业），2同步中
      */
     private int status;
+
+    private RotateTransition animation;
 
     public StatusBar(RecWindows windows) {
         this.windows = windows;
@@ -56,12 +61,43 @@ public class StatusBar extends HBox {
     public void switchOffline (){
         if (MySetting.isConnection()){
             JDBCUtil.closeConnection();
-            switchStatus("/img/redPoint.png",0);
+        }
+        switchStatus("/img/redPoint.png",0);
+    }
+
+    public void switchSyncIcon(){
+        switchStatus(null,status);
+        statusImage.setImage(ImageUtils.getImageFromResources("/img/syncIcon32.png",32,32));
+        ImageUtils.resize(statusImage,20,20);
+        if (animation == null) {
+            this.animation = new RotateTransition(Duration.millis(3000), statusImage);
+            // 旋转度数
+            animation.setByAngle(360f);
+            animation.setCycleCount(Timeline.INDEFINITE);
+            animation.setAutoReverse(true);
+        }
+
+        animation.play();
+    }
+
+    public void switchLastStatus(){
+        this.animation.pause();
+        this.statusImage.setRotate(0);
+        this.statusImage.setImage(ImageUtils.getImageFromResources("/img/syncSwitch.png",32,32));
+        ImageUtils.resize(statusImage,24,24);
+        if (status == 1){
+            switchOnline();
+        }else {
+            switchOffline();
         }
     }
 
     private void switchStatus(String imgPath,int status) {
-        this.pointView.setImage(ImageUtils.getImageFromResources(imgPath,32,32));
+        if (imgPath == null) {
+            this.pointView.setImage(null);
+        }else {
+            this.pointView.setImage(ImageUtils.getImageFromResources(imgPath,32,32));
+        }
         this.status = status;
     }
 

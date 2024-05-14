@@ -1,6 +1,5 @@
 package com.tom.repo;
 
-import com.tom.config.MySetting;
 import com.tom.entity.LocalFileRecord;
 import com.tom.mapper.LocalRecordMapper;
 import com.tom.utils.JDBCUtil;
