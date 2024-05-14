@@ -17,6 +17,14 @@
         );
     </insert>
 
+    <select id="selectByRlAndFn" resultType="LocalFileRecord">
+        select * from file_record_table
+        <where>
+            relative_location = #{relativePath}
+            and file_name = #{filename}
+        </where>
+    </select>
+
     <select id="selectListByRelativeLocation" resultType="LocalFileRecord">
         select * from file_record_table
         <where>
@@ -65,6 +73,11 @@
         </foreach>
     </delete>
 
-    <delete id="removeBatchLeftLike" parameterType="LocalFileRecord">
+    <delete id="removeUponDir" parameterType="LocalFileRecord">
+        delete from file_record_table where relative_location like concat(#{relativePath},'%')
+    </delete>
+
+    <delete id="removeFile">
+        delete from file_record_table where relative_location =#{relativePath} and file_name= #{filename}
     </delete>
 </mapper>

@@ -36,12 +36,12 @@ public class FileChecker {
     @Getter
     private final List<File> subDirs;
     /**
-     * 本地缺失文件
+     * 本地缺失文件（包含文件和目录）
      */
     @Getter
     private final List<FileRecord> localLoseList;
     /**
-     * 远端缺失文件
+     * 远端缺失文件（包含文件和目录）
      */
     @Getter
     private final List<File> remoteLoseList;
@@ -50,12 +50,12 @@ public class FileChecker {
     }
 
     /**
-     * 待推送更新文件
+     * 待推送更新文件(只有文件)
      */
     @Getter
     private final List<LRM> pushList;
     /**
-     * 待拉取更新的本地文件
+     * 待拉取更新的本地文件(只有文件)
      */
     @Getter
     private final List<LRM> pullList;

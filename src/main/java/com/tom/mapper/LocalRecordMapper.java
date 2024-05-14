@@ -9,6 +9,8 @@ public interface LocalRecordMapper {
 
     void createTable();
 
+    LocalFileRecord selectByRlAndFn(@Param("relativePath") String relativePath,@Param("filename") String filename);
+
     List<LocalFileRecord> selectListByRelativeLocation(@Param("relativePath") String relativePath);
 
     List<LocalFileRecord> selectListByRelativeLocationUpon(@Param("relativePath") String relativePath);
@@ -18,4 +20,9 @@ public interface LocalRecordMapper {
     void saveBatch(@Param("fileRecords") List<LocalFileRecord> fileRecords);
 
     void removeBatch(@Param("fileRecords") List<LocalFileRecord> fileRecords);
+
+    void removeUponDir(@Param("relativePath") String relativePath);
+
+    void removeFile(@Param("relativePath") String relativePath,@Param("filename") String filename);
+
 }

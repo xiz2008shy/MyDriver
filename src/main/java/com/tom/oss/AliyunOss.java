@@ -52,14 +52,14 @@ public class AliyunOss implements OssOperation{
     }
 
     @Override
-    public void downloadFile(String path, FileOutputStream outputStream) {
+    public void downloadFile(String remotePath, FileOutputStream outputStream) {
         ConfigVo config = MySetting.getConfig();
         // 填写Bucket名称，例如examplebucket。
         String bucketName = config.getBucketName();
         try (outputStream){
             // ossObject包含文件所在的存储空间名称、文件名称、文件元数据以及一个输入流。
-            try (OSSObject ossObject = ossClient.getObject(new GetObjectRequest(bucketName, path).
-                    withProgressListener(new ProcessBar.DownloadProgressListener(path)));
+            try (OSSObject ossObject = ossClient.getObject(new GetObjectRequest(bucketName, remotePath).
+                    withProgressListener(new ProcessBar.DownloadProgressListener(remotePath)));
                  InputStream inputStream = ossObject.getObjectContent();
                  ReadableByteChannel readableByteChannel = Channels.newChannel(inputStream);
                  FileChannel fileChannel = outputStream.getChannel()

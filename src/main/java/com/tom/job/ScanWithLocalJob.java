@@ -3,10 +3,13 @@ package com.tom.job;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
+import com.tom.entity.FileRecord;
 import com.tom.entity.LocalFileRecord;
+import com.tom.entity.RemoteOperateHistory;
 import com.tom.model.LocalFileChecker;
 import com.tom.repo.LocalRecordService;
 import com.tom.repo.RemoteFileRecordService;
+import com.tom.repo.RemoteOperateHistoryService;
 import com.tom.utils.FileNameUtil;
 import com.tom.utils.MD5Util;
 
@@ -18,6 +21,7 @@ public class ScanWithLocalJob {
 
     private final LocalRecordService localRecordService = LocalRecordService.getService();
     private final RemoteFileRecordService remoteFileRecordService = RemoteFileRecordService.getService();
+    private final RemoteOperateHistoryService remoteOperateHistoryService = RemoteOperateHistoryService.getService();
     private final List<LocalFileRecord> removeList = new ArrayList<>();
     private final List<LocalFileRecord> addList = new ArrayList<>();
 
@@ -28,9 +32,10 @@ public class ScanWithLocalJob {
             files = scanDirCompareWithLocal(files, basePath);
         } while (!CollUtil.isEmpty(files));
 
-        if (CollUtil.isNotEmpty(addList)){
+        // 在远端比较后再添加到本地记录
+        /*if (CollUtil.isNotEmpty(addList)){
             localRecordService.saveBatch(addList);
-        }
+        }*/
 
         if (CollUtil.isNotEmpty(removeList)){
             List<LocalFileRecord> dirRecords = new ArrayList<>();
@@ -43,7 +48,20 @@ public class ScanWithLocalJob {
             }
             removeList.addAll(dirRecords);
             localRecordService.removeBatch(removeList);
-            remoteFileRecordService.tempRemoveBatch(removeList);
+
+            // 本地文件移除的场合还要在远端添加相关的删除记录
+            List<FileRecord> remoteRecordDeleting = remoteFileRecordService.selectListByRlAndFn(removeList);
+            List<RemoteOperateHistory> operateHistories = new ArrayList<>();
+            String macByIP = MySetting.getMacIP();
+            for (FileRecord fileRecord : remoteRecordDeleting) {
+                RemoteOperateHistory remoteOperateHistory = new RemoteOperateHistory();
+                remoteOperateHistory.copyFrom(fileRecord);
+                remoteOperateHistory.setOperator(macByIP);
+                remoteOperateHistory.setOperate("delete");
+                operateHistories.add(remoteOperateHistory);
+            }
+            remoteFileRecordService.tempRemoveBatch(remoteRecordDeleting);
+            remoteOperateHistoryService.saveBatch(operateHistories);
         }
     }
 

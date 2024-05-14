@@ -1,9 +1,15 @@
 package com.tom.entity;
 
+import cn.hutool.core.bean.BeanUtil;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public class RemoteFileOperateHistory implements Serializable {
+@Setter
+@Getter
+public class RemoteOperateHistory implements Serializable {
 
     private long id;
 
@@ -45,5 +51,16 @@ public class RemoteFileOperateHistory implements Serializable {
      */
     private Date operateTime;
 
+    /**
+     * 操作(push,deleted)
+     */
     private String operate;
+    /**
+     * 操作者（记mac地址）
+     */
+    private String operator;
+
+    public void copyFrom(FileRecord record){
+        BeanUtil.copyProperties(record,this,true);
+    }
 }

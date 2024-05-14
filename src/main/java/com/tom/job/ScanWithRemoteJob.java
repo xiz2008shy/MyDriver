@@ -7,9 +7,12 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
 import com.tom.entity.FileRecord;
+import com.tom.entity.RemoteOperateHistory;
 import com.tom.model.FileChecker;
 import com.tom.oss.AliyunOss;
+import com.tom.repo.LocalRecordService;
 import com.tom.repo.RemoteFileRecordService;
+import com.tom.repo.RemoteOperateHistoryService;
 import com.tom.utils.FileNameUtil;
 import com.tom.utils.MD5Util;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,8 @@ import static cn.hutool.core.text.StrPool.DOT;
 public class ScanWithRemoteJob {
 
     private RemoteFileRecordService remoteFileRecordService = RemoteFileRecordService.getService();
+    private LocalRecordService localRecordService = LocalRecordService.getService();
+    private RemoteOperateHistoryService remoteOperateHistoryService = RemoteOperateHistoryService.getService();
     private AliyunOss aliyunOss = new AliyunOss();
 
     public void scanBasePathCompareWithRemote(){
@@ -43,6 +48,9 @@ public class ScanWithRemoteJob {
     public List<File> scanDirCompareWithRemote(List<File> dirs,String basePath){
         List<File> subDir = new ArrayList<>();
         for (File dir : dirs) {
+            if (!dir.exists()){
+                continue;
+            }
             File[] files = dir.listFiles();
             String relativePath = FileNameUtil.getRelativePath(dir, basePath);
 
@@ -60,17 +68,16 @@ public class ScanWithRemoteJob {
             // 处理本地文件在远端记录后有更新的文件
             List<FileChecker.LRM> pushList = fileChecker.getPushList();
             handlePushList(pushList);
-            List<FileChecker.LRM> pullList = fileChecker.getPullList();
             // 远端更新超过本地文件内的场合
+            List<FileChecker.LRM> pullList = fileChecker.getPullList();
+            handlePullList(pullList);
 
             subDir.addAll(fileChecker.getSubDirs());
         }
         return subDir;
     }
 
-
-
-
+    
     /**
      * 处理本地缺失文件，要从oss下载文件到本地
      * @param loseLocalFile 本地缺失文件记录
@@ -101,11 +108,23 @@ public class ScanWithRemoteJob {
         DateTime date = DateUtil.date();
         String remotePath = STR."\{date.year()}/\{date.monthBaseOne()}/\{date.dayOfMonth()}/";
 
+
         for (File file : files) {
-            try {
-                insertRecordAndUploadFile(relativePath, file, remotePath);
-            }catch (Exception e){
-                log.error("ScanJob.handleRemoteLoseFile occurred an error,cause:",e);
+            // 增加远端删除的场景，需同步删除本地文件，1判断是否有远端删除记录
+            String md5 = MD5Util.getFileMD5(file);
+            RemoteOperateHistory deleteHistory = remoteOperateHistoryService.selectByMd5AndFilenameDel(md5, file.getName(),relativePath);
+            if (deleteHistory == null) {
+                try {
+                    insertRecordAndUploadFile(relativePath, file, remotePath,MySetting.getMacIP(),md5);
+                }catch (Exception e){
+                    log.error("ScanJob.handleRemoteLoseFile occurred an error,cause:",e);
+                }
+            }else {
+                if (file.isDirectory()){
+                    localRecordService.removeUponDir(relativePath + file.getName() + "/");
+                }
+                localRecordService.removeFile(relativePath, file.getName());
+                file.delete();
             }
         }
     }
@@ -137,6 +156,7 @@ public class ScanWithRemoteJob {
             }else {
                 remoteFileRecordService.updateById(fileRecord);
             }
+            addPushOperateRecord(MySetting.getMacIP(), fileRecord);
         }
     }
 
@@ -145,33 +165,25 @@ public class ScanWithRemoteJob {
         if (CollUtil.isEmpty(pullList)){
             return;
         }
-        DateTime date = DateUtil.date();
-        String remotePath = STR."\{date.year()}/\{date.monthBaseOne()}/\{date.dayOfMonth()}/";
 
         for (FileChecker.LRM lrm : pullList) {
             File file = lrm.localFile();
             FileRecord fileRecord = lrm.fileRecord();
-            fileRecord.setLastModified(DateUtil.date(file.lastModified()));
-            fileRecord.setSize(file.length());
-            if (!file.isDirectory()){
-                try {
-                    fileRecord.setRemotePath(remotePath + UUID.fastUUID().toString(true));
-                    fileRecord.setLastModified(DateUtil.date(file.lastModified()));
-                    fileRecord.setSize(file.length());
-                    fileRecord.setMd5(lrm.md5());
-                    aliyunOss.uploadFile(fileRecord.getRemotePath(), lrm.localFile());
-                    remoteFileRecordService.updateById(fileRecord);
-                }catch (Exception e){
-                    log.error("ScanJob.handleRemoteLoseFile occurred an error,cause:",e);
-                }
-            }else {
-                remoteFileRecordService.updateById(fileRecord);
+
+            // TODO 需要下载远端文件 并更新本地记录
+            try (var outputStream = new FileOutputStream(file);) {
+                aliyunOss.downloadFile(fileRecord.getRemotePath(),outputStream);
+            }catch (Exception e){
+                log.error("ScanJob.handlePullList occurred an error,cause:",e);
             }
+
         }
     }
 
 
-    private void insertRecordAndUploadFile(String relativePath, File file, String remotePath) {
+
+
+    private void insertRecordAndUploadFile(String relativePath, File file, String remotePath,String macAddr,String md5) {
         FileRecord fileRecord = new FileRecord();
         fileRecord.setFileName(file.getName());
         fileRecord.setLastModified(DateUtil.date(file.lastModified()));
@@ -181,7 +193,6 @@ public class ScanWithRemoteJob {
             fileRecord.setRecordType(1);
             fileRecord.setMd5(StrUtil.EMPTY);
         }else {
-            String md5 = MD5Util.getFileMD5(file);
             List<FileRecord> similarFile = remoteFileRecordService.selectListByMd5AndSize(md5, file.length());
             if (CollUtil.isEmpty(similarFile)){
                 fileRecord.setRemotePath(remotePath + UUID.fastUUID().toString(true));
@@ -209,5 +220,21 @@ public class ScanWithRemoteJob {
             fileRecord.setMd5(md5);
         }
         remoteFileRecordService.insert(fileRecord);
+
+        // 远端库 添加push记录
+        addPushOperateRecord(macAddr, fileRecord);
+    }
+
+    /**
+     * 远端库 添加push记录
+     * @param macAddr
+     * @param fileRecord
+     */
+    private void addPushOperateRecord(String macAddr, FileRecord fileRecord) {
+        RemoteOperateHistory remoteOperateHistory = new RemoteOperateHistory();
+        remoteOperateHistory.copyFrom(fileRecord);
+        remoteOperateHistory.setOperate("push");
+        remoteOperateHistory.setOperator(macAddr);
+        remoteOperateHistoryService.insert(remoteOperateHistory);
     }
 }

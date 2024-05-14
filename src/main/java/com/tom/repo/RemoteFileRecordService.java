@@ -17,6 +17,12 @@ public class RemoteFileRecordService implements FileRecordMapper{
     }
 
     @Override
+    public FileRecord selectByRlAndFn(String relativePath, String filename) {
+        FileRecordMapper remoteMapper = JDBCUtil.getRemoteMapper(FileRecordMapper.class);
+        return remoteMapper.selectByRlAndFn(relativePath,filename);
+    }
+
+    @Override
     public List<FileRecord> selectListByRelativeLocation(String relativePath) {
         FileRecordMapper remoteMapper = JDBCUtil.getRemoteMapper(FileRecordMapper.class);
         return remoteMapper.selectListByRelativeLocation(relativePath);
@@ -41,8 +47,14 @@ public class RemoteFileRecordService implements FileRecordMapper{
     }
 
     @Override
-    public void tempRemoveBatch(List<LocalFileRecord> fileRecords) {
+    public void tempRemoveBatch(List<FileRecord> fileRecords) {
         FileRecordMapper remoteMapper = JDBCUtil.getRemoteMapper(FileRecordMapper.class);
         remoteMapper.tempRemoveBatch(fileRecords);
+    }
+
+    @Override
+    public List<FileRecord> selectListByRlAndFn(List<LocalFileRecord> fileRecords) {
+        FileRecordMapper remoteMapper = JDBCUtil.getRemoteMapper(FileRecordMapper.class);
+        return remoteMapper.selectListByRlAndFn(fileRecords);
     }
 }

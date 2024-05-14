@@ -2,22 +2,42 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tom.mapper.RemoteFileOperateHistoryMapper">
+<mapper namespace="com.tom.mapper.RemoteOperateHistoryMapper">
 
-    <insert id="insert" parameterType="RemoteFileOperateHistory">
+    <insert id="insert" parameterType="RemoteOperateHistory">
         insert into file_operate_history (file_name,
         <if test="relativeLocation != null and relativeLocation != ''">relative_location,</if>
         last_modified,
         <if test="md5 != null and md5 != ''">md5,</if>
         <if test="remotePath != null and remotePath != ''">remote_path,</if>
-        record_type,size,operate)
+        record_type,size,operate,operator)
         values (
         #{fileName},
         <if test="relativeLocation != null and relativeLocation != ''">#{relativeLocation},</if>
         #{lastModified},
         <if test="md5 != null and md5 != ''">#{md5},</if>
         <if test="remotePath != null and remotePath != ''">#{remotePath},</if>
-        #{recordType},#{size},#{operate}
+        #{recordType},#{size},#{operate},#{operator}
         )
     </insert>
+
+    <insert id="saveBatch" parameterType="RemoteOperateHistory">
+        insert into file_operate_history (file_name,
+        relative_location,last_modified,md5,record_type,size,operate,operator)
+        values
+        <foreach collection="fileRecords" item="item" separator=",">
+            (#{item.fileName},#{item.relativeLocation},#{item.lastModified},#{item.md5},
+             #{item.recordType},#{item.size},#{operate},#{operator})
+        </foreach>
+    </insert>
+
+    <select id="selectByMd5AndFilenameDel" resultType="RemoteOperateHistory">
+        select * from file_operate_history
+        where md5 = #{md5}
+          and file_name = #{filename}
+          and relative_location = #{relativePath}
+          and operate = 'delete'
+        order by id desc
+        limit 1
+    </select>
 </mapper>

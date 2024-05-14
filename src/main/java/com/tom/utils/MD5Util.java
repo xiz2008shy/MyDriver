@@ -13,26 +13,27 @@ public class MD5Util {
 
     public static String getFileMD5(File file){
         StringBuilder sb = new StringBuilder();
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            FileInputStream fis = new FileInputStream(file);
-            byte[] buffer = new byte[1024 * 8];
-            int len;
-            int times = 0;
-            while ((len = fis.read(buffer)) != -1) {
-                md.update(buffer, 0, len);
-                times++;
-            }
-            fis.close();
-            byte[] digest = md.digest();
+        if (!file.isDirectory()){
+            try {
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                FileInputStream fis = new FileInputStream(file);
+                byte[] buffer = new byte[1024 * 8];
+                int len;
+                int times = 0;
+                while ((len = fis.read(buffer)) != -1) {
+                    md.update(buffer, 0, len);
+                    times++;
+                }
+                fis.close();
+                byte[] digest = md.digest();
 
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b));
+                for (byte b : digest) {
+                    sb.append(String.format("%02x", b));
+                }
+            } catch (NoSuchAlgorithmException | IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (NoSuchAlgorithmException | IOException e) {
-            throw new RuntimeException(e);
         }
-
         return sb.toString();
     }
 
@@ -82,8 +83,13 @@ public class MD5Util {
 
 
 
-    public static String getMacByIP() throws Exception {
-        return getMacByIP(InetAddress.getLocalHost().getHostAddress());
+    public static String getMacByIP(){
+        try {
+            return getMacByIP(InetAddress.getLocalHost().getHostAddress());
+        }catch (Exception e){
+            log.error("MD5Util.getMacByIP occurred an error,cause:",e);
+            return "unknown user";
+        }
     }
 
     public static String getMacByIP(String IP) throws Exception {

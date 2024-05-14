@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface FileRecordMapper {
 
+    FileRecord selectByRlAndFn(@Param("relativePath") String relativePath,@Param("filename") String filename);
+
     List<FileRecord> selectListByRelativeLocation(@Param("relativePath") String relativePath);
 
     void insert(FileRecord fileRecord);
@@ -17,6 +19,8 @@ public interface FileRecordMapper {
     List<FileRecord> selectListByMd5AndSize(@Param("md5") String md5, @Param("size") long size);
 
 
-    void tempRemoveBatch(@Param("fileRecords") List<LocalFileRecord> fileRecords);
+    void tempRemoveBatch(@Param("fileRecords") List<FileRecord> fileRecords);
+
+    List<FileRecord> selectListByRlAndFn(@Param("fileRecords")List<LocalFileRecord> fileRecords);
 
 }

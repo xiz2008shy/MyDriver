@@ -13,6 +13,15 @@
         </where>
     </select>
 
+    <select id="selectByRlAndFn" resultType="FileRecord">
+        select * from file_record_table
+        <where>
+            relative_location = #{relativePath}
+            and file_name = #{filename}
+            and deleted = 0
+        </where>
+    </select>
+
     <insert id="insert" parameterType="FileRecord">
         insert into file_record_table (file_name,
             <if test="relativeLocation != null and relativeLocation != ''">relative_location,</if>
@@ -50,7 +59,7 @@
         </where>
     </select>
 
-    <update id="tempRemoveBatch" parameterType="LocalFileRecord">
+    <update id="tempRemoveBatch" parameterType="FileRecord">
         update file_record_table set
             deleted = case
         <foreach collection="fileRecords" item="item">
@@ -58,9 +67,34 @@
             then 1
         </foreach>
             else 0 end
+        where id in
+        <foreach collection="fileRecords" item="it" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="selectByFilenameAnd" parameterType="LocalFileRecord">
+        update file_record_table set
+        deleted = case
+        <foreach collection="fileRecords" item="item">
+            when file_name=#{item.fileName} and relative_location=#{item.relativeLocation}
+            then 1
+        </foreach>
+        else 0 end
         where file_name in
         <foreach collection="fileRecords" item="it" separator="," open="(" close=")">
             #{it.fileName}
         </foreach>
     </update>
+
+    <select id="selectListByRlAndFn" parameterType="LocalFileRecord" resultType="FileRecord">
+        <foreach collection="fileRecords" item="item" separator="union all">
+            select * from file_record_table
+            <where>
+                relative_location = #{item.relativePath}
+                and file_name = #{item.filename}
+                and deleted = 0
+            </where>
+        </foreach>
+    </select>
 </mapper>

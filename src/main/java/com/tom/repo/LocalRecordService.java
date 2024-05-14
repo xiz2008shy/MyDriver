@@ -21,6 +21,12 @@ public class LocalRecordService implements LocalRecordMapper {
     }
 
     @Override
+    public LocalFileRecord selectByRlAndFn(String relativePath, String filename) {
+        LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
+        return localMapper.selectByRlAndFn(relativePath,filename);
+    }
+
+    @Override
     public List<LocalFileRecord> selectListByRelativeLocation(String relativePath) {
         LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
         return localMapper.selectListByRelativeLocation(relativePath);
@@ -48,5 +54,17 @@ public class LocalRecordService implements LocalRecordMapper {
     public void removeBatch(List<LocalFileRecord> fileRecords) {
         LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
         localMapper.removeBatch(fileRecords);
+    }
+
+    @Override
+    public void removeUponDir(String relativePath) {
+        LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
+        localMapper.removeUponDir(relativePath);
+    }
+
+    @Override
+    public void removeFile(String relativePath, String filename) {
+        LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
+        localMapper.removeFile(relativePath,filename);
     }
 }

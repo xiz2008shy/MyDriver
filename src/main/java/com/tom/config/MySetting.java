@@ -8,6 +8,7 @@ import com.tom.controller.MySettingController;
 import com.tom.general.RecWindows;
 import com.tom.general.TipBlock;
 import com.tom.utils.JDBCUtil;
+import com.tom.utils.MD5Util;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -53,6 +54,8 @@ public class MySetting {
     private static SqlSessionFactory localSessionFactory;
     @Getter @Setter
     private static SqlSessionFactory remoteSessionFactory;
+    @Getter
+    private static String macIP;
 
     private static final ObjectMapper OM = new ObjectMapper();
 
@@ -106,6 +109,8 @@ public class MySetting {
         } catch (IOException e) {
             log.error("MySetting.initSetting occurred an error,cause: ",e);
         }
+
+        macIP = MD5Util.getMacByIP();
     }
 
 
