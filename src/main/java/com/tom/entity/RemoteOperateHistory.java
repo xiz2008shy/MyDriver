@@ -1,6 +1,7 @@
 package com.tom.entity;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,5 +63,6 @@ public class RemoteOperateHistory implements Serializable {
 
     public void copyFrom(FileRecord record){
         BeanUtil.copyProperties(record,this,true);
+        this.lastModified = DateUtil.date(record.getLastModified());
     }
 }

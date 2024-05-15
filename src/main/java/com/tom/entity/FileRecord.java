@@ -25,7 +25,7 @@ public class FileRecord implements Serializable {
     /**
      * 本地的最后修改时间
      */
-    private Date lastModified;
+    private long lastModified;
 
     /**
      * 文件的md5码值

@@ -25,4 +25,5 @@ public interface LocalRecordMapper {
 
     void removeFile(@Param("relativePath") String relativePath,@Param("filename") String filename);
 
+    void updateFile(LocalFileRecord fileRecord);
 }

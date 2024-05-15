@@ -23,11 +23,11 @@
 
     <insert id="saveBatch" parameterType="RemoteOperateHistory">
         insert into file_operate_history (file_name,
-        relative_location,last_modified,md5,record_type,size,operate,operator)
+        relative_location,remote_path,last_modified,md5,record_type,size,operate,operator)
         values
         <foreach collection="fileRecords" item="item" separator=",">
-            (#{item.fileName},#{item.relativeLocation},#{item.lastModified},#{item.md5},
-             #{item.recordType},#{item.size},#{operate},#{operator})
+            (#{item.fileName},#{item.relativeLocation},#{item.remotePath},#{item.lastModified},#{item.md5},
+             #{item.recordType},#{item.size},#{item.operate},#{item.operator})
         </foreach>
     </insert>
 

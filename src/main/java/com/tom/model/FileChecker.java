@@ -145,7 +145,7 @@ public class FileChecker {
             this.subDirs.add(file);
         }else {
             long localModified = file.lastModified();
-            long remoteModified = record.getLastModified().getTime();
+            long remoteModified = record.getLastModified();
             String localMd5 = MD5Util.getFileMD5(file);
             if ( localModified == remoteModified){
                 if(file.length() != record.getSize()){

@@ -345,4 +345,11 @@ public class RecWindows extends AnchorPane {
     public void setInActiveStyle(){
         this.secPane.getChildren().add(block);
     }
+
+    public void freshPage(){
+        for (ModelData modelData : this.modelDatum) {
+            modelData.getFileContentPaneController()
+                    .changeContentWhenChangeDir(modelData.getCurDir());
+        }
+    }
 }

@@ -67,4 +67,10 @@ public class LocalRecordService implements LocalRecordMapper {
         LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
         localMapper.removeFile(relativePath,filename);
     }
+
+    @Override
+    public void updateFile(LocalFileRecord fileRecord) {
+        LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
+        localMapper.updateFile(fileRecord);
+    }
 }

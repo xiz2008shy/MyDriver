@@ -61,15 +61,10 @@
 
     <update id="tempRemoveBatch" parameterType="FileRecord">
         update file_record_table set
-            deleted = case
-        <foreach collection="fileRecords" item="item">
-            when file_name=#{item.fileName} and relative_location=#{item.relativeLocation}
-            then 1
-        </foreach>
-            else 0 end
+            deleted = 1
         where id in
         <foreach collection="fileRecords" item="it" separator="," open="(" close=")">
-            #{id}
+            #{it.id}
         </foreach>
     </update>
 
@@ -91,8 +86,8 @@
         <foreach collection="fileRecords" item="item" separator="union all">
             select * from file_record_table
             <where>
-                relative_location = #{item.relativePath}
-                and file_name = #{item.filename}
+                relative_location = #{item.relativeLocation}
+                and file_name = #{item.fileName}
                 and deleted = 0
             </where>
         </foreach>

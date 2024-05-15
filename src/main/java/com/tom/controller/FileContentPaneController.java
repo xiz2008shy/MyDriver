@@ -56,7 +56,7 @@ public class FileContentPaneController implements Initializable {
      * 监听方法，当路径变更时，变更当前展示内容
      * @param n
      */
-    private void changeContentWhenChangeDir(File n) {
+    public void changeContentWhenChangeDir(File n) {
         flowPaneContent.getChildren().clear();
         Map<String,FileRecord> recordMap = Collections.emptyMap();
         if(MySetting.isConnection()){

@@ -7,6 +7,7 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.tom.config.MySetting;
 import com.tom.entity.FileRecord;
+import com.tom.entity.LocalFileRecord;
 import com.tom.entity.RemoteOperateHistory;
 import com.tom.model.FileChecker;
 import com.tom.oss.AliyunOss;
@@ -90,6 +91,9 @@ public class ScanWithRemoteJob {
             if (fileRecord.getRecordType() == 0){
                 try(var fileOutputStream = new FileOutputStream(curDir + File.separator + fileRecord.getFileName())) {
                     aliyunOss.downloadFile(fileRecord.getRemotePath(),fileOutputStream);
+                    LocalFileRecord localFileRecord = new LocalFileRecord();
+                    localFileRecord.copyFrom(fileRecord);
+                    localRecordService.insert(localFileRecord);
                 } catch (Exception e) {
                     log.error("ScanJob.handleLocalLoseFile occurred an error,cause:",e);
                 }
@@ -112,19 +116,19 @@ public class ScanWithRemoteJob {
         for (File file : files) {
             // 增加远端删除的场景，需同步删除本地文件，1判断是否有远端删除记录
             String md5 = MD5Util.getFileMD5(file);
-            RemoteOperateHistory deleteHistory = remoteOperateHistoryService.selectByMd5AndFilenameDel(md5, file.getName(),relativePath);
-            if (deleteHistory == null) {
-                try {
+            try {
+                RemoteOperateHistory deleteHistory = remoteOperateHistoryService.selectByMd5AndFilenameDel(md5, file.getName(),relativePath);
+                if (deleteHistory == null) {
                     insertRecordAndUploadFile(relativePath, file, remotePath,MySetting.getMacIP(),md5);
-                }catch (Exception e){
-                    log.error("ScanJob.handleRemoteLoseFile occurred an error,cause:",e);
+                }else {
+                    if (file.isDirectory()){
+                        localRecordService.removeUponDir(relativePath + file.getName() + "/");
+                    }
+                    localRecordService.removeFile(relativePath, file.getName());
+                    file.delete();
                 }
-            }else {
-                if (file.isDirectory()){
-                    localRecordService.removeUponDir(relativePath + file.getName() + "/");
-                }
-                localRecordService.removeFile(relativePath, file.getName());
-                file.delete();
+            }catch (Exception e){
+                log.error("ScanJob.handleRemoteLoseFile occurred an error,cause:",e);
             }
         }
     }
@@ -140,12 +144,11 @@ public class ScanWithRemoteJob {
         for (FileChecker.LRM lrm : pushList) {
             File file = lrm.localFile();
             FileRecord fileRecord = lrm.fileRecord();
-            fileRecord.setLastModified(DateUtil.date(file.lastModified()));
-            fileRecord.setSize(file.length());
+            fileRecord.setLastModified(file.lastModified());
+            fileRecord.setSize(0);
             if (!file.isDirectory()){
                 try {
                     fileRecord.setRemotePath(remotePath + UUID.fastUUID().toString(true));
-                    fileRecord.setLastModified(DateUtil.date(file.lastModified()));
                     fileRecord.setSize(file.length());
                     fileRecord.setMd5(lrm.md5());
                     aliyunOss.uploadFile(fileRecord.getRemotePath(), lrm.localFile());
@@ -173,10 +176,11 @@ public class ScanWithRemoteJob {
             // TODO 需要下载远端文件 并更新本地记录
             try (var outputStream = new FileOutputStream(file);) {
                 aliyunOss.downloadFile(fileRecord.getRemotePath(),outputStream);
+                LocalFileRecord localFileRecord = new LocalFileRecord().copyFrom(fileRecord);
+                localRecordService.updateFile(localFileRecord);
             }catch (Exception e){
                 log.error("ScanJob.handlePullList occurred an error,cause:",e);
             }
-
         }
     }
 
@@ -186,7 +190,7 @@ public class ScanWithRemoteJob {
     private void insertRecordAndUploadFile(String relativePath, File file, String remotePath,String macAddr,String md5) {
         FileRecord fileRecord = new FileRecord();
         fileRecord.setFileName(file.getName());
-        fileRecord.setLastModified(DateUtil.date(file.lastModified()));
+        fileRecord.setLastModified(file.lastModified());
         fileRecord.setRelativeLocation(relativePath);
         if (file.isDirectory()){
             fileRecord.setSize(0);

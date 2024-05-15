@@ -80,4 +80,12 @@
     <delete id="removeFile">
         delete from file_record_table where relative_location =#{relativePath} and file_name= #{filename}
     </delete>
+
+    <update id="updateFile" parameterType="LocalFileRecord">
+        update file_record_table
+        set last_modified = #{lastModified},
+            md5=#{md5},
+            size=#{size}
+        where file_name=#{fileName} and relative_location = #{relativeLocation}
+    </update>
 </mapper>

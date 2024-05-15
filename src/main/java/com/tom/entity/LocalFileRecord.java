@@ -1,5 +1,6 @@
 package com.tom.entity;
 
+import cn.hutool.core.bean.BeanUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -37,4 +38,10 @@ public class LocalFileRecord implements Serializable {
     private int recordType;
 
     private long size;
+
+    public LocalFileRecord copyFrom(FileRecord fileRecord) {
+        BeanUtil.copyProperties(fileRecord,this,false);
+        this.lastModified = String.valueOf(fileRecord.getLastModified());
+        return this;
+    }
 }

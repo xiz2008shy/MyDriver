@@ -9,7 +9,7 @@ public interface RemoteOperateHistoryMapper {
 
     void insert(RemoteOperateHistory fileRecord);
 
-    void saveBatch(List<RemoteOperateHistory> fileRecords);
+    void saveBatch(@Param("fileRecords")List<RemoteOperateHistory> fileRecords);
 
     RemoteOperateHistory selectByMd5AndFilenameDel(@Param("md5") String md5, @Param("filename") String filename, @Param("relativePath") String relativePath);
 }

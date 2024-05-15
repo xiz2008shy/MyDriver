@@ -33,9 +33,9 @@ public class ScanWithLocalJob {
         } while (!CollUtil.isEmpty(files));
 
         // 在远端比较后再添加到本地记录
-        /*if (CollUtil.isNotEmpty(addList)){
+        if (CollUtil.isNotEmpty(addList)){
             localRecordService.saveBatch(addList);
-        }*/
+        }
 
         if (CollUtil.isNotEmpty(removeList)){
             List<LocalFileRecord> dirRecords = new ArrayList<>();
@@ -60,8 +60,8 @@ public class ScanWithLocalJob {
                 remoteOperateHistory.setOperate("delete");
                 operateHistories.add(remoteOperateHistory);
             }
-            remoteFileRecordService.tempRemoveBatch(remoteRecordDeleting);
             remoteOperateHistoryService.saveBatch(operateHistories);
+            remoteFileRecordService.tempRemoveBatch(remoteRecordDeleting);
         }
     }
 

@@ -90,6 +90,7 @@ public class StatusBar extends HBox {
         }else {
             switchOffline();
         }
+        this.windows.freshPage();
     }
 
     private void switchStatus(String imgPath,int status) {
