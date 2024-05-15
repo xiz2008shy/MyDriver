@@ -26,7 +26,6 @@ public class StatusBarMenu {
         MyMenuContext open = new MyMenuContext(baseMenu,connectionIcon,new Label("开启自动同步"));
         open.whenActiveByMouse(_ -> {
             statusBar.switchOnline();
-
         });
         open.setDisabledPredicate(_ -> statusBar.isOnline());
 

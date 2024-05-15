@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Sample
 {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         MySetting.initSetting(MySetting.mockParam());
         JDBCUtil.createStableConnection();
         FileRecordMapper recordMapper = JDBCUtil.getRemoteMapper(FileRecordMapper.class);

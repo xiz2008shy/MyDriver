@@ -45,16 +45,21 @@ public class JDBCUtil {
     /**
      * TODO 有待调整，建立mybatis的代理工厂
      */
-    public static void createStableConnection() {
+    public static void createStableConnection() throws Exception {
         var mybatisConfigFilePath = "/config/mybatis-config.xml";
 
         if (MySetting.getRemoteSessionFactory() == null) {
-            var inputStream = MySetting.class.getResourceAsStream(mybatisConfigFilePath);
-            try (inputStream) {
-                var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, "remoteMySQL");
-                MySetting.setRemoteSessionFactory(curSqlSessionFactory);
-            } catch (Exception ex) {
-                log.error("createStableConnection RemoteSessionFactory error,cause: ", ex);
+            int res = JDBCUtil.jdbcTest();
+            if (res == 1){
+                var inputStream = MySetting.class.getResourceAsStream(mybatisConfigFilePath);
+                try (inputStream) {
+                    var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, "remoteMySQL");
+                    MySetting.setRemoteSessionFactory(curSqlSessionFactory);
+                } catch (Exception ex) {
+                    log.error("createStableConnection RemoteSessionFactory error,cause: ", ex);
+                }
+            }else {
+                throw new RuntimeException("database config error!");
             }
         }
 

@@ -1,6 +1,7 @@
 package com.tom.config;
 
 import com.tom.config.vo.ConfigVo;
+import com.tom.general.TipBlock;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class RemoteHikariDataSource extends UnpooledDataSourceFactory {
             this.dataSource = new HikariDataSource(config);
         }catch (Exception e){
             log.error("RemoteHikariDataSource occurred an error,cause: ",e);
+            TipBlock.showDialog(e.getMessage(),"RemoteDataSource connect failed!",MySetting.getMainWindows().getStage());
         }
     }
 

@@ -46,14 +46,7 @@ public class StatusBar extends HBox {
     public void switchOnline (){
         try {
             if (!MySetting.isInitFactory()){
-                int res = JDBCUtil.jdbcTest();
-                if (res == 1){
-                    JDBCUtil.createStableConnection();
-                    switchStatus("/img/greenPoint.png",1);
-                }else {
-                    TipBlock.showDialog("连接失败，请稍后再试！","Connection Failed!",windows.getStage());
-                }
-            }else {
+                JDBCUtil.createStableConnection();
                 switchStatus("/img/greenPoint.png",1);
             }
         }catch (Exception e){

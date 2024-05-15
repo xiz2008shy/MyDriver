@@ -35,6 +35,8 @@ import static java.nio.file.StandardOpenOption.*;
 
 
 public class MySetting {
+    @Setter @Getter
+    private static RecWindows mainWindows;
 
     @Getter
     private static ConfigVo config;
