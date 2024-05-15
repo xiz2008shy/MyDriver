@@ -1,6 +1,5 @@
 package com.tom.component.menu;
 
-import com.tom.config.MySetting;
 import com.tom.general.RecWindows;
 import com.tom.general.StatusBar;
 import com.tom.general.menu.BaseMenu;
@@ -15,6 +14,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
+
 public class StatusBarMenu {
 
     public static BaseMenu createBaseMenu(RecWindows windows) {
@@ -23,19 +23,21 @@ public class StatusBarMenu {
 
         ImageView connectionIcon = ImageUtils.getImageView("/img/connection.png", 16, 16);
         HBox.setMargin(connectionIcon,new Insets(0,15,0,0));
-        MyMenuContext open = new MyMenuContext(baseMenu,connectionIcon,new Label("开启自动同步"));
-        open.whenActiveByMouse(_ -> {
-            statusBar.switchOnline();
+        MyMenuContext autoConnect = new MyMenuContext(baseMenu,connectionIcon,new Label("开启自动同步"));
+        autoConnect.whenActiveByMouse(_ -> {
+            statusBar.switchWaitingIcon();
+            Thread.startVirtualThread(statusBar::switchOnline);
         });
-        open.setDisabledPredicate(_ -> statusBar.isOnline());
+        autoConnect.setDisabledPredicate(_ -> statusBar.isOnline());
 
         ImageView disconnectionIcon = ImageUtils.getImageView("/img/disconnection.png", 16, 16);
         HBox.setMargin(disconnectionIcon,new Insets(0,15,0,0));
-        MyMenuContext menu0 = new MyMenuContext(baseMenu,disconnectionIcon,new Label("关闭自动同步"));
-        menu0.whenActiveByMouse(_ -> {
+        MyMenuContext closeAutoConn = new MyMenuContext(baseMenu,disconnectionIcon,new Label("关闭自动同步"));
+        closeAutoConn.whenActiveByMouse(_ -> {
+            statusBar.switchWaitingIcon();
             statusBar.switchOffline();
         });
-        menu0.setDisabledPredicate(_ -> !statusBar.isOnline());
+        closeAutoConn.setDisabledPredicate(_ -> !statusBar.isOnline());
 
         ImageView syncRightNow = ImageUtils.getImageView("/img/syncIcon.png", 16, 16);
         HBox.setMargin(syncRightNow,new Insets(0,15,0,0));

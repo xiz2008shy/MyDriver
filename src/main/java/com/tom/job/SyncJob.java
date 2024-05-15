@@ -28,9 +28,6 @@ public class SyncJob {
     public static void start(Stage stage, StatusBar statusBar){
         statusBar.switchSyncIcon();
         try {
-            if (!MySetting.isInitFactory()){
-                JDBCUtil.createStableConnection();
-            }
             if (!running.get()) {
                 SyncJob syncJob = new SyncJob(statusBar);
                 Thread.startVirtualThread(syncJob::doSyncJob);
@@ -44,6 +41,16 @@ public class SyncJob {
     }
 
     private void doSyncJob() {
+        if (!MySetting.isInitFactory()){
+            try{
+                JDBCUtil.createStableConnection();
+            }catch (Exception e){
+                Platform.runLater(()->{
+                    TipBlock.showDialog(e.getMessage(),"database connect failed!",null);
+                });
+                return;
+            }
+        }
         boolean flag = running.compareAndSet(false, true);
         if (flag){
             try {
