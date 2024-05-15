@@ -26,8 +26,9 @@ public class SyncJob {
     }
 
     public static void start(Stage stage, StatusBar statusBar){
+        statusBar.switchSyncIcon();
         try {
-            if (!MySetting.isConnection()){
+            if (!MySetting.isInitFactory()){
                 JDBCUtil.createStableConnection();
             }
             if (!running.get()) {

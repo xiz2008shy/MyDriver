@@ -59,7 +59,7 @@ public class FileContentPaneController implements Initializable {
     public void changeContentWhenChangeDir(File n) {
         flowPaneContent.getChildren().clear();
         Map<String,FileRecord> recordMap = Collections.emptyMap();
-        if(MySetting.isConnection()){
+        if(MySetting.isInitFactory()){
             List<FileRecord> fileRecords = remoteFileRecordService.selectListByRelativeLocation(
                     FileNameUtil.getRelativePath(n, MySetting.getConfig().getBasePath()));
             recordMap = fileRecords.stream().collect(Collectors.toMap(FileRecord::getFileName, Function.identity()));

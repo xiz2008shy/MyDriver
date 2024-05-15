@@ -192,6 +192,8 @@ public class MySetting {
                 try {
                     String configStr = OM.writeValueAsString(config);
                     createFileWithConfig(path,configStr);
+                    JDBCUtil.closeConnection();
+                    mySettingController.getFromWindow().getTopBar().getStatusBar().switchOffline();
                 } catch (Exception ex) {
                     log.error("MySetting.saveConfig occurred an error,cause: ",ex);
                 }
@@ -252,7 +254,7 @@ public class MySetting {
     }
 
 
-    public static boolean isConnection(){
+    public static boolean isInitFactory(){
         return remoteSessionFactory != null;
     }
 

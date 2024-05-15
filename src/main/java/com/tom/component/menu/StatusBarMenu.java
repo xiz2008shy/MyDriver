@@ -28,7 +28,7 @@ public class StatusBarMenu {
             statusBar.switchOnline();
 
         });
-        open.setDisabledPredicate(_ -> statusBar.isOnline() && MySetting.getRemoteSessionFactory() != null);
+        open.setDisabledPredicate(_ -> statusBar.isOnline());
 
         ImageView disconnectionIcon = ImageUtils.getImageView("/img/disconnection.png", 16, 16);
         HBox.setMargin(disconnectionIcon,new Insets(0,15,0,0));
@@ -36,13 +36,12 @@ public class StatusBarMenu {
         menu0.whenActiveByMouse(_ -> {
             statusBar.switchOffline();
         });
-        menu0.setDisabledPredicate(_ -> !statusBar.isOnline() && MySetting.getRemoteSessionFactory() == null);
+        menu0.setDisabledPredicate(_ -> !statusBar.isOnline());
 
         ImageView syncRightNow = ImageUtils.getImageView("/img/syncIcon.png", 16, 16);
         HBox.setMargin(syncRightNow,new Insets(0,15,0,0));
         MyMenuContext menu1 = new MyMenuContext(baseMenu,syncRightNow,new Label("立即同步"));
         menu1.whenActiveByMouse(_ -> {
-            statusBar.switchSyncIcon();
             SyncJob.start(windows.getStage(),statusBar);
         });
 

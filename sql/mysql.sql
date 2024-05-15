@@ -33,8 +33,8 @@ CREATE TABLE `file_operate_history`
     operate           varchar(10)     default 'push，deleted'                not null comment '远端文件操作，push推送，delete删除',
     operator          varchar(64)     default ''                    not null comment '操作设备',
     PRIMARY KEY (`id`),
-    KEY `file_name_IDX` (`file_name`) USING BTREE,
-    KEY `md5_IDX` (`md5`) USING BTREE
+    KEY `file_name_IDX` (`file_name`,relative_location,`md5`) USING BTREE,
+    KEY `date_IDX` (`operate_time`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4;
