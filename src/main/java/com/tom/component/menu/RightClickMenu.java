@@ -55,9 +55,7 @@ public class RightClickMenu {
                 DesktopIconClickHandler.executeFile(file);
             }
         });
-        open.setDisabledPredicate(_ -> {
-            return existsSelectedFile(windows);
-        });
+        open.setDisabledPredicate(_ -> existsSelectedFile(windows));
         MyMenuContext openInNewPage = new MyMenuContext(baseMenu,new Label("新标签页中打开"));
         openInNewPage.whenActiveByMouse( _ -> {
             File file = windows.getActiveModelData().getRealSelectedFile();
@@ -75,9 +73,7 @@ public class RightClickMenu {
             FileKeyHandler.setToSystemClipboard(file);
             windows.freshPage();
         });
-        copy.setDisabledPredicate(_ -> {
-            return existsSelectedFile(windows);
-        });
+        copy.setDisabledPredicate(_ -> existsSelectedFile(windows));
 
         MyMenuContext paste = new MyMenuContext(baseMenu,new Label("粘贴"));
         paste.whenActiveByMouse( _ -> {
@@ -91,14 +87,12 @@ public class RightClickMenu {
         });
 
         MyMenuContext del = new MyMenuContext(baseMenu,new Label("删除"));
-        paste.whenActiveByMouse( _ -> {
+        del.whenActiveByMouse( _ -> {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
             FileUtil.del(curPath);
             windows.freshPage();
         });
-        paste.setDisabledPredicate(_ -> {
-            return existsSelectedFile(windows);
-        });
+        del.setDisabledPredicate(_ -> existsSelectedFile(windows));
 
         return baseMenu;
     }

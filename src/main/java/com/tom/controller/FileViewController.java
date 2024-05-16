@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -71,6 +72,9 @@ public class FileViewController extends AnchorPane implements Initializable {
         imageBox.setId(STR."\{uuid}_imgBox");
         imageView.setId(STR."\{uuid}_imageView");
         fileNameLabel.setId(STR."\{uuid}_fileNameLabel");
+        Tooltip tooltip = new Tooltip(file.getName());
+        tooltip.getStyleClass().add("my-tooltip");
+        fileNameLabel.setTooltip(tooltip);
         fileNameBox.setId(STR."\{uuid}_fileNameBox");
         this.setId(uuid);
         modelData.getCacheMap().put(uuid,file);
