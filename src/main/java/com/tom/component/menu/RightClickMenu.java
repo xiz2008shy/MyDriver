@@ -56,6 +56,7 @@ public class RightClickMenu {
             }
         });
         open.setDisabledPredicate(_ -> existsSelectedFile(windows));
+
         MyMenuContext openInNewPage = new MyMenuContext(baseMenu,new Label("新标签页中打开"));
         openInNewPage.whenActiveByMouse( _ -> {
             File file = windows.getActiveModelData().getRealSelectedFile();
@@ -67,6 +68,13 @@ public class RightClickMenu {
             log.info("openInNewPage.setDisabledPredicate curPath={}",curPath);
             return curPath == null || !curPath.isDirectory();
         });
+
+        MyMenuContext fresh = new MyMenuContext(baseMenu,new Label("刷新"));
+        fresh.whenActiveByMouse( _ -> {
+            windows.freshPage();
+        });
+
+
         MyMenuContext copy = new MyMenuContext(baseMenu,new Label("复制"));
         copy.whenActiveByMouse( _ -> {
             File file = windows.getActiveModelData().getRealSelectedFile();
