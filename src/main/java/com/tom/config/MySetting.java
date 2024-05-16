@@ -40,6 +40,8 @@ public class MySetting {
 
     @Getter
     private static ConfigVo config;
+    @Getter
+    private static File baseFile;
 
     private static Logger log = null;
 
@@ -113,6 +115,7 @@ public class MySetting {
         }
 
         macIP = MD5Util.getMacByIP();
+        baseFile = new File(config.getBasePath());
     }
 
 
@@ -190,6 +193,7 @@ public class MySetting {
             if (isBasePathValid) {
                 mySettingController.getConfigChange().set(0);
                 mySettingController.refreshConfig();
+                baseFile = new File(config.getBasePath());
                 Path path = Paths.get(runConfFile);
                 try {
                     String configStr = OM.writeValueAsString(config);

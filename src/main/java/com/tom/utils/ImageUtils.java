@@ -1,5 +1,6 @@
 package com.tom.utils;
 
+import cn.hutool.core.lang.Pair;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,10 +22,20 @@ import java.util.Map;
 public class ImageUtils {
 
     private static final Map<String, SoftReference<Image>> imageViewCache = new HashMap<>(256);
+    public static final String EXE = ".exe";
+    public static final String URL = ".url";
+    public static final String LNK = ".lnk";
 
     public static ImageView getImageViewFromResources(String path,double width,double height){
         Image image = getImageFromResources(path, width, height);
         return new ImageView(image);
+    }
+
+
+    public static ImageView getImageView(String image, int size, int resize) {
+        ImageView imageView = getImageViewFromResources(image, size, size);
+        ImageUtils.resize(imageView, resize, resize);
+        return imageView;
     }
 
     public static Image getImageFromResources(String path,double width,double height){
@@ -42,11 +53,6 @@ public class ImageUtils {
         return image;
     }
 
-    public static ImageView getImageView(String image, int size, int resize) {
-        ImageView imageView = getImageViewFromResources(image, size, size);
-        ImageUtils.resize(imageView, resize, resize);
-        return imageView;
-    }
 
     /**
      * 获取文件大图标
@@ -54,23 +60,38 @@ public class ImageUtils {
      * @return 返回文件icon的图片视图
      */
     public static ImageView getBigIcon (FileSystemView fileSystemView,File file) {
-        SoftReference<Image> sr = imageViewCache.get(file.getName());
-        Image image = sr != null ? sr.get() : null;
+        String filename = file.getName();
+        Pair<String, String> parser = FileNameUtil.parseFilename(filename);
         ImageView imageView;
+        String keyValue = parser.getValue();
+        if (parser.getValue().equals(EXE)) {
+            keyValue = file.getName();
+        }
+
+        SoftReference<Image> sr = imageViewCache.get(keyValue);
+        Image image = sr != null ? sr.get() : null;
         if (image == null) {
             ImageIcon iconImage = (ImageIcon)fileSystemView.getSystemIcon(file, 48, 48);
             BufferedImage bufferedImage = toBufferedImage(iconImage,true);
             image = SwingFXUtils.toFXImage(bufferedImage,null);
             imageView = new ImageView(image);
-            imageViewCache.put(file.getName(),new SoftReference<>(image));
+            imageViewCache.put(keyValue,new SoftReference<>(image));
         }else {
             imageView = new ImageView(image);
         }
+
+
         return imageView;
     }
 
     public static Image getBigIconImage (FileSystemView fileSystemView,File file) {
-        SoftReference<Image> sr = imageViewCache.get(file.getName());
+        String filename = file.getName();
+        Pair<String, String> parser = FileNameUtil.parseFilename(filename);
+        String keyValue = parser.getValue();
+        if (keyValue.equals(EXE) || keyValue.equals(URL) || keyValue.equals(LNK)) {
+            keyValue = file.getName();
+        }
+        SoftReference<Image> sr = imageViewCache.get(keyValue);
         Image image = sr != null ? sr.get() : null;
         if (image == null) {
             try{
@@ -78,7 +99,7 @@ public class ImageUtils {
                 if (icon instanceof ImageIcon iconImage){
                     BufferedImage bufferedImage = toBufferedImage(iconImage,true);
                     image = SwingFXUtils.toFXImage(bufferedImage,null);
-                    imageViewCache.put(file.getName(),new SoftReference<>(image));
+                    imageViewCache.put(keyValue,new SoftReference<>(image));
                 }
             }catch (Exception e){
                 log.info("the file icon is not exists!");

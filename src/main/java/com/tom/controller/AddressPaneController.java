@@ -56,6 +56,13 @@ public class AddressPaneController implements Initializable {
                 "M588.8 262.4c6.4-6.4 32-6.4 44.8 0 6.4 12.8 6.4 38.4 0 44.8L428.8 512l204.8 204.8c12.8 12.8 12.8 32 0 44.8-12.8 12.8-32 12.8-44.8 0L364.8 537.6c-12.8-12.8-12.8-32 0-44.8l224-230.4z");
 
         this.backSvg.setShape(svg);
+        this.backSvg.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> {
+            File curDir = modelData.getCurDir();
+            if (!curDir.equals(MySetting.getBaseFile())) {
+                File parentDir = curDir.getParentFile();
+                modelData.freshPage(parentDir);
+            }
+        });
         this.searchIcon.setImage(ImageUtils.getImageFromResources("/img/searchIcon.png",32,32));
 
     }
