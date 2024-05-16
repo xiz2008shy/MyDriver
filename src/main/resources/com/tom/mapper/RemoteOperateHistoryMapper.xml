@@ -5,7 +5,7 @@
 <mapper namespace="com.tom.mapper.RemoteOperateHistoryMapper">
 
     <update id="createTableIfNotExist">
-        CREATE TABLE `file_operate_history`
+        CREATE TABLE if not exists `file_operate_history`
         (
             `id`              bigint NOT NULL AUTO_INCREMENT,
             file_name         varchar(255)                                  not null,

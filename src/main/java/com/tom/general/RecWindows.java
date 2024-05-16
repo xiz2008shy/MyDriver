@@ -2,6 +2,7 @@ package com.tom.general;
 
 import com.tom.general.menu.BaseMenu;
 import com.tom.handler.DragHandler;
+import com.tom.handler.key.FileKeyHandler;
 import com.tom.model.ModelData;
 import com.tom.utils.AnchorPaneUtil;
 import com.tom.utils.DrawUtil;
@@ -14,6 +15,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -344,6 +346,11 @@ public class RecWindows extends AnchorPane {
 
     public void setInActiveStyle(){
         this.secPane.getChildren().add(block);
+    }
+
+    public void setKeyHandler(){
+        FileKeyHandler copyHandler = new FileKeyHandler(this);
+        this.showBox.addEventHandler(KeyEvent.KEY_RELEASED, copyHandler);
     }
 
     public void freshPage(){

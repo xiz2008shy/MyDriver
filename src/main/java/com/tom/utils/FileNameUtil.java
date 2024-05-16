@@ -1,10 +1,13 @@
 package com.tom.utils;
 
+import cn.hutool.core.lang.Pair;
 import cn.hutool.core.util.StrUtil;
 
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static cn.hutool.core.text.StrPool.DOT;
 
 public class FileNameUtil {
 
@@ -48,5 +51,16 @@ public class FileNameUtil {
         return STR."\{dir.getAbsolutePath().replace(basePath, StrUtil.EMPTY).replaceAll("\\\\", "/")}/";
     }
 
+
+    public static Pair<String,String> parseFilename(String fileName) {
+        int i = fileName.lastIndexOf(DOT);
+        if (i != -1) {
+            String pureName = fileName.substring(0,i);
+            String extName = fileName.substring(i);
+            return Pair.of(pureName,extName);
+        }else {
+            return Pair.of(fileName,StrUtil.EMPTY);
+        }
+    }
 
 }

@@ -29,6 +29,7 @@ public class FXMLVersionApp extends Application {
         mainWindow.setWhenActive(RightClickMenu::addMenu);
         StatusBarMenu.addMenuTrigger(mainWindow.getTopBar().getStatusBar());
         mainWindow.initStage();
+        mainWindow.setKeyHandler();
         MySetting.setMainWindows(mainWindow);
         stage.getIcons().add(ImageUtils.getImageFromResources("/img/fileDir32.png",32,32));
         stage.show();

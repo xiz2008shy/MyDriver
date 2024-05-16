@@ -1,12 +1,14 @@
 package com.tom.component.menu;
 
 
+import cn.hutool.core.io.FileUtil;
 import com.tom.controller.MyDriverPaneController;
 import com.tom.general.RecWindows;
 import com.tom.general.menu.BaseMenu;
 import com.tom.general.menu.MenuShowAroundMouse;
 import com.tom.general.menu.MyMenuContext;
 import com.tom.handler.fxml.DesktopIconClickHandler;
+import com.tom.handler.key.FileKeyHandler;
 import com.tom.model.ModelData;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -54,8 +56,7 @@ public class RightClickMenu {
             }
         });
         open.setDisabledPredicate(_ -> {
-            File curPath = windows.getActiveModelData().getRealSelectedFile();
-            return curPath == null;
+            return existsSelectedFile(windows);
         });
         MyMenuContext openInNewPage = new MyMenuContext(baseMenu,new Label("新标签页中打开"));
         openInNewPage.whenActiveByMouse( _ -> {
@@ -65,31 +66,47 @@ public class RightClickMenu {
         });
         openInNewPage.setDisabledPredicate(_ -> {
             File curPath = windows.getActiveModelData().getRealSelectedFile();
-            log.info("menu0.setDisabledPredicate curPath={}",curPath);
+            log.info("openInNewPage.setDisabledPredicate curPath={}",curPath);
             return curPath == null || !curPath.isDirectory();
         });
         MyMenuContext copy = new MyMenuContext(baseMenu,new Label("复制"));
-        copy.whenActiveByMouse( e -> {
-            log.info("复制 active!");
+        copy.whenActiveByMouse( _ -> {
+            File file = windows.getActiveModelData().getRealSelectedFile();
+            FileKeyHandler.setToSystemClipboard(file);
+            windows.freshPage();
         });
         copy.setDisabledPredicate(_ -> {
-            File curPath = windows.getActiveModelData().getRealSelectedFile();
-            return curPath == null;
-        });
-        MyMenuContext paste = new MyMenuContext(baseMenu,new Label("粘贴"));
-        paste.whenActiveByMouse( e -> {
-            log.info("粘贴 active!");
+            return existsSelectedFile(windows);
         });
 
+        MyMenuContext paste = new MyMenuContext(baseMenu,new Label("粘贴"));
+        paste.whenActiveByMouse( _ -> {
+            FileKeyHandler.copyFromSystemClipboard(windows);
+            windows.freshPage();
+        });
         paste.setDisabledPredicate(_ -> {
             Clipboard systemClipboard = Clipboard.getSystemClipboard();
             List<File> files = systemClipboard.getFiles();
             return files == null || files.isEmpty();
         });
 
+        MyMenuContext del = new MyMenuContext(baseMenu,new Label("删除"));
+        paste.whenActiveByMouse( _ -> {
+            File curPath = windows.getActiveModelData().getRealSelectedFile();
+            FileUtil.del(curPath);
+            windows.freshPage();
+        });
+        paste.setDisabledPredicate(_ -> {
+            return existsSelectedFile(windows);
+        });
+
         return baseMenu;
     }
 
+    private static boolean existsSelectedFile(RecWindows windows) {
+        File curPath = windows.getActiveModelData().getRealSelectedFile();
+        return curPath == null;
+    }
 
 
     public static void addMenu(RecWindows windows){

@@ -26,6 +26,7 @@ public class SyncJob {
     }
 
     public static void start(Stage stage, StatusBar statusBar){
+        log.info("SyncJob start");
         statusBar.switchSyncIcon();
         try {
             if (!running.get()) {
@@ -64,5 +65,6 @@ public class SyncJob {
             running.compareAndSet(true,false);
         }
         Platform.runLater(statusBar::switchLastStatus);
+        log.info("SyncJob end");
     }
 }
