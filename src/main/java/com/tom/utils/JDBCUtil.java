@@ -3,6 +3,9 @@ package com.tom.utils;
 import com.tom.config.MySetting;
 import com.tom.config.SqlSessionInvokeHandler;
 import com.tom.config.vo.ConfigVo;
+import com.tom.repo.LocalRecordService;
+import com.tom.repo.RemoteFileRecordService;
+import com.tom.repo.RemoteOperateHistoryService;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.Environment;
@@ -43,7 +46,7 @@ public class JDBCUtil {
 
 
     /**
-     * TODO 有待调整，建立mybatis的代理工厂
+     * 建立mybatis的代理工厂,并初始化相关表数据
      */
     public static void createStableConnection() throws Exception {
         var mybatisConfigFilePath = "/config/mybatis-config.xml";
@@ -55,6 +58,7 @@ public class JDBCUtil {
                 try (inputStream) {
                     var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, "remoteMySQL");
                     MySetting.setRemoteSessionFactory(curSqlSessionFactory);
+                    createRemoteTableIfNotExists();
                 } catch (Exception ex) {
                     log.error("createStableConnection RemoteSessionFactory error,cause: ", ex);
                 }
@@ -63,7 +67,6 @@ public class JDBCUtil {
             }
         }
 
-
         if (MySetting.getLocalSessionFactory() == null) {
             var inputStream = MySetting.class.getResourceAsStream(mybatisConfigFilePath);
             Properties properties = new Properties();
@@ -71,10 +74,22 @@ public class JDBCUtil {
             try (inputStream) {
                 var curSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, "localSqlLite",properties);
                 MySetting.setLocalSessionFactory(curSqlSessionFactory);
+                createLocalTableIfNotExists();
             } catch (Exception ex) {
                 log.error("createStableConnection LocalSessionFactory error,cause: ", ex);
             }
         }
+    }
+
+    private static void createRemoteTableIfNotExists() {
+        RemoteFileRecordService.getService().createTableIfNotExists();
+        RemoteOperateHistoryService.getService().createTableIfNotExist();
+    }
+
+    private static void createLocalTableIfNotExists() {
+        LocalRecordService service = LocalRecordService.getService();
+        service.createTableIfNotExists();
+        service.createIndexIfNotExists();
     }
 
     public static void closeConnection(){

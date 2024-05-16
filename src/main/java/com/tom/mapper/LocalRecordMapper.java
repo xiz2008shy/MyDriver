@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface LocalRecordMapper {
 
-    void createTable();
+    void createTableIfNotExists();
+
+    void createIndexIfNotExists();
 
     LocalFileRecord selectByRlAndFn(@Param("relativePath") String relativePath,@Param("filename") String filename);
 

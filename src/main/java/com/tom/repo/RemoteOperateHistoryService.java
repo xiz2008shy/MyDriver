@@ -15,6 +15,12 @@ public class RemoteOperateHistoryService implements RemoteOperateHistoryMapper {
     }
 
     @Override
+    public void createTableIfNotExist() {
+        RemoteOperateHistoryMapper remoteMapper = JDBCUtil.getRemoteMapper(RemoteOperateHistoryMapper.class);
+        remoteMapper.createTableIfNotExist();
+    }
+
+    @Override
     public void insert(RemoteOperateHistory fileRecord) {
         RemoteOperateHistoryMapper remoteMapper = JDBCUtil.getRemoteMapper(RemoteOperateHistoryMapper.class);
         remoteMapper.insert(fileRecord);

@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tom.mapper.LocalRecordMapper">
 
-    <insert id="createTable">
-        create table file_record_table
+    <update id="createTableIfNotExists">
+        create table if not exists file_record_table
         (
             id                INTEGER primary key autoincrement,
             file_name         VARCHAR(255) not null,
@@ -14,8 +14,12 @@
             md5               varchar(100) default '' not null,
             record_type       int default 0 not null,
             size              bigint unsigned default 0
-        );
-    </insert>
+        )
+    </update>
+
+    <update id="createIndexIfNotExists">
+        create index if not exists idx_rl_fn on file_record_table (relative_location,file_name)
+    </update>
 
     <select id="selectByRlAndFn" resultType="LocalFileRecord">
         select * from file_record_table

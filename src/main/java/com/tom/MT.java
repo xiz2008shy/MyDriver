@@ -21,7 +21,7 @@ public class MT {
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,"localSqlLite",properties);
         try (SqlSession session = sqlSessionFactory.openSession(true)) {
             LocalRecordMapper mapper = session.getMapper(LocalRecordMapper.class);
-            mapper.createTable();
+            mapper.createTableIfNotExists();
         }catch (Exception e){
             System.out.println(e);
         }

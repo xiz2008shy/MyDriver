@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface RemoteOperateHistoryMapper {
 
+    void createTableIfNotExist();
+
     void insert(RemoteOperateHistory fileRecord);
 
     void saveBatch(@Param("fileRecords")List<RemoteOperateHistory> fileRecords);

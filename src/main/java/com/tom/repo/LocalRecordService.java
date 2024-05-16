@@ -15,9 +15,15 @@ public class LocalRecordService implements LocalRecordMapper {
     }
 
     @Override
-    public void createTable() {
+    public void createTableIfNotExists() {
         LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
-        localMapper.createTable();
+        localMapper.createTableIfNotExists();
+    }
+
+    @Override
+    public void createIndexIfNotExists() {
+        LocalRecordMapper localMapper = JDBCUtil.getLocalMapper(LocalRecordMapper.class);
+        localMapper.createIndexIfNotExists();
     }
 
     @Override

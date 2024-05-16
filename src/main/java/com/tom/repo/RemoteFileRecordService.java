@@ -17,6 +17,12 @@ public class RemoteFileRecordService implements FileRecordMapper{
     }
 
     @Override
+    public void createTableIfNotExists() {
+        FileRecordMapper remoteMapper = JDBCUtil.getRemoteMapper(FileRecordMapper.class);
+        remoteMapper.createTableIfNotExists();
+    }
+
+    @Override
     public FileRecord selectByRlAndFn(String relativePath, String filename) {
         FileRecordMapper remoteMapper = JDBCUtil.getRemoteMapper(FileRecordMapper.class);
         return remoteMapper.selectByRlAndFn(relativePath,filename);
