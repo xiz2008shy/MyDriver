@@ -2,13 +2,20 @@ package com.tom.utils;
 
 import cn.hutool.core.lang.Pair;
 import cn.hutool.core.util.StrUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cn.hutool.core.text.StrPool.DOT;
 
+@Slf4j
 public class FileNameUtil {
 
     /**
@@ -63,4 +70,14 @@ public class FileNameUtil {
         }
     }
 
+
+    public static FileChannel createFileChannelCEW(String path) throws IOException {
+        return FileChannel.open(Paths.get(path),
+                StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.WRITE);
+    }
+
+    public static FileChannel createFileChannelCEW(Path path) throws IOException {
+        return FileChannel.open(path,
+                StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.WRITE);
+    }
 }

@@ -52,25 +52,23 @@ public class AliyunOss implements OssOperation{
     }
 
     @Override
-    public void downloadFile(String remotePath, FileOutputStream outputStream) {
+    public void downloadFile(String remotePath, FileChannel outChannel) {
         ConfigVo config = MySetting.getConfig();
         // 填写Bucket名称，例如examplebucket。
         String bucketName = config.getBucketName();
-        try (outputStream){
-            // ossObject包含文件所在的存储空间名称、文件名称、文件元数据以及一个输入流。
-            try (OSSObject ossObject = ossClient.getObject(new GetObjectRequest(bucketName, remotePath).
-                    withProgressListener(new ProcessBar.DownloadProgressListener(remotePath)));
-                 InputStream inputStream = ossObject.getObjectContent();
-                 ReadableByteChannel readableByteChannel = Channels.newChannel(inputStream);
-                 FileChannel fileChannel = outputStream.getChannel()
-            ){
-                fileChannel.transferFrom(readableByteChannel,0,inputStream.available());
-            }catch (OSSException oe) {
-                log.error("OSSException occurred,Error Message:{},Code:{},Request ID:{},Host ID:{}",
-                        oe.getErrorMessage(),oe.getErrorCode(),oe.getRequestId(), oe.getHostId());
-            }
-        } catch (Throwable ce) {
-            log.error("ClientException,Error Message:{}" , ce.getMessage());
+        // ossObject包含文件所在的存储空间名称、文件名称、文件元数据以及一个输入流。
+        try (OSSObject ossObject = ossClient.getObject(new GetObjectRequest(bucketName, remotePath).
+                withProgressListener(new ProcessBar.DownloadProgressListener(remotePath)));
+             InputStream inputStream = ossObject.getObjectContent();
+             ReadableByteChannel readableByteChannel = Channels.newChannel(inputStream);
+             outChannel
+        ){
+            outChannel.transferFrom(readableByteChannel,0,ossObject.getObjectMetadata().getContentLength());
+        }catch (OSSException oe) {
+            log.error("OSSException occurred,Error Message:{},Code:{},Request ID:{},Host ID:{}",
+                    oe.getErrorMessage(),oe.getErrorCode(),oe.getRequestId(), oe.getHostId());
+        }catch (Throwable te){
+            log.error("ClientException,Error Message:{}" , te.getMessage());
         }
     }
 }

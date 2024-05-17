@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,8 +90,8 @@ public class ScanWithRemoteJob {
         }
         for (FileRecord fileRecord : loseLocalFile) {
             if (fileRecord.getRecordType() == 0){
-                try(var fileOutputStream = new FileOutputStream(curDir + File.separator + fileRecord.getFileName())) {
-                    aliyunOss.downloadFile(fileRecord.getRemotePath(),fileOutputStream);
+                try(FileChannel outChannel = FileNameUtil.createFileChannelCEW(curDir + File.separator + fileRecord.getFileName());) {
+                    aliyunOss.downloadFile(fileRecord.getRemotePath(),outChannel);
                     LocalFileRecord localFileRecord = new LocalFileRecord();
                     localFileRecord.copyFrom(fileRecord);
                     localRecordService.insert(localFileRecord);
@@ -173,9 +174,9 @@ public class ScanWithRemoteJob {
             File file = lrm.localFile();
             FileRecord fileRecord = lrm.fileRecord();
 
-            // TODO 需要下载远端文件 并更新本地记录
-            try (var outputStream = new FileOutputStream(file);) {
-                aliyunOss.downloadFile(fileRecord.getRemotePath(),outputStream);
+            // 需要下载远端文件 并更新本地记录
+            try (FileChannel outChannel = FileNameUtil.createFileChannelCEW(file.toPath());) {
+                aliyunOss.downloadFile(fileRecord.getRemotePath(),outChannel);
                 LocalFileRecord localFileRecord = new LocalFileRecord().copyFrom(fileRecord);
                 localRecordService.updateFile(localFileRecord);
             }catch (Exception e){
