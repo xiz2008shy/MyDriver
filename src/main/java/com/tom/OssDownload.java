@@ -18,7 +18,7 @@ public class OssDownload {
 
         AliyunOss aliyunOss = new AliyunOss();
         String path = "C:\\Users\\TOMQI\\Desktop\\GAME\\Enscape_2023-07-14-19-10-22.png";
-        FileChannel fileChannelOverFile = FileNameUtil.createFileChannelOverFile(path);
+        FileChannel fileChannelOverFile = FileNameUtil.createFileChannelCEW(path);
         aliyunOss.downloadFile("2024/5/16/01a14c473ba6414dafcc08393b93f755", fileChannelOverFile);
 
     }
